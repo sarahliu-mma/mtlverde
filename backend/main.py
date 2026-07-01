@@ -14,7 +14,7 @@ app.add_middleware(
 
 @app.get("/events")
 def get_events():
-    data_path = os.path.join(os.path.dirname(__file__), "../data/festivals_montreal.json")
+    data_path = os.path.join(os.path.dirname(__file__), "festivals_montreal.json")
     with open(data_path, "r", encoding="utf-8") as f:
         events = json.load(f)
     return events
