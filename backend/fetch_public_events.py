@@ -110,6 +110,20 @@ def clean_arrondissement(value):
     return re.sub(r"�+", "–", value)
 
 
+def event_id(record):
+    """Return a stable unique id for an event.
+
+    Uses the trailing numeric slug of montreal.ca's event page URL
+    (e.g. ".../mon-evenement-87905" -> "87905"). This is the city's own
+    stable event id, so it survives dataset refreshes -- unlike CKAN's
+    internal `_id`, which can be reassigned when the source is reloaded.
+    Falls back to the full url_fiche if no numeric slug is present.
+    """
+    url = record.get("url_fiche") or ""
+    match = re.search(r"-(\d+)$", url)
+    return match.group(1) if match else (url or None)
+
+
 def normalize(record):
     try:
         lat = float(record["lat"])
@@ -118,6 +132,7 @@ def normalize(record):
         return None
 
     return {
+        "id": event_id(record),
         "titre": record.get("titre"),
         "url_fiche": record.get("url_fiche"),
         "description": record.get("description"),

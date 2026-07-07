@@ -5,6 +5,9 @@ from database import Base
 class Festival(Base):
     __tablename__ = "festivals"
 
+    # String PK: festival ids are title slugs ("festival-mural") and public
+    # event ids are numeric strings ("87905") -- both are stored as text.
+
     id = Column(String, primary_key=True, index=True)
     titre = Column(String, nullable=False)
     url_fiche = Column(String, nullable=True)
