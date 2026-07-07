@@ -10,7 +10,33 @@ events by type and by neighborhood.
   [`public_events_montreal.json`](public_events_montreal.json), refreshed weekly by
   [`.github/workflows/update-public-events.yml`](../.github/workflows/update-public-events.yml)
 - **Endpoint:** `GET /events/public` in [`main.py`](main.py)
-- **Snapshot:** 2026-07-03 — **3,690 events** (from 5,859 total records in the source)
+- **Snapshot:** 2026-07-07 — **3,532 events** (from 5,780 total records in the source)
+
+---
+
+## Unique identifier
+
+Every event carries an **`id`** field for stable identification — this lets the
+PostgreSQL import on Railway upsert cleanly (tell new events from existing ones)
+without creating duplicates.
+
+- `id` is the trailing numeric slug of the montreal.ca event page URL
+  (e.g. `.../dans-loeil-du-lievre-87905` → `"87905"`). It is the city's own
+  stable event id, so it survives dataset refreshes — unlike CKAN's internal
+  `_id`, which can be reassigned when the source is reloaded.
+- In the current snapshot the `id` is present and **unique for all 3,532
+  events** (title + start date is *not* safe as a key — it collides on ~200+
+  events).
+- Use it as the **primary key** on the events table and upsert with
+  `INSERT ... ON CONFLICT (id) DO UPDATE`.
+
+The curated festivals feed (`festivals_montreal.json`, served at `GET /events`)
+also carries an `id`, but as a **slug derived from the title** (e.g.
+`"Festival MURAL"` → `festival-mural`) since those hand-maintained entries have
+no numeric city id. Slugs are stable, human-readable, unique across the 12
+festivals, and do not collide with the numeric public-event ids — so both feeds
+can share one Postgres table. The `festivals` table's `id` column is therefore
+typed as text (`String`), not integer.
 
 ---
 
@@ -42,24 +68,24 @@ date filters (#3, #4).
 
 | Type | Events |
 |------|-------:|
-| Sport et plein air | 1,085 |
-| Art et artisanat | 420 |
-| Heure du conte | 398 |
-| Jeux | 344 |
-| Musique | 285 |
-| Cinéma | 224 |
-| Théâtre | 217 |
-| Fête et marché | 146 |
-| Exposition | 132 |
+| Sport et plein air | 1,025 |
+| Art et artisanat | 401 |
+| Heure du conte | 388 |
+| Jeux | 324 |
+| Musique | 280 |
+| Cinéma | 208 |
+| Théâtre | 208 |
+| Fête et marché | 139 |
+| Exposition | 133 |
 | Club de lecture et littérature | 113 |
-| Science et techno | 112 |
-| Cirque | 75 |
-| Danse | 71 |
+| Science et techno | 108 |
+| Danse | 74 |
+| Cirque | 66 |
 | Cuisine | 31 |
-| Jardinage | 16 |
-| Art de la parole | 16 |
+| Jardinage | 15 |
+| Art de la parole | 14 |
 | Humour | 5 |
-| **Total** | **3,690** |
+| **Total** | **3,532** |
 
 > Note: "Sport et plein air" is dominated by recurring drop-in fitness/dance
 > classes (Zumba, yoga, line dancing, etc.) rather than one-off events, which is
@@ -71,27 +97,27 @@ date filters (#3, #4).
 
 | Arrondissement | Events |
 |----------------|-------:|
-| Ville-Marie | 613 |
-| Le Plateau-Mont-Royal | 385 |
-| Ville de Montréal* | 379 |
-| Rivière-des-Prairies–Pointe-aux-Trembles | 356 |
-| Côte-des-Neiges–Notre-Dame-de-Grâce | 289 |
-| Verdun | 243 |
-| LaSalle | 168 |
-| Saint-Laurent | 162 |
-| Mercier–Hochelaga-Maisonneuve | 161 |
-| Montréal-Nord | 138 |
-| Lachine | 138 |
-| Rosemont–La Petite-Patrie | 113 |
-| Anjou | 108 |
-| Ahuntsic-Cartierville | 107 |
-| Outremont | 67 |
-| Le Sud-Ouest | 66 |
-| Villeray–Saint-Michel–Parc-Extension | 61 |
-| Saint-Léonard | 61 |
-| Pierrefonds-Roxboro | 59 |
-| L'Île-Bizard–Sainte-Geneviève | 16 |
-| **Total** | **3,690** |
+| Ville-Marie | 607 |
+| Ville de Montréal* | 360 |
+| Le Plateau-Mont-Royal | 359 |
+| Rivière-des-Prairies–Pointe-aux-Trembles | 339 |
+| Côte-des-Neiges–Notre-Dame-de-Grâce | 285 |
+| Verdun | 230 |
+| LaSalle | 161 |
+| Mercier–Hochelaga-Maisonneuve | 155 |
+| Saint-Laurent | 150 |
+| Lachine | 133 |
+| Montréal-Nord | 132 |
+| Anjou | 103 |
+| Ahuntsic-Cartierville | 102 |
+| Rosemont–La Petite-Patrie | 100 |
+| Saint-Léonard | 62 |
+| Le Sud-Ouest | 62 |
+| Outremont | 61 |
+| Villeray–Saint-Michel–Parc-Extension | 59 |
+| Pierrefonds-Roxboro | 57 |
+| L'Île-Bizard–Sainte-Geneviève | 15 |
+| **Total** | **3,532** |
 
 > \* "Ville de Montréal" is not a real neighborhood — it is a catch-all the
 > source uses for city-wide events not tied to a specific borough.
