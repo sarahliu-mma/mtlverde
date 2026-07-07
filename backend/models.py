@@ -1,11 +1,11 @@
-from sqlalchemy import Column, Integer, String, Float
+from sqlalchemy import Column, String, Float
 from database import Base
 
 
 class Festival(Base):
     __tablename__ = "festivals"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(String, primary_key=True, index=True)
     titre = Column(String, nullable=False)
     url_fiche = Column(String, nullable=True)
     description = Column(String, nullable=True)

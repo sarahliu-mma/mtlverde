@@ -1,32 +1,46 @@
 import json
 import os
+import sys
 from database import engine, SessionLocal, Base
 from models import Festival
 
 Base.metadata.create_all(bind=engine)
 
 
-def seed():
+def import_festivals(json_filename="festivals_montreal.json"):
     db = SessionLocal()
 
-    existing_count = db.query(Festival).count()
-    if existing_count > 0:
-        print(f"Database already has {existing_count} festivals. Skipping seed.")
-        db.close()
-        return
-
-    data_path = os.path.join(os.path.dirname(__file__), "festivals_montreal.json")
+    data_path = os.path.join(os.path.dirname(__file__), json_filename)
     with open(data_path, "r", encoding="utf-8") as f:
         events = json.load(f)
 
+    created = 0
+    updated = 0
+    skipped = 0
+
     for event in events:
-        festival = Festival(**event)
-        db.add(festival)
+        event_id = event.get("id")
+
+        if not event_id:
+            print(f"Skipping event with no id: {event.get('titre', 'unknown')}")
+            skipped += 1
+            continue
+
+        existing = db.query(Festival).filter(Festival.id == event_id).first()
+
+        if existing:
+            for key, value in event.items():
+                setattr(existing, key, value)
+            updated += 1
+        else:
+            db.add(Festival(**event))
+            created += 1
 
     db.commit()
     db.close()
-    print(f"Seeded {len(events)} festivals.")
+    print(f"Done. Created: {created}, Updated: {updated}, Skipped: {skipped}")
 
 
 if __name__ == "__main__":
-    seed()
+    filename = sys.argv[1] if len(sys.argv) > 1 else "festivals_montreal.json"
+    import_festivals(filename)
