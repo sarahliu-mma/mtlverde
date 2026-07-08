@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -11,8 +11,11 @@ L.Icon.Default.mergeOptions({
 });
 
 export default function Map({ events }) {
+  const mapRef = useRef(null);
+  const markersRef = useRef([]);
+
   useEffect(() => {
-    if (document.getElementById("map")._leaflet_id) return;
+    if (mapRef.current) return;
 
     const map = L.map("map").setView([45.5088, -73.5683], 12);
 
@@ -20,11 +23,27 @@ export default function Map({ events }) {
       attribution: "© OpenStreetMap contributors",
     }).addTo(map);
 
+    mapRef.current = map;
+
+    return () => {
+      map.remove();
+      mapRef.current = null;
+    };
+  }, []);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    markersRef.current.forEach((marker) => map.removeLayer(marker));
+    markersRef.current = [];
+
     events.forEach((event) => {
       if (event.lat && event.long) {
-        L.marker([event.lat, event.long])
+        const marker = L.marker([event.lat, event.long])
           .addTo(map)
           .bindPopup(`<b>${event.titre}</b><br>${event.arrondissement}<br>${event.cout}`);
+        markersRef.current.push(marker);
       }
     });
   }, [events]);
