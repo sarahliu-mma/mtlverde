@@ -1,7 +1,7 @@
 from datetime import date
 import json
 import os
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
@@ -63,8 +63,17 @@ def get_events(db: Session = Depends(get_db)):
 @app.get("/events/public")
 def get_public_events():
     data_path = os.path.join(os.path.dirname(__file__), "public_events_montreal.json")
-    with open(data_path, "r", encoding="utf-8") as f:
-        events = json.load(f)
+    try:
+        with open(data_path, "r", encoding="utf-8") as f:
+            events = json.load(f)
+    except (OSError, json.JSONDecodeError):
+        # Missing or corrupt data file: fail with a clear 503 instead of a
+        # raw 500 so clients can distinguish "temporarily unavailable" from
+        # a real server bug.
+        raise HTTPException(
+            status_code=503,
+            detail="Public events data is temporarily unavailable.",
+        )
     today = date.today()
     horizon = add_months(today, HORIZON_MONTHS)
     return [e for e in events if in_window(e, today, horizon)]

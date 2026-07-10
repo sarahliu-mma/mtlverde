@@ -41,6 +41,12 @@ RELEVANT_TYPES = {
 
 OUTPUT_PATH = os.path.join(os.path.dirname(__file__), "public_events_montreal.json")
 
+# Stale guard: refuse to publish a suspiciously small dataset. MIN_EXPECTED is
+# an absolute floor; SHRINK_RATIO guards against a partial result that is still
+# above the floor but far below what we had last run.
+MIN_EXPECTED = 500
+SHRINK_RATIO = 0.5
+
 
 def fetch_all_records():
     records = []
@@ -149,6 +155,15 @@ def normalize(record):
     }
 
 
+def previous_count():
+    """Number of events in the currently-published file, or None if absent."""
+    try:
+        with open(OUTPUT_PATH, "r", encoding="utf-8") as f:
+            return len(json.load(f))
+    except (OSError, json.JSONDecodeError):
+        return None
+
+
 def main():
     today = date.today()
     horizon = add_months(today, HORIZON_MONTHS)
@@ -162,8 +177,28 @@ def main():
         and (normalized := normalize(r)) is not None
     ]
 
-    with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
+    # Stale guard: abort (non-zero exit) rather than overwrite good data with a
+    # suspiciously small result, e.g. a source outage, schema change, or empty
+    # response. This also stops the scheduled workflow from committing bad data.
+    prev = previous_count()
+    if len(filtered) < MIN_EXPECTED:
+        raise SystemExit(
+            f"Refusing to write: only {len(filtered)} events "
+            f"(floor is {MIN_EXPECTED}). Source may be degraded."
+        )
+    if prev and len(filtered) < prev * SHRINK_RATIO:
+        raise SystemExit(
+            f"Refusing to write: {len(filtered)} events is under {SHRINK_RATIO:.0%} "
+            f"of the previous {prev}. Source may be degraded."
+        )
+
+    # Atomic write: dump to a temp file in the same directory, then os.replace()
+    # it into place. os.replace is atomic on the same filesystem, so a crash
+    # mid-write can never leave a truncated/corrupt JSON file for the API to serve.
+    tmp_path = OUTPUT_PATH + ".tmp"
+    with open(tmp_path, "w", encoding="utf-8") as f:
         json.dump(filtered, f, ensure_ascii=False, indent=2)
+    os.replace(tmp_path, OUTPUT_PATH)
 
     print(f"Wrote {len(filtered)} events to {OUTPUT_PATH} (from {len(records)} total records)")
 
