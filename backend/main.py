@@ -57,7 +57,20 @@ app.add_middleware(
 
 @app.get("/events")
 def get_events(db: Session = Depends(get_db)):
-    events = db.query(Festival).all()
+    # Hide festivals that have already ended (e.g. Francos, ended 2026-06-21),
+    # so the curated feed stays current like /events/public. Dates are stored
+    # as ISO strings, so a lexicographic comparison matches chronological order.
+    # Ongoing festivals (started earlier, not yet ended) are kept because we
+    # compare on date_fin; festivals with no end date are kept too.
+    # NB: unlike /events/public we do NOT apply the 6-month horizon cap here --
+    # the curated list is small and we want to surface marquee festivals even
+    # if they are further out.
+    today = date.today().isoformat()
+    events = (
+        db.query(Festival)
+        .filter((Festival.date_fin >= today) | (Festival.date_fin.is_(None)))
+        .all()
+    )
     return events
 
 @app.get("/events/public")
