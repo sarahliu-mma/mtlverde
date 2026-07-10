@@ -41,11 +41,15 @@ RELEVANT_TYPES = {
 
 OUTPUT_PATH = os.path.join(os.path.dirname(__file__), "public_events_montreal.json")
 
-# Stale guard: refuse to publish a suspiciously small dataset. MIN_EXPECTED is
-# an absolute floor; SHRINK_RATIO guards against a partial result that is still
-# above the floor but far below what we had last run.
-MIN_EXPECTED = 500
-SHRINK_RATIO = 0.5
+# Stale guard: refuse to publish a suspiciously small dataset.
+# SHRINK_RATIO is the primary guard -- it is relative to the previous run, so it
+# adapts to the feed's seasonal drift (a rolling 6-month, summer-heavy window)
+# while still catching a sudden cliff. MIN_EXPECTED is only a backstop for when
+# there is no previous count (first run, or the file was deleted); it is set
+# with headroom below the current ~3,400 so a legitimate off-season dip does not
+# false-abort. Revisit both after observing a full seasonal cycle.
+MIN_EXPECTED = 2000
+SHRINK_RATIO = 0.6
 
 
 def fetch_all_records():
