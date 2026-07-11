@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
 from database import get_db, engine, Base
-from models import Festival
+from models import Festival, PublicEvent
 
 
 HORIZON_MONTHS = 6
@@ -74,19 +74,37 @@ def get_events(db: Session = Depends(get_db)):
     return events
 
 @app.get("/events/public")
-def get_public_events():
+def get_public_events(db: Session = Depends(get_db)):
+    today = date.today()
+    horizon = add_months(today, HORIZON_MONTHS)
+
+    # Serve from Postgres: keep events overlapping [today, horizon], i.e. not
+    # yet ended and not starting beyond the horizon. Dates are ISO strings, so
+    # lexicographic comparison matches chronological order. Rows with a null
+    # date are kept rather than dropped (mirrors in_window's fallback).
+    today_s = today.isoformat()
+    horizon_s = horizon.isoformat()
+    rows = (
+        db.query(PublicEvent)
+        .filter(
+            (PublicEvent.date_fin >= today_s) | (PublicEvent.date_fin.is_(None)),
+            (PublicEvent.date_debut <= horizon_s) | (PublicEvent.date_debut.is_(None)),
+        )
+        .all()
+    )
+    if rows:
+        return rows
+
+    # Migration fallback: if the table has not been seeded yet, serve the JSON
+    # file so the endpoint keeps working. Remove once the scheduled job seeds
+    # Postgres reliably.
     data_path = os.path.join(os.path.dirname(__file__), "public_events_montreal.json")
     try:
         with open(data_path, "r", encoding="utf-8") as f:
             events = json.load(f)
     except (OSError, json.JSONDecodeError):
-        # Missing or corrupt data file: fail with a clear 503 instead of a
-        # raw 500 so clients can distinguish "temporarily unavailable" from
-        # a real server bug.
         raise HTTPException(
             status_code=503,
             detail="Public events data is temporarily unavailable.",
         )
-    today = date.today()
-    horizon = add_months(today, HORIZON_MONTHS)
     return [e for e in events if in_window(e, today, horizon)]

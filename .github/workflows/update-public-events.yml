@@ -19,7 +19,7 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install requests
+        run: pip install -r backend/requirements.txt
 
       - name: Fetch latest public events
         run: python backend/fetch_public_events.py
@@ -31,3 +31,9 @@ jobs:
           git add backend/public_events_montreal.json
           git diff --cached --quiet || git commit -m "Update public events data"
           git push
+
+      - name: Seed public events into Postgres
+        working-directory: backend
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: python seed.py public

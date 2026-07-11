@@ -10,7 +10,39 @@ events by type and by neighborhood.
   [`public_events_montreal.json`](public_events_montreal.json), refreshed weekly by
   [`.github/workflows/update-public-events.yml`](../.github/workflows/update-public-events.yml)
 - **Endpoint:** `GET /events/public` in [`main.py`](main.py)
+- **Storage:** served from Postgres (`public_events` table); the JSON file is the
+  seed input and a fallback if the table is not yet seeded
 - **Snapshot:** 2026-07-07 — **3,532 events** (from 5,780 total records in the source)
+
+---
+
+## Database seeding & deployment
+
+Both feeds are stored in Postgres and served from there: `festivals` (curated,
+`GET /events`) and `public_events` (`GET /events/public`). [`seed.py`](seed.py)
+upserts a JSON file into a table by `id` (idempotent — new rows insert, existing
+rows update, no duplicates):
+
+```
+python seed.py festivals   # loads festivals_montreal.json
+python seed.py public       # loads public_events_montreal.json
+python seed.py all          # both (default)
+```
+
+The scheduled workflow runs `seed.py public` after each fetch to keep the table
+current. It needs a **`DATABASE_URL` GitHub Actions secret** pointing at the
+Railway Postgres:
+
+- Add it under **repo Settings → Secrets and variables → Actions** as
+  `DATABASE_URL` (requires repo admin).
+- Use Railway's **public** connection string (`DATABASE_PUBLIC_URL` — an external
+  host/port), **not** the `*.railway.internal` URL. GitHub Actions runs outside
+  Railway's private network, so the internal URL will time out.
+
+Until the secret is set, the app still works (the `/events/public` endpoint
+falls back to the JSON file); only the workflow's seed step fails. The
+`public_events` table is created automatically by `Base.metadata.create_all` on
+first run — no manual migration needed.
 
 ---
 
