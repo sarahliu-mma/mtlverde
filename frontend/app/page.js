@@ -10,7 +10,7 @@ export default function Home() {
   const [arrFilter, setArrFilter] = useState("Tous");
 
   useEffect(() => {
-    fetch("https://mtlverde-production.up.railway.app/events")
+    fetch("https://mtlverde-production.up.railway.app/events/all")
       .then((res) => res.json())
       .then((data) => setEvents(data));
   }, []);

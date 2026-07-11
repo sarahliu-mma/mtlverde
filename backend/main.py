@@ -55,33 +55,28 @@ app.add_middleware(
 )
 
 
-@app.get("/events")
-def get_events(db: Session = Depends(get_db)):
-    # Hide festivals that have already ended (e.g. Francos, ended 2026-06-21),
-    # so the curated feed stays current like /events/public. Dates are stored
-    # as ISO strings, so a lexicographic comparison matches chronological order.
-    # Ongoing festivals (started earlier, not yet ended) are kept because we
-    # compare on date_fin; festivals with no end date are kept too.
-    # NB: unlike /events/public we do NOT apply the 6-month horizon cap here --
-    # the curated list is small and we want to surface marquee festivals even
-    # if they are further out.
-    today = date.today().isoformat()
-    events = (
+def query_festivals(db, today):
+    """Curated festivals that have not ended yet.
+
+    Compares on date_fin so ongoing festivals are kept; festivals with no end
+    date are kept too. No 6-month horizon cap -- the curated list is small and
+    we want to surface marquee festivals even if they are further out.
+    """
+    today_s = today.isoformat()
+    return (
         db.query(Festival)
-        .filter((Festival.date_fin >= today) | (Festival.date_fin.is_(None)))
+        .filter((Festival.date_fin >= today_s) | (Festival.date_fin.is_(None)))
         .all()
     )
-    return events
 
-@app.get("/events/public")
-def get_public_events(db: Session = Depends(get_db)):
-    today = date.today()
-    horizon = add_months(today, HORIZON_MONTHS)
 
-    # Serve from Postgres: keep events overlapping [today, horizon], i.e. not
-    # yet ended and not starting beyond the horizon. Dates are ISO strings, so
-    # lexicographic comparison matches chronological order. Rows with a null
-    # date are kept rather than dropped (mirrors in_window's fallback).
+def query_public_events(db, today, horizon):
+    """Public events overlapping [today, horizon], served from Postgres.
+
+    Falls back to the JSON file if the table has not been seeded yet, so the
+    endpoint keeps working during migration. Remove the fallback once the
+    scheduled job seeds Postgres reliably.
+    """
     today_s = today.isoformat()
     horizon_s = horizon.isoformat()
     rows = (
@@ -95,9 +90,6 @@ def get_public_events(db: Session = Depends(get_db)):
     if rows:
         return rows
 
-    # Migration fallback: if the table has not been seeded yet, serve the JSON
-    # file so the endpoint keeps working. Remove once the scheduled job seeds
-    # Postgres reliably.
     data_path = os.path.join(os.path.dirname(__file__), "public_events_montreal.json")
     try:
         with open(data_path, "r", encoding="utf-8") as f:
@@ -108,3 +100,26 @@ def get_public_events(db: Session = Depends(get_db)):
             detail="Public events data is temporarily unavailable.",
         )
     return [e for e in events if in_window(e, today, horizon)]
+
+
+@app.get("/events")
+def get_events(db: Session = Depends(get_db)):
+    return query_festivals(db, date.today())
+
+
+@app.get("/events/public")
+def get_public_events(db: Session = Depends(get_db)):
+    today = date.today()
+    return query_public_events(db, today, add_months(today, HORIZON_MONTHS))
+
+
+@app.get("/events/all")
+def get_all_events(db: Session = Depends(get_db)):
+    # Combined feed: curated festivals + public events, each with its own date
+    # filter, unioned into one list. Lets the frontend show everything with a
+    # single request while the two feeds stay in separate tables.
+    today = date.today()
+    horizon = add_months(today, HORIZON_MONTHS)
+    festivals = query_festivals(db, today)
+    publics = query_public_events(db, today, horizon)
+    return list(festivals) + list(publics)
