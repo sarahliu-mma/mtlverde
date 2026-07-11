@@ -6,8 +6,13 @@ const Map = dynamic(() => import("./Map"), { ssr: false });
 
 export default function Home() {
   const [events, setEvents] = useState([]);
-  const [coutFilter, setCoutFilter] = useState("Tous");
+  const [typeFilter, setTypeFilter] = useState("Tous");
   const [arrFilter, setArrFilter] = useState("Tous");
+  const [coutFilter, setCoutFilter] = useState("Tous");
+  const [empFilter, setEmpFilter] = useState("Tous");
+  const [audFilter, setAudFilter] = useState("Tous");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
   useEffect(() => {
     fetch("https://mtlverde-production.up.railway.app/events/all")
@@ -15,12 +20,28 @@ export default function Home() {
       .then((data) => setEvents(data));
   }, []);
 
-  const arrondissements = ["Tous", ...new Set(events.map((e) => e.arrondissement))];
+  // Unique, sorted dropdown values for a field, with "Tous" (all) pinned first.
+  const optionsFor = (field) =>
+    ["Tous", ...[...new Set(events.map((e) => e[field]).filter(Boolean))].sort()];
+
+  // The five dropdown filters, driven by a config so the markup stays DRY.
+  const selectFilters = [
+    { label: "Type", field: "type_evenement", value: typeFilter, set: setTypeFilter },
+    { label: "Arrondissement", field: "arrondissement", value: arrFilter, set: setArrFilter },
+    { label: "Coût", field: "cout", value: coutFilter, set: setCoutFilter },
+    { label: "Lieu", field: "emplacement", value: empFilter, set: setEmpFilter },
+    { label: "Public", field: "public_cible", value: audFilter, set: setAudFilter },
+  ];
 
   const filtered = events.filter((e) => {
-    const coutMatch = coutFilter === "Tous" || e.cout === coutFilter;
-    const arrMatch = arrFilter === "Tous" || e.arrondissement === arrFilter;
-    return coutMatch && arrMatch;
+    const selectMatch = selectFilters.every(
+      (f) => f.value === "Tous" || e[f.field] === f.value
+    );
+    // Date bounds (ISO strings compare chronologically): keep events starting
+    // on/after startDate and ending on/before endDate. Empty = no bound.
+    const startMatch = !startDate || (e.date_debut && e.date_debut >= startDate);
+    const endMatch = !endDate || (e.date_fin && e.date_fin <= endDate);
+    return selectMatch && startMatch && endMatch;
   });
 
   return (
@@ -39,29 +60,37 @@ export default function Home() {
 
         {/* Filters */}
         <div className="bg-white rounded-xl shadow p-5 mb-6 flex flex-wrap gap-6">
+          {selectFilters.map((f) => (
+            <div key={f.field}>
+              <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">{f.label}</label>
+              <select
+                className="border border-gray-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
+                value={f.value}
+                onChange={(e) => f.set(e.target.value)}
+              >
+                {optionsFor(f.field).map((o) => (
+                  <option key={o}>{o}</option>
+                ))}
+              </select>
+            </div>
+          ))}
           <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">Coût</label>
-            <select
+            <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">Date de début</label>
+            <input
+              type="date"
               className="border border-gray-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
-              value={coutFilter}
-              onChange={(e) => setCoutFilter(e.target.value)}
-            >
-              <option>Tous</option>
-              <option>Gratuit</option>
-              <option>Payant</option>
-            </select>
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+            />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">Arrondissement</label>
-            <select
+            <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">Date de fin</label>
+            <input
+              type="date"
               className="border border-gray-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
-              value={arrFilter}
-              onChange={(e) => setArrFilter(e.target.value)}
-            >
-              {arrondissements.map((a) => (
-                <option key={a}>{a}</option>
-              ))}
-            </select>
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+            />
           </div>
           <div className="flex items-end">
             <p className="text-sm text-gray-400">{filtered.length} événement(s) trouvé(s)</p>
