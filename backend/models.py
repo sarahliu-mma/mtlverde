@@ -20,6 +20,7 @@ class EventFields:
     type_evenement = Column(String, nullable=True)
     public_cible = Column(String, nullable=True)
     emplacement = Column(String, nullable=True)
+    inscription = Column(String, nullable=True)
     cout = Column(String, nullable=True)
     arrondissement = Column(String, nullable=True)
     adresse_principale = Column(String, nullable=True)

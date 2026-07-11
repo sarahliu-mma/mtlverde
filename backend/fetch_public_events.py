@@ -151,6 +151,7 @@ def normalize(record):
         "type_evenement": record.get("type_evenement"),
         "public_cible": record.get("public_cible"),
         "emplacement": record.get("emplacement"),
+        "inscription": record.get("inscription"),
         "cout": record.get("cout"),
         "arrondissement": clean_arrondissement(record.get("arrondissement")),
         "adresse_principale": record.get("adresse_principale"),

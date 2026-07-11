@@ -11,6 +11,7 @@ export default function Home() {
   const [coutFilter, setCoutFilter] = useState("Tous");
   const [empFilter, setEmpFilter] = useState("Tous");
   const [audFilter, setAudFilter] = useState("Tous");
+  const [inscFilter, setInscFilter] = useState("Tous");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
@@ -31,6 +32,7 @@ export default function Home() {
     { label: "Coût", field: "cout", value: coutFilter, set: setCoutFilter },
     { label: "Lieu", field: "emplacement", value: empFilter, set: setEmpFilter },
     { label: "Public", field: "public_cible", value: audFilter, set: setAudFilter },
+    { label: "Inscription", field: "inscription", value: inscFilter, set: setInscFilter },
   ];
 
   const filtered = events.filter((e) => {
