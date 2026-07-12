@@ -1,17 +1,22 @@
 "use client";
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 
 const Map = dynamic(() => import("./Map"), { ssr: false });
 
-export default function Home() {
+// Internal sentinel for the "no filter" dropdown option. Kept language-neutral
+// so filtering logic never depends on the displayed (translated) label.
+const ALL = "Tous";
+
+export default function HomeClient({ dict, lang }) {
   const [events, setEvents] = useState([]);
-  const [typeFilter, setTypeFilter] = useState("Tous");
-  const [arrFilter, setArrFilter] = useState("Tous");
-  const [coutFilter, setCoutFilter] = useState("Tous");
-  const [empFilter, setEmpFilter] = useState("Tous");
-  const [audFilter, setAudFilter] = useState("Tous");
-  const [inscFilter, setInscFilter] = useState("Tous");
+  const [typeFilter, setTypeFilter] = useState(ALL);
+  const [arrFilter, setArrFilter] = useState(ALL);
+  const [coutFilter, setCoutFilter] = useState(ALL);
+  const [empFilter, setEmpFilter] = useState(ALL);
+  const [audFilter, setAudFilter] = useState(ALL);
+  const [inscFilter, setInscFilter] = useState(ALL);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
@@ -21,23 +26,24 @@ export default function Home() {
       .then((data) => setEvents(data));
   }, []);
 
-  // Unique, sorted dropdown values for a field, with "Tous" (all) pinned first.
+  // Unique, sorted dropdown values for a field, with the "all" sentinel pinned first.
   const optionsFor = (field) =>
-    ["Tous", ...[...new Set(events.map((e) => e[field]).filter(Boolean))].sort()];
+    [ALL, ...[...new Set(events.map((e) => e[field]).filter(Boolean))].sort()];
 
-  // The five dropdown filters, driven by a config so the markup stays DRY.
+  // The six dropdown filters. Labels come from the dictionary; `field` maps to
+  // the (French) event data keys, which are unchanged.
   const selectFilters = [
-    { label: "Type", field: "type_evenement", value: typeFilter, set: setTypeFilter },
-    { label: "Arrondissement", field: "arrondissement", value: arrFilter, set: setArrFilter },
-    { label: "Coût", field: "cout", value: coutFilter, set: setCoutFilter },
-    { label: "Lieu", field: "emplacement", value: empFilter, set: setEmpFilter },
-    { label: "Public", field: "public_cible", value: audFilter, set: setAudFilter },
-    { label: "Inscription", field: "inscription", value: inscFilter, set: setInscFilter },
+    { label: dict.filters.type, field: "type_evenement", value: typeFilter, set: setTypeFilter },
+    { label: dict.filters.arrondissement, field: "arrondissement", value: arrFilter, set: setArrFilter },
+    { label: dict.filters.cout, field: "cout", value: coutFilter, set: setCoutFilter },
+    { label: dict.filters.lieu, field: "emplacement", value: empFilter, set: setEmpFilter },
+    { label: dict.filters.public, field: "public_cible", value: audFilter, set: setAudFilter },
+    { label: dict.filters.inscription, field: "inscription", value: inscFilter, set: setInscFilter },
   ];
 
   const filtered = events.filter((e) => {
     const selectMatch = selectFilters.every(
-      (f) => f.value === "Tous" || e[f.field] === f.value
+      (f) => f.value === ALL || e[f.field] === f.value
     );
     // Date bounds (ISO strings compare chronologically): keep events starting
     // on/after startDate and ending on/before endDate. Empty = no bound.
@@ -46,12 +52,23 @@ export default function Home() {
     return selectMatch && startMatch && endMatch;
   });
 
+  const otherLocale = lang === "fr" ? "en" : "fr";
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-green-700 text-white px-8 py-5 shadow">
-        <h1 className="text-3xl font-bold tracking-tight">MTLVerde 🌿</h1>
-        <p className="text-green-200 text-sm mt-1">Découvrez les festivals de Montréal</p>
+      <header className="bg-green-700 text-white px-8 py-5 shadow flex justify-between items-start">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">{dict.header.brand}</h1>
+          <p className="text-green-200 text-sm mt-1">{dict.header.subtitle}</p>
+        </div>
+        <Link
+          href={`/${otherLocale}`}
+          aria-label={dict.lang.label}
+          className="shrink-0 mt-1 border border-green-300 text-white text-sm font-semibold px-3 py-1 rounded-lg hover:bg-green-600 transition"
+        >
+          {dict.lang.switchTo}
+        </Link>
       </header>
 
       <main className="max-w-5xl mx-auto px-6 py-8">
@@ -71,13 +88,13 @@ export default function Home() {
                 onChange={(e) => f.set(e.target.value)}
               >
                 {optionsFor(f.field).map((o) => (
-                  <option key={o}>{o}</option>
+                  <option key={o} value={o}>{o === ALL ? dict.filters.all : o}</option>
                 ))}
               </select>
             </div>
           ))}
           <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">Date de début</label>
+            <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">{dict.filters.startDate}</label>
             <input
               type="date"
               className="border border-gray-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
@@ -86,7 +103,7 @@ export default function Home() {
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">Date de fin</label>
+            <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">{dict.filters.endDate}</label>
             <input
               type="date"
               className="border border-gray-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
@@ -95,7 +112,9 @@ export default function Home() {
             />
           </div>
           <div className="flex items-end">
-            <p className="text-sm text-gray-400">{filtered.length} événement(s) trouvé(s)</p>
+            <p className="text-sm text-gray-400">
+              {dict.results.count.replace("{count}", filtered.length)}
+            </p>
           </div>
         </div>
 
