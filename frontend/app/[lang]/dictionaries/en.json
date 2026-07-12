@@ -7,6 +7,10 @@
     "brand": "MTLVerde 🌿",
     "subtitle": "Discover Montreal's festivals"
   },
+  "nav": {
+    "events": "Events",
+    "mission": "Our Mission"
+  },
   "filters": {
     "all": "All",
     "type": "Type",
@@ -20,6 +24,19 @@
   },
   "results": {
     "count": "{count} event(s) found"
+  },
+  "mission": {
+    "title": "Our Mission — MTLVerde",
+    "heading": "Our Mission",
+    "statement": "Montréal produces thousands of free community events every year — but they're scattered, hard to find, and often only in French. MTLVerde brings them together in one free, bilingual place, so anyone can find something meaningful to do nearby this weekend. We believe discovering your community shouldn't require speaking the right language or already knowing where to look.",
+    "problemTitle": "The problem",
+    "problem": "The city publishes 4,400+ free events a year across 20 boroughs. Existing tools serve tourists or organizers — not the person who just moved in and wants to know what's happening near them. The result is a city full of public life that stays invisible to the people who'd benefit from it most.",
+    "whatTitle": "What we do",
+    "what": "An interactive map and smart filters — by borough, audience, cost, and sustainability — plus a curated list of Montréal's iconic festivals. Every event earns an eco-badge for accessibility, cost, location, and inclusivity. It all runs on open city data, free for anyone to use.",
+    "visionTitle": "Our vision",
+    "vision": "To become Montréal's community discovery layer — so no one feels like a stranger in their own neighbourhood. In the long run, we want finding your people to be as easy as opening a map.",
+    "dataTitle": "Our data source",
+    "data": "MTLVerde is built on open data published by the City of Montréal. We're grateful to the city for making community event information freely available — it's what makes this project possible. Our curated festival listings complement that public data with a few of Montréal's most iconic annual events."
   },
   "lang": {
     "switchTo": "FR",
