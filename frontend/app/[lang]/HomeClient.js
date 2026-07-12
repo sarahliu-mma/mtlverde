@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import Header from "./Header";
+import { tField, eventDescription } from "./eventData";
 
 const Map = dynamic(() => import("./Map"), { ssr: false });
 
@@ -73,7 +74,7 @@ export default function HomeClient({ dict, lang }) {
                 onChange={(e) => f.set(e.target.value)}
               >
                 {optionsFor(f.field).map((o) => (
-                  <option key={o} value={o}>{o === ALL ? dict.filters.all : o}</option>
+                  <option key={o} value={o}>{o === ALL ? dict.filters.all : tField(f.field, o, lang)}</option>
                 ))}
               </select>
             </div>
@@ -112,14 +113,14 @@ export default function HomeClient({ dict, lang }) {
                   <h2 className="text-lg font-bold text-gray-800">{event.titre}</h2>
                   <p className="text-sm text-gray-500 mt-1">{event.arrondissement}</p>
                   <p className="text-sm text-gray-400 mt-1">{event.date_debut} → {event.date_fin}</p>
-                  <p className="text-sm text-gray-500 mt-2 leading-relaxed">{event.description}</p>
+                  <p className="text-sm text-gray-500 mt-2 leading-relaxed">{eventDescription(event, lang)}</p>
                 </div>
                 <span className={`ml-4 mt-1 shrink-0 text-xs font-semibold px-3 py-1 rounded-full ${
                   event.cout === "Gratuit"
                     ? "bg-green-100 text-green-700"
                     : "bg-orange-100 text-orange-600"
                 }`}>
-                  {event.cout}
+                  {tField("cout", event.cout, lang)}
                 </span>
               </div>
             </div>
