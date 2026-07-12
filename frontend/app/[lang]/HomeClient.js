@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import Link from "next/link";
+import Header from "./Header";
 
 const Map = dynamic(() => import("./Map"), { ssr: false });
 
@@ -52,24 +52,9 @@ export default function HomeClient({ dict, lang }) {
     return selectMatch && startMatch && endMatch;
   });
 
-  const otherLocale = lang === "fr" ? "en" : "fr";
-
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-green-700 text-white px-8 py-5 shadow flex justify-between items-start">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">{dict.header.brand}</h1>
-          <p className="text-green-200 text-sm mt-1">{dict.header.subtitle}</p>
-        </div>
-        <Link
-          href={`/${otherLocale}`}
-          aria-label={dict.lang.label}
-          className="shrink-0 mt-1 border border-green-300 text-white text-sm font-semibold px-3 py-1 rounded-lg hover:bg-green-600 transition"
-        >
-          {dict.lang.switchTo}
-        </Link>
-      </header>
+      <Header dict={dict} lang={lang} subtitle={dict.header.subtitle} />
 
       <main className="max-w-5xl mx-auto px-6 py-8">
         {/* Map */}

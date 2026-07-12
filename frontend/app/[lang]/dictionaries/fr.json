@@ -7,6 +7,10 @@
     "brand": "MTLVerde 🌿",
     "subtitle": "Découvrez les festivals de Montréal"
   },
+  "nav": {
+    "events": "Événements",
+    "mission": "Notre mission"
+  },
   "filters": {
     "all": "Tous",
     "type": "Type",
@@ -20,6 +24,19 @@
   },
   "results": {
     "count": "{count} événement(s) trouvé(s)"
+  },
+  "mission": {
+    "title": "Notre mission — MTLVerde",
+    "heading": "Notre mission",
+    "statement": "Montréal produit des milliers d'événements communautaires gratuits chaque année — mais ils sont dispersés, difficiles à trouver, et souvent seulement en français. MTLVerde les réunit dans un seul endroit gratuit et bilingue, pour que chacun trouve une activité enrichissante près de chez lui cette fin de semaine. Nous croyons que découvrir sa communauté ne devrait pas exiger de parler la bonne langue ni de savoir déjà où chercher.",
+    "problemTitle": "Le problème",
+    "problem": "La Ville publie plus de 4 400 événements gratuits par année dans 20 arrondissements. Les outils existants servent les touristes ou les organisateurs — pas la personne qui vient d'emménager et veut savoir ce qui se passe près d'elle. Résultat : une ville pleine de vie publique qui reste invisible pour ceux qui en bénéficieraient le plus.",
+    "whatTitle": "Ce que nous faisons",
+    "what": "Une carte interactive et des filtres intelligents — par arrondissement, public, coût et durabilité — ainsi qu'une sélection des festivals emblématiques de Montréal. Chaque événement obtient un éco-badge pour l'accessibilité, le coût, l'emplacement et l'inclusivité. Le tout repose sur les données ouvertes de la Ville, gratuit pour tous.",
+    "visionTitle": "Notre vision",
+    "vision": "Devenir la couche de découverte communautaire de Montréal — pour que personne ne se sente étranger dans son propre quartier. À terme, nous voulons que trouver sa communauté soit aussi simple que d'ouvrir une carte.",
+    "dataTitle": "Notre source de données",
+    "data": "MTLVerde repose sur les données ouvertes publiées par la Ville de Montréal. Nous remercions la Ville de rendre l'information sur les événements communautaires librement accessible — c'est ce qui rend ce projet possible. Notre sélection de festivals complète ces données publiques avec quelques-uns des événements annuels les plus emblématiques de Montréal."
   },
   "lang": {
     "switchTo": "EN",
