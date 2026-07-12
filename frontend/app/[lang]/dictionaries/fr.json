@@ -1,0 +1,28 @@
+{
+  "meta": {
+    "title": "MTLVerde",
+    "description": "Découvrez les festivals de Montréal"
+  },
+  "header": {
+    "brand": "MTLVerde 🌿",
+    "subtitle": "Découvrez les festivals de Montréal"
+  },
+  "filters": {
+    "all": "Tous",
+    "type": "Type",
+    "arrondissement": "Arrondissement",
+    "cout": "Coût",
+    "lieu": "Lieu",
+    "public": "Public",
+    "inscription": "Inscription",
+    "startDate": "Date de début",
+    "endDate": "Date de fin"
+  },
+  "results": {
+    "count": "{count} événement(s) trouvé(s)"
+  },
+  "lang": {
+    "switchTo": "EN",
+    "label": "English"
+  }
+}
