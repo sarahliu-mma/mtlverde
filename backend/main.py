@@ -1,3 +1,4 @@
+from chat import router as chat_router
 from datetime import date
 import json
 import os
@@ -114,7 +115,7 @@ def get_public_events(db: Session = Depends(get_db)):
     return query_public_events(db, today, add_months(today, HORIZON_MONTHS))
 
 
-@app.get("/events/all")
+@app.get("/events/all") 
 def get_all_events(db: Session = Depends(get_db)):
     # Combined feed: curated festivals + public events, each with its own date
     # filter, unioned into one list. Lets the frontend show everything with a
@@ -124,3 +125,5 @@ def get_all_events(db: Session = Depends(get_db)):
     festivals = query_festivals(db, today)
     publics = query_public_events(db, today, horizon)
     return list(festivals) + list(publics)
+
+app.include_router(chat_router)
