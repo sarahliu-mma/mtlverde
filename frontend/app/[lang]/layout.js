@@ -1,3 +1,5 @@
+
+import ChatWidget from "@/components/ChatWidget";
 import { Geist, Geist_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
 import "../globals.css";
@@ -36,8 +38,9 @@ export default async function RootLayout({ children, params }) {
   return (
     <html lang={lang}>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {children}
-      </body>
+  {children}
+  <ChatWidget />
+</body>
     </html>
   );
 }
