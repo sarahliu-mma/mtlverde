@@ -1,10 +1,11 @@
 import json
 import os
 import sys
-from database import engine, SessionLocal, Base
+from database import engine, SessionLocal, Base, ensure_schema
 from models import Festival, PublicEvent
 
 Base.metadata.create_all(bind=engine)
+ensure_schema()
 
 
 def import_events(model, json_filename):

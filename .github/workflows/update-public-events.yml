@@ -22,18 +22,20 @@ jobs:
         run: pip install -r backend/requirements.txt
 
       - name: Fetch latest public events
+        env:
+          DEEPL_API_KEY: ${{ secrets.DEEPL_API_KEY }}
         run: python backend/fetch_public_events.py
 
       - name: Commit updated data if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add backend/public_events_montreal.json
+          git add backend/public_events_montreal.json backend/translations_cache.json
           git diff --cached --quiet || git commit -m "Update public events data"
           git push
 
-      - name: Seed public events into Postgres
+      - name: Seed events into Postgres
         working-directory: backend
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        run: python seed.py public
+        run: python seed.py all

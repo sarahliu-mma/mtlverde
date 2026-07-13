@@ -15,6 +15,7 @@ class EventFields:
     titre = Column(String, nullable=False)
     url_fiche = Column(String, nullable=True)
     description = Column(String, nullable=True)
+    description_en = Column(String, nullable=True)
     date_debut = Column(String, nullable=True)
     date_fin = Column(String, nullable=True)
     type_evenement = Column(String, nullable=True)

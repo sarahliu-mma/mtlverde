@@ -5,7 +5,7 @@ from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
-from database import get_db, engine, Base
+from database import get_db, engine, Base, ensure_schema
 from models import Festival, PublicEvent
 
 
@@ -46,6 +46,7 @@ def in_window(event, today, horizon):
 app = FastAPI()
 
 Base.metadata.create_all(bind=engine)
+ensure_schema()
 
 app.add_middleware(
     CORSMiddleware,
