@@ -16,7 +16,7 @@ from translate import translate_descriptions
 RESOURCE_ID = "6decf611-6f11-4f34-bb36-324d804c9bad"
 API_URL = "https://donnees.montreal.ca/api/3/action/datastore_search"
 PAGE_SIZE = 1000
-HEADERS = {"User-Agent": "mtlverde-backend/1.0 (+https://github.com/yanling-lu/mtlverde)"}
+HEADERS = {"User-Agent": "mtlverde-backend/1.0 (+https://github.com/sarahliu-mma/mtlverde)"}
 
 # type_evenement values to keep. The full dataset is mostly borough council
 # meetings and administrative notices, so we filter down to the
