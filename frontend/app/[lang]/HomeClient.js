@@ -10,6 +10,10 @@ const Map = dynamic(() => import("./Map"), { ssr: false });
 // so filtering logic never depends on the displayed (translated) label.
 const ALL = "Tous";
 
+// How many event cards to show initially and per "load more" click. The map
+// always shows the full filtered set; this only caps the rendered card list.
+const PAGE_SIZE = 24;
+
 export default function HomeClient({ dict, lang }) {
   const [events, setEvents] = useState([]);
   const [typeFilter, setTypeFilter] = useState(ALL);
@@ -21,6 +25,7 @@ export default function HomeClient({ dict, lang }) {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [selectedId, setSelectedId] = useState(null);
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   useEffect(() => {
     fetch("https://mtlverde-production.up.railway.app/events/all")
@@ -53,6 +58,14 @@ export default function HomeClient({ dict, lang }) {
     const endMatch = !endDate || (e.date_fin && e.date_fin <= endDate);
     return selectMatch && startMatch && endMatch;
   });
+
+  // Reset the visible window whenever the filters change, so a new search
+  // starts from the top rather than keeping a previously expanded count.
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [typeFilter, arrFilter, coutFilter, empFilter, audFilter, inscFilter, startDate, endDate]);
+
+  const visible = filtered.slice(0, visibleCount);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -107,7 +120,7 @@ export default function HomeClient({ dict, lang }) {
 
         {/* Event Cards */}
         <div className="grid gap-4">
-          {filtered.map((event, i) => (
+          {visible.map((event, i) => (
             <div
               key={event.id ?? i}
               onClick={() => setSelectedId(event.id)}
@@ -155,6 +168,17 @@ export default function HomeClient({ dict, lang }) {
             </div>
           ))}
         </div>
+
+        {visibleCount < filtered.length && (
+          <div className="flex justify-center mt-6">
+            <button
+              onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+              className="border border-gray-200 bg-white rounded-lg px-6 py-2 text-sm font-medium text-green-700 shadow-sm hover:shadow transition"
+            >
+              {dict.results.loadMore.replace("{count}", filtered.length - visibleCount)}
+            </button>
+          </div>
+        )}
       </main>
     </div>
   );

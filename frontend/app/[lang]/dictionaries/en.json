@@ -23,7 +23,8 @@
     "endDate": "End date"
   },
   "results": {
-    "count": "{count} event(s) found"
+    "count": "{count} event(s) found",
+    "loadMore": "Load more ({count} remaining)"
   },
   "event": {
     "readMore": "Read more →"
