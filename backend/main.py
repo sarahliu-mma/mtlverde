@@ -104,26 +104,39 @@ def query_public_events(db, today, horizon):
     return [e for e in events if in_window(e, today, horizon)]
 
 
+def _start(event):
+    """Sort key: event start date, ascending, with missing dates sorted last.
+
+    Works for both ORM rows (attribute) and the JSON-fallback dicts (key), and
+    since date_debut is an ISO "YYYY-MM-DD" string, plain string order is
+    chronological.
+    """
+    value = event.get("date_debut") if isinstance(event, dict) else event.date_debut
+    return value or "9999-12-31"
+
+
 @app.get("/events")
 def get_events(db: Session = Depends(get_db)):
-    return query_festivals(db, date.today())
+    return sorted(query_festivals(db, date.today()), key=_start)
 
 
 @app.get("/events/public")
 def get_public_events(db: Session = Depends(get_db)):
     today = date.today()
-    return query_public_events(db, today, add_months(today, HORIZON_MONTHS))
+    return sorted(
+        query_public_events(db, today, add_months(today, HORIZON_MONTHS)), key=_start
+    )
 
 
-@app.get("/events/all") 
+@app.get("/events/all")
 def get_all_events(db: Session = Depends(get_db)):
     # Combined feed: curated festivals + public events, each with its own date
-    # filter, unioned into one list. Lets the frontend show everything with a
-    # single request while the two feeds stay in separate tables.
+    # filter, unioned into one list and sorted by start date so the soonest
+    # events (festivals and public events interleaved) appear first.
     today = date.today()
     horizon = add_months(today, HORIZON_MONTHS)
     festivals = query_festivals(db, today)
     publics = query_public_events(db, today, horizon)
-    return list(festivals) + list(publics)
+    return sorted(list(festivals) + list(publics), key=_start)
 
 app.include_router(chat_router)
