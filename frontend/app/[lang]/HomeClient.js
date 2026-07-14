@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import Header from "./Header";
-import { tField, eventDescription } from "./eventData";
+import { tField, eventTitle, eventDescription } from "./eventData";
 
 const Map = dynamic(() => import("./Map"), { ssr: false });
 
@@ -60,7 +60,7 @@ export default function HomeClient({ dict, lang }) {
       <main className="max-w-5xl mx-auto px-6 py-8">
         {/* Map */}
         <div className="rounded-xl overflow-hidden shadow mb-8">
-          <Map events={filtered} />
+          <Map events={filtered} lang={lang} />
         </div>
 
         {/* Filters */}
@@ -110,7 +110,7 @@ export default function HomeClient({ dict, lang }) {
             <div key={i} className="bg-white rounded-xl shadow p-5 hover:shadow-md transition">
               <div className="flex justify-between items-start">
                 <div>
-                  <h2 className="text-lg font-bold text-gray-800">{event.titre}</h2>
+                  <h2 className="text-lg font-bold text-gray-800">{eventTitle(event, lang)}</h2>
                   <p className="text-sm text-gray-500 mt-1">{event.arrondissement}</p>
                   <p className="text-sm text-gray-400 mt-1">{event.date_debut} → {event.date_fin}</p>
                   <p className="text-sm text-gray-500 mt-2 leading-relaxed">{eventDescription(event, lang)}</p>

@@ -21,6 +21,7 @@ def get_db():
 
 ADDED_COLUMNS = [
     ("description_en", "VARCHAR"),
+    ("titre_en", "VARCHAR"),
     ("inscription", "VARCHAR"),
 ]
 

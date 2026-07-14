@@ -11,7 +11,7 @@ from datetime import date
 
 import requests
 
-from translate import translate_descriptions
+from translate import translate_events
 
 RESOURCE_ID = "6decf611-6f11-4f34-bb36-324d804c9bad"
 API_URL = "https://donnees.montreal.ca/api/3/action/datastore_search"
@@ -184,9 +184,9 @@ def main():
         and (normalized := normalize(r)) is not None
     ]
 
-    # Translate descriptions FR->EN (best-effort, cached). Runs before the stale
-    # guard/write so description_en is persisted alongside the French text.
-    filtered = translate_descriptions(filtered)
+    # Translate titles and descriptions FR->EN (best-effort, cached). Runs before
+    # the stale guard/write so the _en fields are persisted alongside the French.
+    filtered = translate_events(filtered)
 
     # Stale guard: abort (non-zero exit) rather than overwrite good data with a
     # suspiciously small result, e.g. a source outage, schema change, or empty

@@ -2,6 +2,7 @@
 import { useEffect, useRef } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { tField, eventTitle } from "./eventData";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -10,7 +11,7 @@ L.Icon.Default.mergeOptions({
   shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
 
-export default function Map({ events }) {
+export default function Map({ events, lang }) {
   const mapRef = useRef(null);
   const markersRef = useRef([]);
 
@@ -42,11 +43,13 @@ export default function Map({ events }) {
       if (event.lat && event.long) {
         const marker = L.marker([event.lat, event.long])
           .addTo(map)
-          .bindPopup(`<b>${event.titre}</b><br>${event.arrondissement}<br>${event.cout}`);
+          .bindPopup(
+            `<b>${eventTitle(event, lang)}</b><br>${event.arrondissement}<br>${tField("cout", event.cout, lang)}`
+          );
         markersRef.current.push(marker);
       }
     });
-  }, [events]);
+  }, [events, lang]);
 
   return <div id="map" style={{ height: "400px", width: "100%" }} />;
 }
