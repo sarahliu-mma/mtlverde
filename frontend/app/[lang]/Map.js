@@ -25,9 +25,10 @@ export default function Map({ events, lang, readMoreLabel, selectedId }) {
   useEffect(() => {
     if (mapRef.current) return;
 
+    // Make the map theme CARTO Positron,a theme picked from Leaflet Provider Demo
     const map = L.map("map").setView([45.5088, -73.5683], 12);
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: "© OpenStreetMap contributors",
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+      attribution: "© OpenStreetMap contributors © CARTO",
     }).addTo(map);
 
     const cluster = L.markerClusterGroup({ chunkedLoading: true });
