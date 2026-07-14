@@ -11,7 +11,7 @@ L.Icon.Default.mergeOptions({
   shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
 
-export default function Map({ events, lang }) {
+export default function Map({ events, lang, readMoreLabel }) {
   const mapRef = useRef(null);
   const markersRef = useRef([]);
 
@@ -41,15 +41,18 @@ export default function Map({ events, lang }) {
 
     events.forEach((event) => {
       if (event.lat && event.long) {
+        const readMore = event.url_fiche
+          ? `<br><a href="${event.url_fiche}" target="_blank" rel="noopener noreferrer">${readMoreLabel}</a>`
+          : "";
         const marker = L.marker([event.lat, event.long])
           .addTo(map)
           .bindPopup(
-            `<b>${eventTitle(event, lang)}</b><br>${event.arrondissement}<br>${tField("cout", event.cout, lang)}`
+            `<b>${eventTitle(event, lang)}</b><br>${event.arrondissement}<br>${tField("cout", event.cout, lang)}${readMore}`
           );
         markersRef.current.push(marker);
       }
     });
-  }, [events, lang]);
+  }, [events, lang, readMoreLabel]);
 
   return <div id="map" style={{ height: "400px", width: "100%" }} />;
 }

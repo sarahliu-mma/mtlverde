@@ -25,6 +25,9 @@
   "results": {
     "count": "{count} événement(s) trouvé(s)"
   },
+  "event": {
+    "readMore": "En savoir plus →"
+  },
   "mission": {
     "title": "Notre mission — MTLVerde",
     "heading": "Notre mission",

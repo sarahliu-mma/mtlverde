@@ -60,7 +60,7 @@ export default function HomeClient({ dict, lang }) {
       <main className="max-w-5xl mx-auto px-6 py-8">
         {/* Map */}
         <div className="rounded-xl overflow-hidden shadow mb-8">
-          <Map events={filtered} lang={lang} />
+          <Map events={filtered} lang={lang} readMoreLabel={dict.event.readMore} />
         </div>
 
         {/* Filters */}
@@ -114,6 +114,16 @@ export default function HomeClient({ dict, lang }) {
                   <p className="text-sm text-gray-500 mt-1">{event.arrondissement}</p>
                   <p className="text-sm text-gray-400 mt-1">{event.date_debut} → {event.date_fin}</p>
                   <p className="text-sm text-gray-500 mt-2 leading-relaxed">{eventDescription(event, lang)}</p>
+                  {event.url_fiche && (
+                    <a
+                      href={event.url_fiche}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm font-medium text-green-700 hover:underline mt-2 inline-block"
+                    >
+                      {dict.event.readMore}
+                    </a>
+                  )}
                 </div>
                 <span className={`ml-4 mt-1 shrink-0 text-xs font-semibold px-3 py-1 rounded-full ${
                   event.cout === "Gratuit"
