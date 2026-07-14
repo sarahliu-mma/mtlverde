@@ -20,6 +20,7 @@ export default function HomeClient({ dict, lang }) {
   const [inscFilter, setInscFilter] = useState(ALL);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [selectedId, setSelectedId] = useState(null);
 
   useEffect(() => {
     fetch("https://mtlverde-production.up.railway.app/events/all")
@@ -60,7 +61,7 @@ export default function HomeClient({ dict, lang }) {
       <main className="max-w-5xl mx-auto px-6 py-8">
         {/* Map */}
         <div className="rounded-xl overflow-hidden shadow mb-8">
-          <Map events={filtered} lang={lang} readMoreLabel={dict.event.readMore} />
+          <Map events={filtered} lang={lang} readMoreLabel={dict.event.readMore} selectedId={selectedId} />
         </div>
 
         {/* Filters */}
@@ -107,7 +108,13 @@ export default function HomeClient({ dict, lang }) {
         {/* Event Cards */}
         <div className="grid gap-4">
           {filtered.map((event, i) => (
-            <div key={i} className="bg-white rounded-xl shadow p-5 hover:shadow-md transition">
+            <div
+              key={event.id ?? i}
+              onClick={() => setSelectedId(event.id)}
+              className={`bg-white rounded-xl shadow p-5 hover:shadow-md transition cursor-pointer ${
+                selectedId === event.id ? "ring-2 ring-green-500" : ""
+              }`}
+            >
               <div className="flex justify-between items-start">
                 <div>
                   <h2 className="text-lg font-bold text-gray-800">{eventTitle(event, lang)}</h2>
