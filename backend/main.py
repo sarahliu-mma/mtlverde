@@ -104,39 +104,53 @@ def query_public_events(db, today, horizon):
     return [e for e in events if in_window(e, today, horizon)]
 
 
-def _start(event):
-    """Sort key: event start date, ascending, with missing dates sorted last.
+def _order_key(today_s):
+    """Build a sort key that surfaces the soonest-relevant events first.
 
-    Works for both ORM rows (attribute) and the JSON-fallback dicts (key), and
-    since date_debut is an ISO "YYYY-MM-DD" string, plain string order is
-    chronological.
+    Ordering (dates are ISO "YYYY-MM-DD" strings, so string order is
+    chronological):
+      1. Upcoming events (start on/after today), nearest start first.
+      2. Ongoing events (already started, not yet ended), ending soonest first.
+      3. Events with no start date, last.
+    Works for both ORM rows (attribute) and JSON-fallback dicts (key).
     """
-    value = event.get("date_debut") if isinstance(event, dict) else event.date_debut
-    return value or "9999-12-31"
+
+    def key(event):
+        get = event.get if isinstance(event, dict) else (lambda k: getattr(event, k))
+        start = get("date_debut") or ""
+        if not start:
+            return (2, "")
+        if start >= today_s:
+            return (0, start)
+        return (1, get("date_fin") or "9999-12-31")
+
+    return key
 
 
 @app.get("/events")
 def get_events(db: Session = Depends(get_db)):
-    return sorted(query_festivals(db, date.today()), key=_start)
+    today = date.today()
+    return sorted(query_festivals(db, today), key=_order_key(today.isoformat()))
 
 
 @app.get("/events/public")
 def get_public_events(db: Session = Depends(get_db)):
     today = date.today()
     return sorted(
-        query_public_events(db, today, add_months(today, HORIZON_MONTHS)), key=_start
+        query_public_events(db, today, add_months(today, HORIZON_MONTHS)),
+        key=_order_key(today.isoformat()),
     )
 
 
 @app.get("/events/all")
 def get_all_events(db: Session = Depends(get_db)):
     # Combined feed: curated festivals + public events, each with its own date
-    # filter, unioned into one list and sorted by start date so the soonest
-    # events (festivals and public events interleaved) appear first.
+    # filter, unioned and sorted so upcoming events (festivals and public events
+    # interleaved) appear first, nearest start date first.
     today = date.today()
     horizon = add_months(today, HORIZON_MONTHS)
     festivals = query_festivals(db, today)
     publics = query_public_events(db, today, horizon)
-    return sorted(list(festivals) + list(publics), key=_start)
+    return sorted(list(festivals) + list(publics), key=_order_key(today.isoformat()))
 
 app.include_router(chat_router)
