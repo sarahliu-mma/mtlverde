@@ -125,13 +125,25 @@ export default function HomeClient({ dict, lang }) {
                     </a>
                   )}
                 </div>
-                <span className={`ml-4 mt-1 shrink-0 text-xs font-semibold px-3 py-1 rounded-full ${
-                  event.cout === "Gratuit"
-                    ? "bg-green-100 text-green-700"
-                    : "bg-orange-100 text-orange-600"
-                }`}>
-                  {tField("cout", event.cout, lang)}
-                </span>
+                <div className="ml-4 mt-1 shrink-0 flex gap-2">
+                  {event.type_evenement && (
+                    <span className="whitespace-nowrap text-xs font-semibold px-3 py-1 rounded-full bg-purple-100 text-purple-700">
+                      {tField("type_evenement", event.type_evenement, lang)}
+                    </span>
+                  )}
+                  {event.public_cible && (
+                    <span className="whitespace-nowrap text-xs font-semibold px-3 py-1 rounded-full bg-pink-100 text-pink-700">
+                      {tField("public_cible", event.public_cible, lang)}
+                    </span>
+                  )}
+                  <span className={`whitespace-nowrap text-xs font-semibold px-3 py-1 rounded-full ${
+                    event.cout === "Gratuit"
+                      ? "bg-blue-100 text-blue-700"
+                      : "bg-amber-100 text-amber-700"
+                  }`}>
+                    {tField("cout", event.cout, lang)}
+                  </span>
+                </div>
               </div>
             </div>
           ))}
