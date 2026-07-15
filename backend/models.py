@@ -13,6 +13,7 @@ class EventFields:
 
     id = Column(String, primary_key=True, index=True)
     titre = Column(String, nullable=False)
+    titre_en = Column(String, nullable=True)
     url_fiche = Column(String, nullable=True)
     description = Column(String, nullable=True)
     description_en = Column(String, nullable=True)

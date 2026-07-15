@@ -63,32 +63,30 @@ def _deepl(texts):
     return [t["text"] for t in resp.json()["translations"]]
 
 
-def translate_descriptions(events):
-    """Attach event['description_en'] to each event, using/updating the cache.
+def translate_field(events, src, dst):
+    """Attach event[dst] = English(event[src]) for each event, using the cache.
 
-    Only new (uncached) unique descriptions are sent to DeepL. On any failure
+    Only new (uncached) unique source values are sent to DeepL. On any failure
     the function returns having attached whatever translations are available.
+    The cache is keyed by source text, so it is shared across fields (e.g. a
+    title and a description with identical text translate once).
     """
     cache = load_cache()
 
-    # Unique, non-empty descriptions we haven't translated yet.
+    # Unique, non-empty source values we haven't translated yet.
     todo = sorted(
-        {
-            e["description"]
-            for e in events
-            if e.get("description") and e["description"] not in cache
-        }
+        {e[src] for e in events if e.get(src) and e[src] not in cache}
     )
 
     if todo and not DEEPL_KEY:
-        print(f"DEEPL_API_KEY not set; skipping translation of {len(todo)} descriptions.")
+        print(f"DEEPL_API_KEY not set; skipping translation of {len(todo)} {src} values.")
     elif todo:
-        print(f"Translating {len(todo)} new descriptions via DeepL...")
+        print(f"Translating {len(todo)} new {src} values via DeepL...")
         try:
             for i in range(0, len(todo), BATCH):
                 chunk = todo[i : i + BATCH]
-                for src, en in zip(chunk, _deepl(chunk)):
-                    cache[src] = en
+                for source, en in zip(chunk, _deepl(chunk)):
+                    cache[source] = en
             save_cache(cache)
             print(f"Translation cache now holds {len(cache)} entries.")
         except requests.RequestException as exc:
@@ -97,8 +95,15 @@ def translate_descriptions(events):
             print(f"Translation failed ({exc}); proceeding with cached translations only.")
 
     for e in events:
-        desc = e.get("description")
-        if desc and desc in cache:
-            e["description_en"] = cache[desc]
+        value = e.get(src)
+        if value and value in cache:
+            e[dst] = cache[value]
 
+    return events
+
+
+def translate_events(events):
+    """Translate both the title and description of each event (FR->EN)."""
+    translate_field(events, "titre", "titre_en")
+    translate_field(events, "description", "description_en")
     return events

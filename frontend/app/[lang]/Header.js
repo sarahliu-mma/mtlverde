@@ -13,7 +13,7 @@ export default function Header({ dict, lang, subtitle }) {
   const switchHref = `/${otherLocale}${rest || ""}`;
 
   return (
-    <header className="bg-green-700 text-white px-8 py-5 shadow">
+    <header className="sticky top-0 z-[1100] bg-green-700 text-white px-8 py-5 shadow">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-6">
           <Link href={`/${lang}`} className="text-2xl font-bold tracking-tight">
