@@ -62,7 +62,7 @@ def fetch_all_records():
             API_URL,
             params={"resource_id": RESOURCE_ID, "limit": PAGE_SIZE, "offset": offset},
             headers=HEADERS,
-            timeout=30,
+            timeout=(10, 60), # 10s to connect, 60s per read
         )
         resp.raise_for_status()
         batch = resp.json()["result"]["records"]
