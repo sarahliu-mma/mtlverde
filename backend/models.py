@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Float
+from sqlalchemy import Column, String, Float, Boolean, Integer, JSON
 from database import Base
 
 
@@ -28,6 +28,23 @@ class EventFields:
     adresse_principale = Column(String, nullable=True)
     lat = Column(Float, nullable=True)
     long = Column(Float, nullable=True)
+
+    # --- Sustainability scoring (Joohee) ---------------------------------
+    # A 0-100 low-carbon-accessibility score plus a 3-tier eco-badge, and
+    # wheelchair-by-metro accessibility reported separately from the score.
+    # score_breakdown / score_reasons / eco_flag_terms are JSON (dict/list).
+    sustainability_score = Column(Float, nullable=True)      # 0-100
+    badge = Column(String, nullable=True)                    # "Green Leader" | ...
+    badge_icon = Column(String, nullable=True)               # "🌿🌿🌿" | ...
+    eco_flag = Column(Boolean, nullable=True)                # organizer-advertised eco practice
+    free_flag = Column(Boolean, nullable=True)               # free admission
+    score_breakdown = Column(JSON, nullable=True)            # {"transit_access": 45, ...}
+    score_reasons = Column(JSON, nullable=True)              # ["Metro 159 m", "Outdoor", ...]
+    eco_flag_terms = Column(JSON, nullable=True)             # ["zéro déchet", ...]
+    wheelchair_metro_accessible = Column(Boolean, nullable=True)  # accessible metro <=800 m
+    wheelchair_metro_m = Column(Integer, nullable=True)          # distance to accessible metro
+    wheelchair_metro_gap_m = Column(Integer, nullable=True)      # extra distance vs any metro
+    wheelchair_note = Column(String, nullable=True)              # "Accessible metro 384 m"
 
 
 class Festival(EventFields, Base):
