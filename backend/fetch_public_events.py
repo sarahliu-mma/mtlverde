@@ -12,6 +12,8 @@ from datetime import date
 import requests
 
 from translate import translate_events
+from sustainability_score import score_event
+from mtl_transit_pipeline import load_stm_stops, load_bixi, make_transit_scorer
 
 RESOURCE_ID = "6decf611-6f11-4f34-bb36-324d804c9bad"
 API_URL = "https://donnees.montreal.ca/api/3/action/datastore_search"
@@ -42,6 +44,45 @@ RELEVANT_TYPES = {
 }
 
 OUTPUT_PATH = os.path.join(os.path.dirname(__file__), "public_events_montreal.json")
+
+STOPS_PATH = os.path.join(os.path.dirname(__file__), "stops.txt")
+
+# Fields produced by score_event() that we persist. Listed explicitly so a
+# future change to score_event can never inject an unexpected key into the DB.
+SCORE_FIELDS = (
+    "sustainability_score", "badge", "badge_icon", "eco_flag", "free_flag",
+    "score_breakdown", "score_reasons", "eco_flag_terms",
+    "wheelchair_metro_accessible", "wheelchair_metro_m",
+    "wheelchair_metro_gap_m", "wheelchair_note",
+)
+
+
+def add_sustainability_scores(events):
+    """Attach sustainability score + eco-badge + wheelchair fields to each event.
+
+    The transit index (STM stops + BIXI) is built ONCE and reused for every
+    event. Scoring is defensive: a failure on one event is logged and skipped
+    so the daily pipeline never dies on a single bad record.
+    """
+    stm = load_stm_stops(STOPS_PATH)
+    try:
+        bixi = load_bixi()  # live BIXI GBFS feed
+    except Exception as exc:  # noqa: BLE001 - BIXI is a bonus, not required
+        print(f"BIXI feed unavailable ({exc}); scoring without the BIXI bonus.")
+        bixi = None
+    transit = make_transit_scorer(stm, bixi)
+
+    scored = 0
+    for event in events:
+        try:
+            result = score_event(event, transit_index=transit)
+            event.update({k: result[k] for k in SCORE_FIELDS})
+            scored += 1
+        except Exception as exc:  # noqa: BLE001 - keep the event, drop the score
+            print(f"Scoring failed for id={event.get('id')}: {exc}")
+    print(f"Scored {scored}/{len(events)} events")
+    return events
+
 
 # Stale guard: refuse to publish a suspiciously small dataset.
 # SHRINK_RATIO is the primary guard -- it is relative to the previous run, so it
@@ -187,6 +228,11 @@ def main():
     # Translate titles and descriptions FR->EN (best-effort, cached). Runs before
     # the stale guard/write so the _en fields are persisted alongside the French.
     filtered = translate_events(filtered)
+
+    # Attach sustainability scores (Joohee). Runs after translation so the
+    # eco-flag keyword scan can see description_en, and before the write so
+    # scores are persisted in the same JSON the API/seed.py consume.
+    filtered = add_sustainability_scores(filtered)
 
     # Stale guard: abort (non-zero exit) rather than overwrite good data with a
     # suspiciously small result, e.g. a source outage, schema change, or empty
