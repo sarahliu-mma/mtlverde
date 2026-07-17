@@ -21,7 +21,20 @@ def get_db():
 
 ADDED_COLUMNS = [
     ("description_en", "VARCHAR"),
+    ("titre_en", "VARCHAR"),
     ("inscription", "VARCHAR"),
+    ("sustainability_score", "FLOAT"),
+    ("badge", "VARCHAR"),
+    ("badge_icon", "VARCHAR"),
+    ("eco_flag", "BOOLEAN"),
+    ("free_flag", "BOOLEAN"),
+    ("score_breakdown", "JSON"),
+    ("score_reasons", "JSON"),
+    ("eco_flag_terms", "JSON"),
+    ("wheelchair_metro_accessible", "BOOLEAN"),
+    ("wheelchair_metro_m", "INTEGER"),
+    ("wheelchair_metro_gap_m", "INTEGER"),
+    ("wheelchair_note", "VARCHAR"),
 ]
 
 
