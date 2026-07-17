@@ -2,13 +2,17 @@
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import Header from "./Header";
-import { tField, eventDescription } from "./eventData";
+import { tField, eventTitle, eventDescription } from "./eventData";
 
 const Map = dynamic(() => import("./Map"), { ssr: false });
 
 // Internal sentinel for the "no filter" dropdown option. Kept language-neutral
 // so filtering logic never depends on the displayed (translated) label.
 const ALL = "Tous";
+
+// How many event cards to show initially and per "load more" click. The map
+// always shows the full filtered set; this only caps the rendered card list.
+const PAGE_SIZE = 24;
 
 export default function HomeClient({ dict, lang }) {
   const [events, setEvents] = useState([]);
@@ -20,6 +24,8 @@ export default function HomeClient({ dict, lang }) {
   const [inscFilter, setInscFilter] = useState(ALL);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [selectedId, setSelectedId] = useState(null);
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   useEffect(() => {
     fetch("https://mtlverde-production.up.railway.app/events/all")
@@ -53,6 +59,14 @@ export default function HomeClient({ dict, lang }) {
     return selectMatch && startMatch && endMatch;
   });
 
+  // Reset the visible window whenever the filters change, so a new search
+  // starts from the top rather than keeping a previously expanded count.
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [typeFilter, arrFilter, coutFilter, empFilter, audFilter, inscFilter, startDate, endDate]);
+
+  const visible = filtered.slice(0, visibleCount);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header dict={dict} lang={lang} subtitle={dict.header.subtitle} />
@@ -60,7 +74,7 @@ export default function HomeClient({ dict, lang }) {
       <main className="max-w-5xl mx-auto px-6 py-8">
         {/* Map */}
         <div className="rounded-xl overflow-hidden shadow mb-8">
-          <Map events={filtered} />
+          <Map events={filtered} lang={lang} readMoreLabel={dict.event.readMore} selectedId={selectedId} />
         </div>
 
         {/* Filters */}
@@ -106,26 +120,65 @@ export default function HomeClient({ dict, lang }) {
 
         {/* Event Cards */}
         <div className="grid gap-4">
-          {filtered.map((event, i) => (
-            <div key={i} className="bg-white rounded-xl shadow p-5 hover:shadow-md transition">
+          {visible.map((event, i) => (
+            <div
+              key={event.id ?? i}
+              onClick={() => setSelectedId(event.id)}
+              className={`bg-white rounded-xl shadow p-5 hover:shadow-md transition cursor-pointer ${
+                selectedId === event.id ? "ring-2 ring-green-500" : ""
+              }`}
+            >
               <div className="flex justify-between items-start">
                 <div>
-                  <h2 className="text-lg font-bold text-gray-800">{event.titre}</h2>
+                  <h2 className="text-lg font-bold text-gray-800">{eventTitle(event, lang)}</h2>
                   <p className="text-sm text-gray-500 mt-1">{event.arrondissement}</p>
                   <p className="text-sm text-gray-400 mt-1">{event.date_debut} → {event.date_fin}</p>
                   <p className="text-sm text-gray-500 mt-2 leading-relaxed">{eventDescription(event, lang)}</p>
+                  {event.url_fiche && (
+                    <a
+                      href={event.url_fiche}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm font-medium text-green-700 hover:underline mt-2 inline-block"
+                    >
+                      {dict.event.readMore}
+                    </a>
+                  )}
                 </div>
-                <span className={`ml-4 mt-1 shrink-0 text-xs font-semibold px-3 py-1 rounded-full ${
-                  event.cout === "Gratuit"
-                    ? "bg-green-100 text-green-700"
-                    : "bg-orange-100 text-orange-600"
-                }`}>
-                  {tField("cout", event.cout, lang)}
-                </span>
+                <div className="ml-4 mt-1 shrink-0 flex gap-2">
+                  {event.type_evenement && (
+                    <span className="whitespace-nowrap text-xs font-semibold px-3 py-1 rounded-full bg-purple-100 text-purple-700">
+                      {tField("type_evenement", event.type_evenement, lang)}
+                    </span>
+                  )}
+                  {event.public_cible && (
+                    <span className="whitespace-nowrap text-xs font-semibold px-3 py-1 rounded-full bg-pink-100 text-pink-700">
+                      {tField("public_cible", event.public_cible, lang)}
+                    </span>
+                  )}
+                  <span className={`whitespace-nowrap text-xs font-semibold px-3 py-1 rounded-full ${
+                    event.cout === "Gratuit"
+                      ? "bg-blue-100 text-blue-700"
+                      : "bg-amber-100 text-amber-700"
+                  }`}>
+                    {tField("cout", event.cout, lang)}
+                  </span>
+                </div>
               </div>
             </div>
           ))}
         </div>
+
+        {visibleCount < filtered.length && (
+          <div className="flex justify-center mt-6">
+            <button
+              onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+              className="border border-gray-200 bg-white rounded-lg px-6 py-2 text-sm font-medium text-green-700 shadow-sm hover:shadow transition"
+            >
+              {dict.results.loadMore.replace("{count}", filtered.length - visibleCount)}
+            </button>
+          </div>
+        )}
       </main>
     </div>
   );

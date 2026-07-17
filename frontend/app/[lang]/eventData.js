@@ -56,6 +56,13 @@ export function tField(field, value, lang) {
   return EVENT_VALUE_EN[field]?.[value] ?? value;
 }
 
+// Title in the active language: English when available, else French. Curated
+// festival titles are brand names with no titre_en, so they fall back to French.
+export function eventTitle(event, lang) {
+  if (lang === "en") return event.titre_en || event.titre;
+  return event.titre;
+}
+
 // Description in the active language: English when available, else French.
 export function eventDescription(event, lang) {
   if (lang === "en") return event.description_en || event.description;

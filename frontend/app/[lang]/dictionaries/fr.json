@@ -23,7 +23,11 @@
     "endDate": "Date de fin"
   },
   "results": {
-    "count": "{count} événement(s) trouvé(s)"
+    "count": "{count} événement(s) trouvé(s)",
+    "loadMore": "Voir plus ({count} restants)"
+  },
+  "event": {
+    "readMore": "En savoir plus →"
   },
   "mission": {
     "title": "Notre mission — MTLVerde",

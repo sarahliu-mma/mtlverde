@@ -15,7 +15,27 @@
     "arrondissement": "Le Plateau-Mont-Royal",
     "adresse_principale": "Boulevard Saint-Laurent",
     "lat": 45.5173,
-    "long": -73.5731
+    "long": -73.5731,
+    "sustainability_score": 100.0,
+    "badge": "Green Leader",
+    "badge_icon": "🌿🌿🌿",
+    "eco_flag": false,
+    "free_flag": true,
+    "score_breakdown": {
+      "transit_access": 45.0,
+      "outdoor_green": 20.0,
+      "walkin_access": 35.0
+    },
+    "score_reasons": [
+      "Metro within 396 m + BIXI 126 m",
+      "Outdoor venue",
+      "Walk-in (no registration)"
+    ],
+    "eco_flag_terms": [],
+    "wheelchair_metro_accessible": false,
+    "wheelchair_metro_m": 1048,
+    "wheelchair_metro_gap_m": 652,
+    "wheelchair_note": "Nearest accessible metro 1047 m"
   },
   {
     "id": "francos-de-montreal",
@@ -33,7 +53,27 @@
     "arrondissement": "Ville-Marie",
     "adresse_principale": "1000, place des Festivals",
     "lat": 45.5088,
-    "long": -73.5683
+    "long": -73.5683,
+    "sustainability_score": 70.2,
+    "badge": "Eco-Friendly",
+    "badge_icon": "🌿🌿",
+    "eco_flag": false,
+    "free_flag": false,
+    "score_breakdown": {
+      "transit_access": 45.0,
+      "outdoor_green": 20.0,
+      "walkin_access": 5.2
+    },
+    "score_reasons": [
+      "Metro within 69 m + BIXI 80 m",
+      "Outdoor venue",
+      "Ticket required"
+    ],
+    "eco_flag_terms": [],
+    "wheelchair_metro_accessible": true,
+    "wheelchair_metro_m": 70,
+    "wheelchair_metro_gap_m": 0,
+    "wheelchair_note": "Accessible metro 69 m"
   },
   {
     "id": "festival-international-de-jazz-de-montreal",
@@ -51,7 +91,27 @@
     "arrondissement": "Ville-Marie",
     "adresse_principale": "1000, place des Festivals",
     "lat": 45.5088,
-    "long": -73.5683
+    "long": -73.5683,
+    "sustainability_score": 100.0,
+    "badge": "Green Leader",
+    "badge_icon": "🌿🌿🌿",
+    "eco_flag": false,
+    "free_flag": true,
+    "score_breakdown": {
+      "transit_access": 45.0,
+      "outdoor_green": 20.0,
+      "walkin_access": 35.0
+    },
+    "score_reasons": [
+      "Metro within 69 m + BIXI 80 m",
+      "Outdoor venue",
+      "Walk-in (no registration)"
+    ],
+    "eco_flag_terms": [],
+    "wheelchair_metro_accessible": true,
+    "wheelchair_metro_m": 70,
+    "wheelchair_metro_gap_m": 0,
+    "wheelchair_note": "Accessible metro 69 m"
   },
   {
     "id": "montreal-completement-cirque",
@@ -69,7 +129,27 @@
     "arrondissement": "Ville-Marie",
     "adresse_principale": "1000, place des Festivals",
     "lat": 45.5088,
-    "long": -73.5683
+    "long": -73.5683,
+    "sustainability_score": 100.0,
+    "badge": "Green Leader",
+    "badge_icon": "🌿🌿🌿",
+    "eco_flag": false,
+    "free_flag": true,
+    "score_breakdown": {
+      "transit_access": 45.0,
+      "outdoor_green": 20.0,
+      "walkin_access": 35.0
+    },
+    "score_reasons": [
+      "Metro within 69 m + BIXI 80 m",
+      "Outdoor venue",
+      "Walk-in (no registration)"
+    ],
+    "eco_flag_terms": [],
+    "wheelchair_metro_accessible": true,
+    "wheelchair_metro_m": 70,
+    "wheelchair_metro_gap_m": 0,
+    "wheelchair_note": "Accessible metro 69 m"
   },
   {
     "id": "festival-international-nuits-d-afrique",
@@ -87,7 +167,27 @@
     "arrondissement": "Ville-Marie",
     "adresse_principale": "1000, place des Festivals",
     "lat": 45.5088,
-    "long": -73.5683
+    "long": -73.5683,
+    "sustainability_score": 100.0,
+    "badge": "Green Leader",
+    "badge_icon": "🌿🌿🌿",
+    "eco_flag": false,
+    "free_flag": true,
+    "score_breakdown": {
+      "transit_access": 45.0,
+      "outdoor_green": 20.0,
+      "walkin_access": 35.0
+    },
+    "score_reasons": [
+      "Metro within 69 m + BIXI 80 m",
+      "Outdoor venue",
+      "Walk-in (no registration)"
+    ],
+    "eco_flag_terms": [],
+    "wheelchair_metro_accessible": true,
+    "wheelchair_metro_m": 70,
+    "wheelchair_metro_gap_m": 0,
+    "wheelchair_note": "Accessible metro 69 m"
   },
   {
     "id": "just-for-laughs-montreal",
@@ -105,7 +205,27 @@
     "arrondissement": "Ville-Marie",
     "adresse_principale": "1000, place des Festivals",
     "lat": 45.5088,
-    "long": -73.5683
+    "long": -73.5683,
+    "sustainability_score": 70.2,
+    "badge": "Eco-Friendly",
+    "badge_icon": "🌿🌿",
+    "eco_flag": false,
+    "free_flag": false,
+    "score_breakdown": {
+      "transit_access": 45.0,
+      "outdoor_green": 20.0,
+      "walkin_access": 5.2
+    },
+    "score_reasons": [
+      "Metro within 69 m + BIXI 80 m",
+      "Outdoor venue",
+      "Ticket required"
+    ],
+    "eco_flag_terms": [],
+    "wheelchair_metro_accessible": true,
+    "wheelchair_metro_m": 70,
+    "wheelchair_metro_gap_m": 0,
+    "wheelchair_note": "Accessible metro 69 m"
   },
   {
     "id": "fierte-montreal",
@@ -123,7 +243,27 @@
     "arrondissement": "Ville-Marie",
     "adresse_principale": "Rue Sainte-Catherine Est",
     "lat": 45.5167,
-    "long": -73.55
+    "long": -73.55,
+    "sustainability_score": 88.8,
+    "badge": "Eco-Friendly",
+    "badge_icon": "🌿🌿",
+    "eco_flag": false,
+    "free_flag": true,
+    "score_breakdown": {
+      "transit_access": 33.8,
+      "outdoor_green": 20.0,
+      "walkin_access": 35.0
+    },
+    "score_reasons": [
+      "Metro within 524 m",
+      "Outdoor venue",
+      "Walk-in (no registration)"
+    ],
+    "eco_flag_terms": [],
+    "wheelchair_metro_accessible": false,
+    "wheelchair_metro_m": 813,
+    "wheelchair_metro_gap_m": 288,
+    "wheelchair_note": "Nearest accessible metro 813 m"
   },
   {
     "id": "osheaga-music-and-arts-festival",
@@ -141,7 +281,27 @@
     "arrondissement": "Ville-Marie",
     "adresse_principale": "1, circuit Gilles-Villeneuve",
     "lat": 45.5097,
-    "long": -73.5318
+    "long": -73.5318,
+    "sustainability_score": 70.2,
+    "badge": "Eco-Friendly",
+    "badge_icon": "🌿🌿",
+    "eco_flag": false,
+    "free_flag": false,
+    "score_breakdown": {
+      "transit_access": 45.0,
+      "outdoor_green": 20.0,
+      "walkin_access": 5.2
+    },
+    "score_reasons": [
+      "Metro within 301 m",
+      "Outdoor venue",
+      "Ticket required"
+    ],
+    "eco_flag_terms": [],
+    "wheelchair_metro_accessible": false,
+    "wheelchair_metro_m": 1921,
+    "wheelchair_metro_gap_m": 1619,
+    "wheelchair_note": "Nearest accessible metro 1920 m"
   },
   {
     "id": "ilesoniq",
@@ -159,7 +319,27 @@
     "arrondissement": "Ville-Marie",
     "adresse_principale": "1, circuit Gilles-Villeneuve",
     "lat": 45.5097,
-    "long": -73.5318
+    "long": -73.5318,
+    "sustainability_score": 70.2,
+    "badge": "Eco-Friendly",
+    "badge_icon": "🌿🌿",
+    "eco_flag": false,
+    "free_flag": false,
+    "score_breakdown": {
+      "transit_access": 45.0,
+      "outdoor_green": 20.0,
+      "walkin_access": 5.2
+    },
+    "score_reasons": [
+      "Metro within 301 m",
+      "Outdoor venue",
+      "Ticket required"
+    ],
+    "eco_flag_terms": [],
+    "wheelchair_metro_accessible": false,
+    "wheelchair_metro_m": 1921,
+    "wheelchair_metro_gap_m": 1619,
+    "wheelchair_note": "Nearest accessible metro 1920 m"
   },
   {
     "id": "pop-montreal",
@@ -177,7 +357,27 @@
     "arrondissement": "Le Plateau-Mont-Royal",
     "adresse_principale": "Mile End, Montréal",
     "lat": 45.527,
-    "long": -73.599
+    "long": -73.599,
+    "sustainability_score": 58.2,
+    "badge": "Getting There",
+    "badge_icon": "🌿",
+    "eco_flag": false,
+    "free_flag": false,
+    "score_breakdown": {
+      "transit_access": 45.0,
+      "outdoor_green": 8.0,
+      "walkin_access": 5.2
+    },
+    "score_reasons": [
+      "Metro within 449 m + BIXI 85 m",
+      "Indoor venue",
+      "Ticket required"
+    ],
+    "eco_flag_terms": [],
+    "wheelchair_metro_accessible": true,
+    "wheelchair_metro_m": 449,
+    "wheelchair_metro_gap_m": 0,
+    "wheelchair_note": "Accessible metro 449 m"
   },
   {
     "id": "fantasia-international-film-festival",
@@ -195,7 +395,27 @@
     "arrondissement": "Ville-Marie",
     "adresse_principale": "1455, boulevard De Maisonneuve Ouest",
     "lat": 45.4972,
-    "long": -73.5789
+    "long": -73.5789,
+    "sustainability_score": 58.2,
+    "badge": "Getting There",
+    "badge_icon": "🌿",
+    "eco_flag": false,
+    "free_flag": false,
+    "score_breakdown": {
+      "transit_access": 45.0,
+      "outdoor_green": 8.0,
+      "walkin_access": 5.2
+    },
+    "score_reasons": [
+      "Metro within 169 m + BIXI 46 m",
+      "Indoor venue",
+      "Ticket required"
+    ],
+    "eco_flag_terms": [],
+    "wheelchair_metro_accessible": false,
+    "wheelchair_metro_m": 921,
+    "wheelchair_metro_gap_m": 752,
+    "wheelchair_note": "Nearest accessible metro 921 m"
   },
   {
     "id": "festival-international-des-premiers-peuples",
@@ -213,6 +433,26 @@
     "arrondissement": "Ville-Marie",
     "adresse_principale": "1400, rue Berri",
     "lat": 45.5161,
-    "long": -73.56
+    "long": -73.56,
+    "sustainability_score": 100.0,
+    "badge": "Green Leader",
+    "badge_icon": "🌿🌿🌿",
+    "eco_flag": false,
+    "free_flag": true,
+    "score_breakdown": {
+      "transit_access": 45.0,
+      "outdoor_green": 20.0,
+      "walkin_access": 35.0
+    },
+    "score_reasons": [
+      "Metro within 139 m + BIXI 26 m",
+      "Outdoor venue",
+      "Walk-in (no registration)"
+    ],
+    "eco_flag_terms": [],
+    "wheelchair_metro_accessible": true,
+    "wheelchair_metro_m": 139,
+    "wheelchair_metro_gap_m": 0,
+    "wheelchair_note": "Accessible metro 139 m"
   }
 ]
