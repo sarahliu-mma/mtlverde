@@ -41,6 +41,13 @@
     "save": "Enregistrer l'événement",
     "unsave": "Retirer des favoris"
   },
+  "badge": {
+  "greenLeader": "Chef de file vert",
+  "ecoFriendly": "Écoresponsable",
+  "gettingThere": "En progrès",
+  "learnMore": "Notre méthode d'évaluation",
+  "wheelchairAccessible": "Métro accessible à proximité"
+  },
   "mission": {
     "title": "Notre mission — MTLVerde",
     "heading": "Notre mission",
