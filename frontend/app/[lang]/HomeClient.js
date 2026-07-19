@@ -5,6 +5,7 @@ import Header from "./Header";
 import EventCard from "./EventCard";
 import { tField } from "./eventData";
 import { useBookmarks } from "@/lib/bookmarks";
+import { API_BASE } from "@/lib/api";
 
 const Map = dynamic(() => import("./Map"), { ssr: false });
 
@@ -31,7 +32,7 @@ export default function HomeClient({ dict, lang }) {
   const { isSaved, toggle } = useBookmarks();
 
   useEffect(() => {
-    fetch("https://mtlverde-production.up.railway.app/events/all")
+    fetch(`${API_BASE}/events/all`)
       .then((res) => res.json())
       .then((data) => setEvents(data));
   }, []);

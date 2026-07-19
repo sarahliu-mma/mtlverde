@@ -1,12 +1,43 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useBookmarks } from "@/lib/bookmarks";
+import { API_BASE } from "@/lib/api";
 
 // Shared site header: brand, page nav, and a language switch that keeps the
 // visitor on the same page when toggling (e.g. /fr/mission -> /en/mission).
 export default function Header({ dict, lang, subtitle }) {
   const pathname = usePathname();
+  const { ids } = useBookmarks();
   const otherLocale = lang === "fr" ? "en" : "fr";
+
+  // The badge shows how many saved events are still in the live feed, so it
+  // matches the saved page (which drops events the city has removed). We ask
+  // the backend rather than shipping the whole feed here just to count; if the
+  // request fails we fall back to the raw saved count. The empty case is
+  // derived (not set in the effect) so no state is written synchronously here.
+  const [liveCount, setLiveCount] = useState(0);
+  useEffect(() => {
+    if (ids.length === 0) return;
+    let cancelled = false;
+    fetch(`${API_BASE}/events/live-count`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ids }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (!cancelled) setLiveCount(data.count ?? ids.length);
+      })
+      .catch(() => {
+        if (!cancelled) setLiveCount(ids.length);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [ids]);
+  const count = ids.length === 0 ? 0 : liveCount;
 
   // Swap the leading locale segment, preserving the rest of the path.
   const rest = pathname.replace(/^\/(fr|en)(?=\/|$)/, "");
@@ -25,6 +56,14 @@ export default function Header({ dict, lang, subtitle }) {
             </Link>
             <Link href={`/${lang}/mission`} className="hover:text-white hover:underline">
               {dict.nav.mission}
+            </Link>
+            <Link href={`/${lang}/saved`} className="hover:text-white hover:underline flex items-center gap-1">
+              {dict.nav.saved}
+              {count > 0 && (
+                <span className="bg-white/25 text-white text-xs font-semibold rounded-full px-1.5 py-0.5 leading-none">
+                  {count}
+                </span>
+              )}
             </Link>
           </nav>
         </div>

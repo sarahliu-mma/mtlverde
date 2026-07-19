@@ -9,7 +9,17 @@
   },
   "nav": {
     "events": "Événements",
-    "mission": "Notre mission"
+    "mission": "Notre mission",
+    "saved": "Enregistrés"
+  },
+  "saved": {
+    "title": "Événements enregistrés — MTLVerde",
+    "heading": "Événements enregistrés",
+    "loading": "Chargement de vos événements enregistrés…",
+    "empty": "Aucun événement enregistré",
+    "emptyHint": "Touchez le cœur d'un événement pour l'enregistrer ici. Vos choix restent dans ce navigateur, prêts à votre retour.",
+    "browse": "Parcourir les événements",
+    "note": "Enregistré sur cet appareil. Effacer les données du navigateur les supprimera."
   },
   "filters": {
     "all": "Tous",
