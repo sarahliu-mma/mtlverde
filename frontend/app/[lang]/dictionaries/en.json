@@ -41,6 +41,13 @@
     "save": "Save event",
     "unsave": "Remove from saved"
   },
+  "badge": {
+  "greenLeader": "Green Leader",
+  "ecoFriendly": "Eco-Friendly",
+  "gettingThere": "Getting There",
+  "learnMore": "How we score",
+  "wheelchairAccessible": "Wheelchair-accessible metro nearby"
+  },
   "mission": {
     "title": "Our Mission — MTLVerde",
     "heading": "Our Mission",
