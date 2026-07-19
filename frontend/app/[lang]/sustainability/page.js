@@ -14,7 +14,7 @@ export async function generateMetadata({ params }) {
   const dict = await getDictionary(lang);
   return {
     title: dict.sustainability.title,
-    description: dict.sustainability.intro.slice(0, 155),
+    description: dict.sustainability.intro.slice(0, 155)
   };
 }
 
