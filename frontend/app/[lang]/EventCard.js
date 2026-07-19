@@ -1,5 +1,12 @@
 import { tField, eventTitle, eventDescription } from "./eventData";
 
+// match badge with dictionary
+const BADGE_KEY = {
+  "Green Leader": "greenLeader",
+  "Eco-Friendly": "ecoFriendly",
+  "Getting There": "gettingThere",
+};
+
 // A single event card: title, borough, dates, description, category tags, and a
 // "read more" link. Rendered on the home list and (later) the saved-events page,
 // so the markup lives here to keep the two views identical.
@@ -79,6 +86,30 @@ export default function EventCard({ event, lang, dict, selected, onSelect, saved
             {tField("cout", event.cout, lang)}
           </span>
           </div>
+          {/* When click the badge, move to Sustainability page */}
+          {(event.badge || event.wheelchair_metro_accessible) && (
+            <div className="flex gap-2 mt-1">
+              {event.badge && (
+                
+                  href={`/${lang}/sustainability`}
+                  onClick={(e) => e.stopPropagation()}
+                  title={dict.badge?.learnMore ?? "How we score"}
+                  className="whitespace-nowrap text-xs font-semibold px-3 py-1 rounded-full bg-green-100 text-green-800 hover:bg-green-200 transition"
+                >
+                  {event.badge_icon} {dict.badge?.[BADGE_KEY[event.badge]] ?? event.badge}
+                </a>
+              )}
+              {event.wheelchair_metro_accessible && (
+                <span
+                  title={dict.badge?.wheelchairAccessible ?? "Wheelchair-accessible metro nearby"}
+                  aria-label={dict.badge?.wheelchairAccessible ?? "Wheelchair-accessible metro nearby"}
+                  className="whitespace-nowrap text-xs font-semibold px-3 py-1 rounded-full bg-sky-100 text-sky-800"
+                >
+                  ♿
+                </span>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
