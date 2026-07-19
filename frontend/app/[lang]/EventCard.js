@@ -90,7 +90,7 @@ export default function EventCard({ event, lang, dict, selected, onSelect, saved
           {(event.badge || event.wheelchair_metro_accessible) && (
             <div className="flex gap-2 mt-1">
               {event.badge && (
-                
+                <a
                   href={`/${lang}/sustainability`}
                   onClick={(e) => e.stopPropagation()}
                   title={dict.badge?.learnMore ?? "How we score"}
