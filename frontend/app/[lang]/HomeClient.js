@@ -2,7 +2,8 @@
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import Header from "./Header";
-import { tField, eventTitle, eventDescription } from "./eventData";
+import EventCard from "./EventCard";
+import { tField } from "./eventData";
 
 const Map = dynamic(() => import("./Map"), { ssr: false });
 
@@ -121,51 +122,14 @@ export default function HomeClient({ dict, lang }) {
         {/* Event Cards */}
         <div className="grid gap-4">
           {visible.map((event, i) => (
-            <div
+            <EventCard
               key={event.id ?? i}
-              onClick={() => setSelectedId(event.id)}
-              className={`bg-white rounded-xl shadow p-5 hover:shadow-md transition cursor-pointer ${
-                selectedId === event.id ? "ring-2 ring-green-500" : ""
-              }`}
-            >
-              <div className="flex justify-between items-start">
-                <div>
-                  <h2 className="text-lg font-bold text-gray-800">{eventTitle(event, lang)}</h2>
-                  <p className="text-sm text-gray-500 mt-1">{event.arrondissement}</p>
-                  <p className="text-sm text-gray-400 mt-1">{event.date_debut} → {event.date_fin}</p>
-                  <p className="text-sm text-gray-500 mt-2 leading-relaxed">{eventDescription(event, lang)}</p>
-                  {event.url_fiche && (
-                    <a
-                      href={event.url_fiche}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm font-medium text-green-700 hover:underline mt-2 inline-block"
-                    >
-                      {dict.event.readMore}
-                    </a>
-                  )}
-                </div>
-                <div className="ml-4 mt-1 shrink-0 flex gap-2">
-                  {event.type_evenement && (
-                    <span className="whitespace-nowrap text-xs font-semibold px-3 py-1 rounded-full bg-purple-100 text-purple-700">
-                      {tField("type_evenement", event.type_evenement, lang)}
-                    </span>
-                  )}
-                  {event.public_cible && (
-                    <span className="whitespace-nowrap text-xs font-semibold px-3 py-1 rounded-full bg-pink-100 text-pink-700">
-                      {tField("public_cible", event.public_cible, lang)}
-                    </span>
-                  )}
-                  <span className={`whitespace-nowrap text-xs font-semibold px-3 py-1 rounded-full ${
-                    event.cout === "Gratuit"
-                      ? "bg-blue-100 text-blue-700"
-                      : "bg-amber-100 text-amber-700"
-                  }`}>
-                    {tField("cout", event.cout, lang)}
-                  </span>
-                </div>
-              </div>
-            </div>
+              event={event}
+              lang={lang}
+              dict={dict}
+              selected={selectedId === event.id}
+              onSelect={() => setSelectedId(event.id)}
+            />
           ))}
         </div>
 
