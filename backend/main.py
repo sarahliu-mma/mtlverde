@@ -4,6 +4,7 @@ import json
 import os
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from database import get_db, engine, Base, ensure_schema
@@ -152,5 +153,28 @@ def get_all_events(db: Session = Depends(get_db)):
     festivals = query_festivals(db, today)
     publics = query_public_events(db, today, horizon)
     return sorted(list(festivals) + list(publics), key=_order_key(today.isoformat()))
+
+
+class LiveCountRequest(BaseModel):
+    ids: list[str] = []
+
+
+def _event_id(event):
+    """id accessor for both ORM rows and the JSON-fallback dicts."""
+    return event["id"] if isinstance(event, dict) else event.id
+
+
+@app.post("/events/live-count")
+def get_live_count(payload: LiveCountRequest, db: Session = Depends(get_db)):
+    """Count how many of the given ids are still in the live feed.
+
+    Lets the header show an accurate saved-count badge without shipping the
+    whole /events/all payload to the client just to intersect ids.
+    """
+    today = date.today()
+    horizon = add_months(today, HORIZON_MONTHS)
+    live_ids = {_event_id(e) for e in query_festivals(db, today)}
+    live_ids |= {_event_id(e) for e in query_public_events(db, today, horizon)}
+    return {"count": sum(1 for event_id in payload.ids if event_id in live_ids)}
 
 app.include_router(chat_router)
