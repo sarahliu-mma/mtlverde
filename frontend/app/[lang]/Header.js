@@ -57,6 +57,9 @@ export default function Header({ dict, lang, subtitle }) {
             <Link href={`/${lang}/mission`} className="hover:text-white hover:underline">
               {dict.nav.mission}
             </Link>
+            <Link href={`/${lang}/sustainability`} className="hover:text-white hover:underline">
+              {dict.nav.sustainability}
+            </Link>
             <Link href={`/${lang}/saved`} className="hover:text-white hover:underline flex items-center gap-1">
               {dict.nav.saved}
               {count > 0 && (
