@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import Header from "./Header";
 import EventCard from "./EventCard";
 import { tField } from "./eventData";
+import { useBookmarks } from "@/lib/bookmarks";
 
 const Map = dynamic(() => import("./Map"), { ssr: false });
 
@@ -27,6 +28,7 @@ export default function HomeClient({ dict, lang }) {
   const [endDate, setEndDate] = useState("");
   const [selectedId, setSelectedId] = useState(null);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const { isSaved, toggle } = useBookmarks();
 
   useEffect(() => {
     fetch("https://mtlverde-production.up.railway.app/events/all")
@@ -129,6 +131,8 @@ export default function HomeClient({ dict, lang }) {
               dict={dict}
               selected={selectedId === event.id}
               onSelect={() => setSelectedId(event.id)}
+              saved={isSaved(event.id)}
+              onToggleSave={() => toggle(event.id)}
             />
           ))}
         </div>

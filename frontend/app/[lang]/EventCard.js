@@ -5,9 +5,11 @@ import { tField, eventTitle, eventDescription } from "./eventData";
 // so the markup lives here to keep the two views identical.
 //
 // `selected` toggles the map-highlight ring; `onSelect` fires when the card is
-// clicked. No "use client" directive -- this component is only ever rendered
-// inside client components, so it inherits their client boundary.
-export default function EventCard({ event, lang, dict, selected, onSelect }) {
+// clicked. `saved` / `onToggleSave` drive the heart button (guest bookmarks);
+// they're optional so the card still renders anywhere the feature isn't wired.
+// No "use client" directive -- this component is only ever rendered inside
+// client components, so it inherits their client boundary.
+export default function EventCard({ event, lang, dict, selected, onSelect, saved, onToggleSave }) {
   return (
     <div
       onClick={onSelect}
@@ -32,7 +34,33 @@ export default function EventCard({ event, lang, dict, selected, onSelect }) {
             </a>
           )}
         </div>
-        <div className="ml-4 mt-1 shrink-0 flex gap-2">
+        <div className="ml-4 mt-1 shrink-0 flex flex-col items-end gap-2">
+          {onToggleSave && (
+            <button
+              type="button"
+              aria-label={saved ? dict.event.unsave : dict.event.save}
+              aria-pressed={saved}
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleSave();
+              }}
+              className="text-red-500 hover:text-red-600 transition"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                className="w-5 h-5"
+                fill={saved ? "currentColor" : "none"}
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              </svg>
+            </button>
+          )}
+          <div className="flex gap-2">
           {event.type_evenement && (
             <span className="whitespace-nowrap text-xs font-semibold px-3 py-1 rounded-full bg-purple-100 text-purple-700">
               {tField("type_evenement", event.type_evenement, lang)}
@@ -50,6 +78,7 @@ export default function EventCard({ event, lang, dict, selected, onSelect }) {
           }`}>
             {tField("cout", event.cout, lang)}
           </span>
+          </div>
         </div>
       </div>
     </div>

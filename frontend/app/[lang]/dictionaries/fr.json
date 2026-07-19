@@ -27,7 +27,9 @@
     "loadMore": "Voir plus ({count} restants)"
   },
   "event": {
-    "readMore": "En savoir plus →"
+    "readMore": "En savoir plus →",
+    "save": "Enregistrer l'événement",
+    "unsave": "Retirer des favoris"
   },
   "mission": {
     "title": "Notre mission — MTLVerde",
