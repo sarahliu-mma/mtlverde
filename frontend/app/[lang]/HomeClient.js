@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import Header from "./Header";
 import EventCard from "./EventCard";
@@ -37,9 +37,21 @@ export default function HomeClient({ dict, lang }) {
       .then((data) => setEvents(data));
   }, []);
 
-  // Unique, sorted dropdown values for a field, with the "all" sentinel pinned first.
-  const optionsFor = (field) =>
-    [ALL, ...[...new Set(events.map((e) => e[field]).filter(Boolean))].sort()];
+  // Unique, sorted dropdown values per filter field, with the "all" sentinel
+  // pinned first. Memoized on `events` so we don't rebuild six Sets over the
+  // whole feed on every render (e.g. selecting a card or typing a date).
+  const options = useMemo(() => {
+    const build = (field) =>
+      [ALL, ...[...new Set(events.map((e) => e[field]).filter(Boolean))].sort()];
+    return {
+      type_evenement: build("type_evenement"),
+      arrondissement: build("arrondissement"),
+      cout: build("cout"),
+      emplacement: build("emplacement"),
+      public_cible: build("public_cible"),
+      inscription: build("inscription"),
+    };
+  }, [events]);
 
   // The six dropdown filters. Labels come from the dictionary; `field` maps to
   // the (French) event data keys, which are unchanged.
@@ -52,22 +64,41 @@ export default function HomeClient({ dict, lang }) {
     { label: dict.filters.inscription, field: "inscription", value: inscFilter, set: setInscFilter },
   ];
 
-  const filtered = events.filter((e) => {
-    const selectMatch = selectFilters.every(
-      (f) => f.value === ALL || e[f.field] === f.value
-    );
-    // Date bounds (ISO strings compare chronologically): keep events starting
-    // on/after startDate and ending on/before endDate. Empty = no bound.
-    const startMatch = !startDate || (e.date_debut && e.date_debut >= startDate);
-    const endMatch = !endDate || (e.date_fin && e.date_fin <= endDate);
-    return selectMatch && startMatch && endMatch;
-  });
+  // Memoized so the array reference only changes when a filter actually changes
+  // -- not on every render. This keeps the Map from clearing and rebuilding all
+  // ~3k markers when unrelated state (selected card, load-more) updates.
+  const filtered = useMemo(() => {
+    const active = [
+      ["type_evenement", typeFilter],
+      ["arrondissement", arrFilter],
+      ["cout", coutFilter],
+      ["emplacement", empFilter],
+      ["public_cible", audFilter],
+      ["inscription", inscFilter],
+    ];
+    return events.filter((e) => {
+      const selectMatch = active.every(
+        ([field, value]) => value === ALL || e[field] === value
+      );
+      // Date bounds (ISO strings compare chronologically): keep events starting
+      // on/after startDate and ending on/before endDate. Empty = no bound.
+      const startMatch = !startDate || (e.date_debut && e.date_debut >= startDate);
+      const endMatch = !endDate || (e.date_fin && e.date_fin <= endDate);
+      return selectMatch && startMatch && endMatch;
+    });
+  }, [events, typeFilter, arrFilter, coutFilter, empFilter, audFilter, inscFilter, startDate, endDate]);
 
   // Reset the visible window whenever the filters change, so a new search
-  // starts from the top rather than keeping a previously expanded count.
-  useEffect(() => {
+  // starts from the top rather than keeping a previously expanded count. Done
+  // during render (React's "adjust state when an input changes" pattern) by
+  // comparing against the previous filter signature -- avoids the extra render
+  // pass an effect would cause.
+  const filterKey = [typeFilter, arrFilter, coutFilter, empFilter, audFilter, inscFilter, startDate, endDate].join("|");
+  const [prevFilterKey, setPrevFilterKey] = useState(filterKey);
+  if (filterKey !== prevFilterKey) {
+    setPrevFilterKey(filterKey);
     setVisibleCount(PAGE_SIZE);
-  }, [typeFilter, arrFilter, coutFilter, empFilter, audFilter, inscFilter, startDate, endDate]);
+  }
 
   const visible = filtered.slice(0, visibleCount);
 
@@ -91,7 +122,7 @@ export default function HomeClient({ dict, lang }) {
                 value={f.value}
                 onChange={(e) => f.set(e.target.value)}
               >
-                {optionsFor(f.field).map((o) => (
+                {options[f.field].map((o) => (
                   <option key={o} value={o}>{o === ALL ? dict.filters.all : tField(f.field, o, lang)}</option>
                 ))}
               </select>

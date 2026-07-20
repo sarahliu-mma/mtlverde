@@ -7,11 +7,14 @@ import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import { tField, eventTitle } from "./eventData";
 
+// Marker images are self-hosted from /public/leaflet (copied from the leaflet
+// package) rather than fetched from unpkg.com -- same-origin off Vercel's CDN,
+// with no extra third-party DNS/TLS hop or unpkg outage on the critical path.
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+  iconRetinaUrl: "/leaflet/marker-icon-2x.png",
+  iconUrl: "/leaflet/marker-icon.png",
+  shadowUrl: "/leaflet/marker-shadow.png",
 });
 
 export default function Map({ events, lang, readMoreLabel, selectedId }) {
