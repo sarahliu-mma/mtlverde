@@ -49,6 +49,27 @@
     "learnMore": "Notre méthode d'évaluation",
     "wheelchairAccessible": "Métro accessible à proximité"
   },
+  "sustainability": {
+    "title": "Notre méthode d'évaluation — MTLVerde",
+    "heading": "Notre méthode d'évaluation",
+    "intro": "Chaque événement reçoit un éco-badge qui mesure à quel point il est sobre en carbone et accessible d'y assister. Pour un événement communautaire, l'essentiel de l'empreinte environnementale ne vient pas de l'événement lui-même, mais des déplacements du public.",
+    "signalsTitle": "Ce qui compose le score",
+    "transitTitle": "Accès au transport (45 %)",
+    "transit": "La proximité d'une station de métro, d'un arrêt d'autobus ou d'une station BIXI. Le facteur le plus important : il détermine si une voiture est nécessaire.",
+    "walkinTitle": "Accès libre (35 %)",
+    "walkin": "La possibilité de se présenter sans inscription. Les événements exigeant une inscription en ligne excluent les personnes peu à l'aise avec le numérique ou le français, ou nouvellement arrivées.",
+    "outdoorTitle": "Lieu extérieur (20 %)",
+    "outdoor": "Les événements extérieurs et dans l'espace public consomment moins d'énergie et s'ouvrent sur la rue, où chacun peut se joindre.",
+    "tiersTitle": "Ce que signifient les feuilles",
+    "tier3": "Chef de file vert (90–100) : métro à la porte, en plein air et entrée libre.",
+    "tier2": "Écoresponsable (65–89) : facile d'accès en transport, avec un bémol — en salle ou payant.",
+    "tier1": "En progrès (0–64) : plus difficile d'accès sans voiture, ou nécessitant une inscription préalable.",
+    "wheelchairTitle": "Accessibilité en fauteuil roulant",
+    "wheelchair": "Nous indiquons séparément si un événement est accessible par une station de métro adaptée, car seules 25 des 68 stations de métro de Montréal le sont. Un éco-badge élevé ne garantit pas l'accessibilité en fauteuil roulant — nous l'indiquons donc à part.",
+    "honestTitle": "Ce que ce score n'est pas",
+    "honest": "Il ne mesure pas les émissions de carbone réelles d'un événement — nous n'avons aucune donnée sur l'énergie, les déchets ou la restauration. Il estime à quel point il est sobre en carbone et sans obstacle d'y assister. Les distances sont à vol d'oiseau, et non des trajets à pied. Lorsqu'un organisateur annonce une pratique écologique dans sa description, nous l'affichons comme une étiquette 🌱 autodéclarée.",
+    "dataNote": "Bâti sur des données ouvertes : événements de la Ville de Montréal, arrêts STM (CC BY 4.0) et stations BIXI (CC BY)."
+  },
   "mission": {
     "title": "Notre mission — MTLVerde",
     "heading": "Notre mission",
