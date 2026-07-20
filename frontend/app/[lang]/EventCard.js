@@ -8,8 +8,8 @@ const BADGE_KEY = {
 };
 
 // A single event card: title, borough, dates, description, category tags, and a
-// "read more" link. Rendered on the home list and (later) the saved-events page,
-// so the markup lives here to keep the two views identical.
+// "read more" link. Rendered on the home list and the saved-events page, so the
+// markup lives here to keep the two views identical.
 //
 // `selected` toggles the map-highlight ring; `onSelect` fires when the card is
 // clicked. `saved` / `onToggleSave` drive the heart button (guest bookmarks);
@@ -42,49 +42,24 @@ export default function EventCard({ event, lang, dict, selected, onSelect, saved
           )}
         </div>
         <div className="ml-4 mt-1 shrink-0 flex flex-col items-end gap-2">
-          {onToggleSave && (
-            <button
-              type="button"
-              aria-label={saved ? dict.event.unsave : dict.event.save}
-              aria-pressed={saved}
-              onClick={(e) => {
-                e.stopPropagation();
-                onToggleSave();
-              }}
-              className="text-red-500 hover:text-red-600 transition"
-            >
-              <svg
-                viewBox="0 0 24 24"
-                className="w-5 h-5"
-                fill={saved ? "currentColor" : "none"}
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-              </svg>
-            </button>
-          )}
           <div className="flex gap-2">
-          {event.type_evenement && (
-            <span className="whitespace-nowrap text-xs font-semibold px-3 py-1 rounded-full bg-purple-100 text-purple-700">
-              {tField("type_evenement", event.type_evenement, lang)}
+            {event.type_evenement && (
+              <span className="whitespace-nowrap text-xs font-semibold px-3 py-1 rounded-full bg-purple-100 text-purple-700">
+                {tField("type_evenement", event.type_evenement, lang)}
+              </span>
+            )}
+            {event.public_cible && (
+              <span className="whitespace-nowrap text-xs font-semibold px-3 py-1 rounded-full bg-pink-100 text-pink-700">
+                {tField("public_cible", event.public_cible, lang)}
+              </span>
+            )}
+            <span className={`whitespace-nowrap text-xs font-semibold px-3 py-1 rounded-full ${
+              event.cout === "Gratuit"
+                ? "bg-blue-100 text-blue-700"
+                : "bg-amber-100 text-amber-700"
+            }`}>
+              {tField("cout", event.cout, lang)}
             </span>
-          )}
-          {event.public_cible && (
-            <span className="whitespace-nowrap text-xs font-semibold px-3 py-1 rounded-full bg-pink-100 text-pink-700">
-              {tField("public_cible", event.public_cible, lang)}
-            </span>
-          )}
-          <span className={`whitespace-nowrap text-xs font-semibold px-3 py-1 rounded-full ${
-            event.cout === "Gratuit"
-              ? "bg-blue-100 text-blue-700"
-              : "bg-amber-100 text-amber-700"
-          }`}>
-            {tField("cout", event.cout, lang)}
-          </span>
           </div>
           {/* When click the badge, move to Sustainability page */}
           {(event.badge || event.wheelchair_metro_accessible) && (
@@ -112,6 +87,33 @@ export default function EventCard({ event, lang, dict, selected, onSelect, saved
           )}
         </div>
       </div>
+      {onToggleSave && (
+        <div className="flex justify-end mt-3">
+          <button
+            type="button"
+            aria-label={saved ? dict.event.unsave : dict.event.save}
+            aria-pressed={saved}
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleSave();
+            }}
+            className="text-red-500 hover:text-red-600 transition"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              className="w-5 h-5"
+              fill={saved ? "currentColor" : "none"}
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+            </svg>
+          </button>
+        </div>
+      )}
     </div>
   );
 }
