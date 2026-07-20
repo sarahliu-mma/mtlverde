@@ -68,7 +68,14 @@
     "wheelchair": "We show separately whether an event can be reached by an accessible metro station, because only 25 of Montréal's 68 metro stations are wheelchair-accessible. A high eco-badge doesn't guarantee wheelchair access — so we report it on its own.",
     "honestTitle": "What this score is not",
     "honest": "It doesn't measure an event's actual carbon emissions — we have no data on energy, waste, or catering. It estimates how low-carbon and barrier-free it is to attend. Distances are straight-line, not walking routes. When an organizer advertises a green practice in their description, we show it as a 🌱 tag and label it self-reported.",
-    "dataNote": "Built on open data: Ville de Montréal events, STM stops (CC BY 4.0), and BIXI stations (CC BY)."
+    "dataNote": "Built on open data: Ville de Montréal events, STM stops (CC BY 4.0), and BIXI stations (CC BY).",
+    "rankingTitle": "Every event, ranked",
+    "rankingIntro": "All events sorted by sustainability score. Tap any event to see how its score breaks down.",
+    "rankingLoading": "Loading ranking…",
+    "rankingLoadMore": "Show more ({count} remaining)",
+    "transitLabel": "Transit access",
+    "walkinLabel": "Walk-in access",
+    "outdoorLabel": "Outdoor venue"
   },
   "mission": {
     "title": "Our Mission — MTLVerde",
