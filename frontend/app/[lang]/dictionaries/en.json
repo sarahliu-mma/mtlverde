@@ -75,7 +75,9 @@
     "rankingLoadMore": "Show more ({count} remaining)",
     "transitLabel": "Transit access",
     "walkinLabel": "Walk-in access",
-    "outdoorLabel": "Outdoor venue"
+    "outdoorLabel": "Outdoor venue",
+    "whyWeightsTitle": "Why these weights?",
+    "whyWeights": "Transit carries the most weight because attendee travel is the biggest environmental factor, and it's the signal our data measures most precisely. To check the split isn't arbitrary, we re-scored every event across a wide range of weightings — from transit at 25% up to 65%. The ranking barely moved (rank correlation 0.90–0.99), and the key finding held every time: about half of top-rated events still can't be reached by an accessible metro. In other words, the results reflect the city's real transit infrastructure, not our weighting choices."
   },
   "mission": {
     "title": "Our Mission — MTLVerde",
