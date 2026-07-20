@@ -75,7 +75,9 @@
     "rankingLoadMore": "Voir plus ({count} restants)",
     "transitLabel": "Accès au transport",
     "walkinLabel": "Accès libre",
-    "outdoorLabel": "Lieu extérieur"
+    "outdoorLabel": "Lieu extérieur",
+    "whyWeightsTitle": "Pourquoi cette pondération ?",
+    "whyWeights": "Le transport a le plus de poids parce que les déplacements du public constituent le principal facteur environnemental, et c'est le signal que nos données mesurent le plus précisément. Pour vérifier que cette répartition n'est pas arbitraire, nous avons recalculé le score de chaque événement selon un large éventail de pondérations — du transport à 25 % jusqu'à 65 %. Le classement a à peine bougé (corrélation de rang de 0,90 à 0,99), et le constat principal s'est maintenu chaque fois : environ la moitié des événements les mieux notés restent inaccessibles par un métro adapté. Autrement dit, les résultats reflètent l'infrastructure de transport réelle de la ville, et non nos choix de pondération."
   },
   "mission": {
     "title": "Notre mission — MTLVerde",
