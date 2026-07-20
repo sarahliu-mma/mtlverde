@@ -9,7 +9,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { API_BASE } from "@/lib/api";
-import { eventTitle } from "../eventData";
+import { eventTitle, tField } from "../eventData";
 
 // Map the English badge value on the event to a dictionary key (name is
 // translated; the leaf icon comes straight from the event).
@@ -91,6 +91,23 @@ export default function SustainabilityRanking({ dict, lang }) {
                   </span>
                   <span className="block text-sm text-gray-500 truncate">
                     {event.arrondissement}
+                  </span>
+                  <span className="flex flex-wrap gap-1.5 mt-1.5">
+                    {event.type_evenement && (
+                      <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-purple-100 text-purple-700">
+                        {tField("type_evenement", event.type_evenement, lang)}
+                      </span>
+                    )}
+                    {event.public_cible && (
+                      <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-pink-100 text-pink-700">
+                        {tField("public_cible", event.public_cible, lang)}
+                      </span>
+                    )}
+                    {event.cout && (
+                      <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">
+                        {tField("cout", event.cout, lang)}
+                      </span>
+                    )}
                   </span>
                 </span>
                 <span className="shrink-0 text-right">
