@@ -68,7 +68,14 @@
     "wheelchair": "Nous indiquons séparément si un événement est accessible par une station de métro adaptée, car seules 25 des 68 stations de métro de Montréal le sont. Un éco-badge élevé ne garantit pas l'accessibilité en fauteuil roulant — nous l'indiquons donc à part.",
     "honestTitle": "Ce que ce score n'est pas",
     "honest": "Il ne mesure pas les émissions de carbone réelles d'un événement — nous n'avons aucune donnée sur l'énergie, les déchets ou la restauration. Il estime à quel point il est sobre en carbone et sans obstacle d'y assister. Les distances sont à vol d'oiseau, et non des trajets à pied. Lorsqu'un organisateur annonce une pratique écologique dans sa description, nous l'affichons comme une étiquette 🌱 autodéclarée.",
-    "dataNote": "Bâti sur des données ouvertes : événements de la Ville de Montréal, arrêts STM (CC BY 4.0) et stations BIXI (CC BY)."
+    "dataNote": "Bâti sur des données ouvertes : événements de la Ville de Montréal, arrêts STM (CC BY 4.0) et stations BIXI (CC BY).",
+    "rankingTitle": "Tous les événements, classés",
+    "rankingIntro": "Tous les événements triés par score de durabilité. Touchez un événement pour voir le détail de son score.",
+    "rankingLoading": "Chargement du classement…",
+    "rankingLoadMore": "Voir plus ({count} restants)",
+    "transitLabel": "Accès au transport",
+    "walkinLabel": "Accès libre",
+    "outdoorLabel": "Lieu extérieur"
   },
   "mission": {
     "title": "Notre mission — MTLVerde",
