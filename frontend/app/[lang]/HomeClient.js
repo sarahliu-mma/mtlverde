@@ -17,8 +17,8 @@ const ALL = "Tous";
 // always shows the full filtered set; this only caps the rendered card list.
 const PAGE_SIZE = 24;
 
-export default function HomeClient({ dict, lang }) {
-  const [events, setEvents] = useState([]);
+export default function HomeClient({ dict, lang, initialEvents = [] }) {
+  const [events, setEvents] = useState(initialEvents);
   const [typeFilter, setTypeFilter] = useState(ALL);
   const [arrFilter, setArrFilter] = useState(ALL);
   const [coutFilter, setCoutFilter] = useState(ALL);
@@ -31,11 +31,15 @@ export default function HomeClient({ dict, lang }) {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const { isSaved, toggle } = useBookmarks();
 
+  // The feed is normally provided by the server (see page.js), so no fetch runs
+  // here. This is only a fallback for when the server-side fetch returned empty
+  // (e.g. Railway was down at build/revalidate time).
   useEffect(() => {
+    if (initialEvents.length) return;
     fetch(`${API_BASE}/events/all`)
       .then((res) => res.json())
       .then((data) => setEvents(data));
-  }, []);
+  }, [initialEvents.length]);
 
   // Unique, sorted dropdown values per filter field, with the "all" sentinel
   // pinned first. Memoized on `events` so we don't rebuild six Sets over the
