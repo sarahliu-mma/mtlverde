@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 from database import get_db, engine, Base, ensure_schema
 from models import Festival, PublicEvent
-
+from recommendations import router as recommendations_router
 
 HORIZON_MONTHS = 6
 
@@ -154,3 +154,4 @@ def get_all_events(db: Session = Depends(get_db)):
     return sorted(list(festivals) + list(publics), key=_order_key(today.isoformat()))
 
 app.include_router(chat_router)
+app.include_router(recommendations_router)
