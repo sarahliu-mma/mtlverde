@@ -34,13 +34,15 @@ export async function generateMetadata({ params }) {
 export default async function RootLayout({ children, params }) {
   const { lang } = await params;
   if (!hasLocale(lang)) notFound();
+  const dict = await getDictionary(lang);
 
   return (
     <html lang={lang}>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
   {children}
-  <ChatWidget />
+  <ChatWidget lang={lang} dict={dict} />
 </body>
     </html>
   );
 }
+

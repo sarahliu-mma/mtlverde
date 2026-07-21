@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 
-export default function ChatWidget() {
+export default function ChatWidget({ lang, dict }) {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -19,15 +19,14 @@ export default function ChatWidget() {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: userMsg }),
-        }
+body: JSON.stringify({ message: userMsg, lang }),        }
       );
       const data = await res.json();
       setMessages((prev) => [...prev, { role: "assistant", text: data.reply }]);
     } catch (err) {
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", text: "Sorry, something went wrong." },
+{ role: "assistant", text: dict.chatWidget.error },
       ]);
     }
     setLoading(false);
@@ -38,7 +37,7 @@ export default function ChatWidget() {
       {open ? (
         <div className="w-80 h-96 bg-white shadow-xl rounded-lg flex flex-col border">
           <div className="bg-green-600 text-white p-3 rounded-t-lg flex justify-between items-center">
-            <span>MTLVerde Assistant</span>
+<span>{dict.chatWidget.title}</span>
             <button onClick={() => setOpen(false)}>✕</button>
           </div>
           <div className="flex-1 overflow-y-auto p-2 space-y-2">
@@ -62,13 +61,13 @@ export default function ChatWidget() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-              placeholder="Ask a question..."
+placeholder={dict.chatWidget.placeholder}
             />
             <button
               onClick={sendMessage}
               className="bg-green-600 text-white px-3 rounded text-sm"
             >
-              Send
+              {dict.chatWidget.send}
             </button>
           </div>
         </div>

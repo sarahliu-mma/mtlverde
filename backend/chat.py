@@ -23,6 +23,7 @@ STOPWORDS = {
 
 class ChatRequest(BaseModel):
     message: str
+    lang: str = "en"  # "en" or "fr" — determines the reply language
 
 
 class ChatResponse(BaseModel):
@@ -96,13 +97,20 @@ def chat(req: ChatRequest, db: Session = Depends(get_db)):
         else "No matching events found in the database for these keywords."
     )
 
+    lang_instruction = (
+        "Always reply in English, regardless of what language the user writes in."
+        if req.lang == "en"
+        else "Réponds toujours en français, peu importe la langue utilisée par l'utilisateur."
+    )
+
     system_prompt = (
+        f"{lang_instruction}\n\n"
         "You are the event recommendation assistant for MTLVerde, helping users "
         "discover festivals and events in Montreal. You must use ONLY the events "
         "listed below to make recommendations. Do NOT use any outside knowledge "
         "about festivals, venues, or events, even ones you are confident exist. "
         "If none of the listed events fit the user's request, say so honestly "
-        "and do not suggest anything not in the list. When you recommend a "
+        "and do not suggest anything not in the list. When you recomend a "
         "specific event, include its id in the format [id: EVENT_ID] so the app "
         "can render an event card.\n\n"
         f"Available events matching this query:\n{events_context}"

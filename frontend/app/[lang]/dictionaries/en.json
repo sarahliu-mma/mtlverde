@@ -51,6 +51,14 @@
       "kids": "Kids & family"
     }
   },
+"chatWidget": {
+    "title": "MTLVerde Assistant",
+    "placeholder": "Ask a question...",
+    "send": "Send",
+    "error": "Sorry, something went wrong.",
+    "thinking": "Thinking...",
+    "chatEmptyHint": "Ask me anything — e.g. \"Show me free outdoor events this weekend\" or \"What's good for kids?\"",
+  },
   "filters": {
     "all": "All",
     "type": "Type",
