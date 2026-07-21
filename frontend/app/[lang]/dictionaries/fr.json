@@ -56,7 +56,15 @@
     "send": "Envoyer",
     "error": "Désolé, une erreur s'est produite.",
     "thinking": "Réflexion...",
-"chatEmptyHint": "Demandez-moi n'importe quoi, comme « Montrez-moi des événements gratuits en plein air ce week-end » ou « Qu'est-ce qui convient aux enfants? »"  },
+"chatEmptyHint": "Demandez-moi n'importe quoi, comme « Montrez-moi des événements gratuits en plein air ce week-end » ou « Qu'est-ce qui convient aux enfants? »",
+    "suggestedQuestions": [
+      "Qu'est-ce que MTLVerde?",
+      "Quel est le lien entre MTLVerde et le développement durable?",
+      "Comment évaluez-vous la durabilité des événements?",
+      "Montrez-moi des événements gratuits en plein air ce week-end",
+      "Qu'est-ce qui convient aux enfants?",
+      "Recommandez-moi un festival de musique"
+    ]},
   "filters": {
     "all": "Tous",
     "type": "Type",

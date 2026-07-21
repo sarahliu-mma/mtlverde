@@ -56,7 +56,16 @@
     "send": "Send",
     "error": "Sorry, something went wrong.",
     "thinking": "Thinking...",
-"chatEmptyHint": "Ask me anything, like \"Show me free outdoor events this weekend\" or \"What's good for kids?\""  },
+"chatEmptyHint": "Ask me anything, like \"Show me free outdoor events this weekend\" or \"What's good for kids?\"",
+    "suggestedQuestions": [
+      "What is MTLVerde?",
+      "How does MTLVerde relate to sustainability?",
+      "How do you score events for sustainability?",
+      "Show me free outdoor events this weekend",
+      "What's good for kids?",
+      "Recommend a music festival"
+    ]
+},
   "filters": {
     "all": "All",
     "type": "Type",
