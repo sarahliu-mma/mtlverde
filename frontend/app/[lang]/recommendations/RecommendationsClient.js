@@ -17,13 +17,12 @@ export default function RecommendationsClient({ dict, lang }) {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
-  const sendMessage = async () => {
-    if (!input.trim()) return;
-    const userMsg = input;
+const sendMessage = async (overrideText) => {
+    const userMsg = overrideText ?? input;
+    if (!userMsg.trim()) return;
     setMessages((prev) => [...prev, { role: "user", text: userMsg }]);
     setInput("");
     setLoading(true);
-
     try {
       const res = await fetch(`${API_BASE}/chat`, {
         method: "POST",
@@ -52,10 +51,23 @@ export default function RecommendationsClient({ dict, lang }) {
         {/* Conversation area */}
         <div className="flex-1 bg-white rounded-xl shadow border flex flex-col min-h-[50vh]">
           <div className="flex-1 overflow-y-auto p-4 space-y-3">
-            {messages.length === 0 && (
-              <p className="text-sm text-gray-400">{r.chatEmptyHint}</p>
-            )}
-            {messages.map((m, i) => (
+{messages.length === 0 && (
+              <div className="space-y-3">
+                <p className="text-sm text-gray-400">{r.chatEmptyHint}</p>
+                <div className="flex flex-wrap gap-2">
+                  {r.suggestedQuestions.map((q, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => sendMessage(q)}
+                      className="text-sm px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 bg-white hover:border-green-500 hover:text-green-700 transition"
+                    >
+                      {q}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}            {messages.map((m, i) => (
               <div
                 key={i}
                 className={`text-sm p-3 rounded-lg max-w-[80%] leading-relaxed whitespace-pre-wrap ${
