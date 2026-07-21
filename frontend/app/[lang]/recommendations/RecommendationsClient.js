@@ -55,8 +55,7 @@ const sendMessage = async (overrideText) => {
               <div className="space-y-3">
                 <p className="text-sm text-gray-400">{r.chatEmptyHint}</p>
                 <div className="flex flex-wrap gap-2">
-                  {r.suggestedQuestions.map((q, i) => (
-                    <button
+{c.suggestedQuestions.map((q, i) => (                    <button
                       key={i}
                       type="button"
                       onClick={() => sendMessage(q)}
