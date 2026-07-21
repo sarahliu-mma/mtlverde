@@ -68,6 +68,9 @@ export default function Header({ dict, lang, subtitle }) {
                 </span>
               )}
             </Link>
+            <Link href={`/${lang}/recommendations`} className="hover:text-white hover:underline">
+              {dict.nav.recommendations}
+            </Link>
           </nav>
         </div>
         <Link
