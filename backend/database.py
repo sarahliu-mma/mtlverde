@@ -6,7 +6,23 @@ DATABASE_URL = os.environ.get("DATABASE_URL")
 if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
-engine = create_engine(DATABASE_URL)
+# pool_pre_ping validates a connection before it is handed out (so a stale,
+# server-dropped connection is discarded and replaced instead of erroring).
+# pool_recycle proactively retires connections older than 5 min. The keepalives
+# keep the socket alive through Railway's public TCP proxy, which otherwise
+# drops long-lived connections mid-job ("server closed the connection
+# unexpectedly"). Retry on top of this lives in seed.py.
+engine = create_engine(
+    DATABASE_URL,
+    pool_pre_ping=True,
+    pool_recycle=300,
+    connect_args={
+        "keepalives": 1,
+        "keepalives_idle": 30,
+        "keepalives_interval": 10,
+        "keepalives_count": 5,
+    },
+)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 

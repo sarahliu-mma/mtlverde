@@ -1,8 +1,11 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import Header from "./Header";
-import { tField, eventTitle, eventDescription } from "./eventData";
+import EventCard from "./EventCard";
+import { tField } from "./eventData";
+import { useBookmarks } from "@/lib/bookmarks";
+import { API_BASE } from "@/lib/api";
 
 const Map = dynamic(() => import("./Map"), { ssr: false });
 
@@ -14,8 +17,8 @@ const ALL = "Tous";
 // always shows the full filtered set; this only caps the rendered card list.
 const PAGE_SIZE = 24;
 
-export default function HomeClient({ dict, lang }) {
-  const [events, setEvents] = useState([]);
+export default function HomeClient({ dict, lang, initialEvents = [] }) {
+  const [events, setEvents] = useState(initialEvents);
   const [typeFilter, setTypeFilter] = useState(ALL);
   const [arrFilter, setArrFilter] = useState(ALL);
   const [coutFilter, setCoutFilter] = useState(ALL);
@@ -26,16 +29,33 @@ export default function HomeClient({ dict, lang }) {
   const [endDate, setEndDate] = useState("");
   const [selectedId, setSelectedId] = useState(null);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const { isSaved, toggle } = useBookmarks();
 
+  // The feed is normally provided by the server (see page.js), so no fetch runs
+  // here. This is only a fallback for when the server-side fetch returned empty
+  // (e.g. Railway was down at build/revalidate time).
   useEffect(() => {
-    fetch("https://mtlverde-production.up.railway.app/events/all")
+    if (initialEvents.length) return;
+    fetch(`${API_BASE}/events/all`)
       .then((res) => res.json())
       .then((data) => setEvents(data));
-  }, []);
+  }, [initialEvents.length]);
 
-  // Unique, sorted dropdown values for a field, with the "all" sentinel pinned first.
-  const optionsFor = (field) =>
-    [ALL, ...[...new Set(events.map((e) => e[field]).filter(Boolean))].sort()];
+  // Unique, sorted dropdown values per filter field, with the "all" sentinel
+  // pinned first. Memoized on `events` so we don't rebuild six Sets over the
+  // whole feed on every render (e.g. selecting a card or typing a date).
+  const options = useMemo(() => {
+    const build = (field) =>
+      [ALL, ...[...new Set(events.map((e) => e[field]).filter(Boolean))].sort()];
+    return {
+      type_evenement: build("type_evenement"),
+      arrondissement: build("arrondissement"),
+      cout: build("cout"),
+      emplacement: build("emplacement"),
+      public_cible: build("public_cible"),
+      inscription: build("inscription"),
+    };
+  }, [events]);
 
   // The six dropdown filters. Labels come from the dictionary; `field` maps to
   // the (French) event data keys, which are unchanged.
@@ -48,22 +68,41 @@ export default function HomeClient({ dict, lang }) {
     { label: dict.filters.inscription, field: "inscription", value: inscFilter, set: setInscFilter },
   ];
 
-  const filtered = events.filter((e) => {
-    const selectMatch = selectFilters.every(
-      (f) => f.value === ALL || e[f.field] === f.value
-    );
-    // Date bounds (ISO strings compare chronologically): keep events starting
-    // on/after startDate and ending on/before endDate. Empty = no bound.
-    const startMatch = !startDate || (e.date_debut && e.date_debut >= startDate);
-    const endMatch = !endDate || (e.date_fin && e.date_fin <= endDate);
-    return selectMatch && startMatch && endMatch;
-  });
+  // Memoized so the array reference only changes when a filter actually changes
+  // -- not on every render. This keeps the Map from clearing and rebuilding all
+  // ~3k markers when unrelated state (selected card, load-more) updates.
+  const filtered = useMemo(() => {
+    const active = [
+      ["type_evenement", typeFilter],
+      ["arrondissement", arrFilter],
+      ["cout", coutFilter],
+      ["emplacement", empFilter],
+      ["public_cible", audFilter],
+      ["inscription", inscFilter],
+    ];
+    return events.filter((e) => {
+      const selectMatch = active.every(
+        ([field, value]) => value === ALL || e[field] === value
+      );
+      // Date bounds (ISO strings compare chronologically): keep events starting
+      // on/after startDate and ending on/before endDate. Empty = no bound.
+      const startMatch = !startDate || (e.date_debut && e.date_debut >= startDate);
+      const endMatch = !endDate || (e.date_fin && e.date_fin <= endDate);
+      return selectMatch && startMatch && endMatch;
+    });
+  }, [events, typeFilter, arrFilter, coutFilter, empFilter, audFilter, inscFilter, startDate, endDate]);
 
   // Reset the visible window whenever the filters change, so a new search
-  // starts from the top rather than keeping a previously expanded count.
-  useEffect(() => {
+  // starts from the top rather than keeping a previously expanded count. Done
+  // during render (React's "adjust state when an input changes" pattern) by
+  // comparing against the previous filter signature -- avoids the extra render
+  // pass an effect would cause.
+  const filterKey = [typeFilter, arrFilter, coutFilter, empFilter, audFilter, inscFilter, startDate, endDate].join("|");
+  const [prevFilterKey, setPrevFilterKey] = useState(filterKey);
+  if (filterKey !== prevFilterKey) {
+    setPrevFilterKey(filterKey);
     setVisibleCount(PAGE_SIZE);
-  }, [typeFilter, arrFilter, coutFilter, empFilter, audFilter, inscFilter, startDate, endDate]);
+  }
 
   const visible = filtered.slice(0, visibleCount);
 
@@ -87,7 +126,7 @@ export default function HomeClient({ dict, lang }) {
                 value={f.value}
                 onChange={(e) => f.set(e.target.value)}
               >
-                {optionsFor(f.field).map((o) => (
+                {options[f.field].map((o) => (
                   <option key={o} value={o}>{o === ALL ? dict.filters.all : tField(f.field, o, lang)}</option>
                 ))}
               </select>
@@ -121,51 +160,16 @@ export default function HomeClient({ dict, lang }) {
         {/* Event Cards */}
         <div className="grid gap-4">
           {visible.map((event, i) => (
-            <div
+            <EventCard
               key={event.id ?? i}
-              onClick={() => setSelectedId(event.id)}
-              className={`bg-white rounded-xl shadow p-5 hover:shadow-md transition cursor-pointer ${
-                selectedId === event.id ? "ring-2 ring-green-500" : ""
-              }`}
-            >
-              <div className="flex justify-between items-start">
-                <div>
-                  <h2 className="text-lg font-bold text-gray-800">{eventTitle(event, lang)}</h2>
-                  <p className="text-sm text-gray-500 mt-1">{event.arrondissement}</p>
-                  <p className="text-sm text-gray-400 mt-1">{event.date_debut} → {event.date_fin}</p>
-                  <p className="text-sm text-gray-500 mt-2 leading-relaxed">{eventDescription(event, lang)}</p>
-                  {event.url_fiche && (
-                    <a
-                      href={event.url_fiche}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm font-medium text-green-700 hover:underline mt-2 inline-block"
-                    >
-                      {dict.event.readMore}
-                    </a>
-                  )}
-                </div>
-                <div className="ml-4 mt-1 shrink-0 flex gap-2">
-                  {event.type_evenement && (
-                    <span className="whitespace-nowrap text-xs font-semibold px-3 py-1 rounded-full bg-purple-100 text-purple-700">
-                      {tField("type_evenement", event.type_evenement, lang)}
-                    </span>
-                  )}
-                  {event.public_cible && (
-                    <span className="whitespace-nowrap text-xs font-semibold px-3 py-1 rounded-full bg-pink-100 text-pink-700">
-                      {tField("public_cible", event.public_cible, lang)}
-                    </span>
-                  )}
-                  <span className={`whitespace-nowrap text-xs font-semibold px-3 py-1 rounded-full ${
-                    event.cout === "Gratuit"
-                      ? "bg-blue-100 text-blue-700"
-                      : "bg-amber-100 text-amber-700"
-                  }`}>
-                    {tField("cout", event.cout, lang)}
-                  </span>
-                </div>
-              </div>
-            </div>
+              event={event}
+              lang={lang}
+              dict={dict}
+              selected={selectedId === event.id}
+              onSelect={() => setSelectedId(event.id)}
+              saved={isSaved(event.id)}
+              onToggleSave={() => toggle(event.id)}
+            />
           ))}
         </div>
 

@@ -9,7 +9,18 @@
   },
   "nav": {
     "events": "Events",
-    "mission": "Our Mission"
+    "mission": "Our Mission",
+    "sustainability": "Sustainability",
+    "saved": "Saved"
+  },
+  "saved": {
+    "title": "Saved events — MTLVerde",
+    "heading": "Saved events",
+    "loading": "Loading your saved events…",
+    "empty": "No saved events yet",
+    "emptyHint": "Tap the heart on any event to save it here. Your picks stay in this browser, ready when you come back.",
+    "browse": "Browse events",
+    "note": "Saved on this device. Clearing your browser data will remove them."
   },
   "filters": {
     "all": "All",
@@ -27,7 +38,46 @@
     "loadMore": "Load more ({count} remaining)"
   },
   "event": {
-    "readMore": "Read more →"
+    "readMore": "Read more →",
+    "save": "Save event",
+    "unsave": "Remove from saved"
+  },
+  "badge": {
+    "greenLeader": "Green Leader",
+    "ecoFriendly": "Eco-Friendly",
+    "gettingThere": "Getting There",
+    "learnMore": "How we score",
+    "wheelchairAccessible": "Wheelchair-accessible metro nearby"
+  },
+  "sustainability": {
+    "title": "How we score — MTLVerde",
+    "heading": "How we score",
+    "intro": "Every event gets an eco-badge that measures how low-carbon and barrier-free it is to attend. For a community event, most of the environmental footprint isn't the event itself — it's how everyone travels to it.",
+    "signalsTitle": "What goes into the score",
+    "transitTitle": "Transit access (45%)",
+    "transit": "How close the event is to a metro station, bus stop, or BIXI dock. The biggest factor — it decides whether you need a car.",
+    "walkinTitle": "Walk-in access (35%)",
+    "walkin": "Whether you can just show up. Events requiring online registration shut out people who aren't online, aren't confident in French, or are new to the city.",
+    "outdoorTitle": "Outdoor venue (20%)",
+    "outdoor": "Outdoor and public-space events use less energy and open onto the street, where anyone can join.",
+    "tiersTitle": "What the leaves mean",
+    "tier3": "Green Leader (90–100): metro on the doorstep, outdoors, and walk-in.",
+    "tier2": "Eco-Friendly (65–89): easy to reach by transit, with one thing working against it — indoors, or a ticket.",
+    "tier1": "Getting There (0–64): harder to reach without a car, or requires advance registration.",
+    "wheelchairTitle": "Wheelchair accessibility",
+    "wheelchair": "We show separately whether an event can be reached by an accessible metro station, because only 25 of Montréal's 68 metro stations are wheelchair-accessible. A high eco-badge doesn't guarantee wheelchair access — so we report it on its own.",
+    "honestTitle": "What this score is not",
+    "honest": "It doesn't measure an event's actual carbon emissions — we have no data on energy, waste, or catering. It estimates how low-carbon and barrier-free it is to attend. Distances are straight-line, not walking routes. When an organizer advertises a green practice in their description, we show it as a 🌱 tag and label it self-reported.",
+    "dataNote": "Built on open data: Ville de Montréal events, STM stops (CC BY 4.0), and BIXI stations (CC BY).",
+    "rankingTitle": "Every event, ranked",
+    "rankingIntro": "All events sorted by sustainability score. Tap any event to see how its score breaks down.",
+    "rankingLoading": "Loading ranking…",
+    "rankingLoadMore": "Show more ({count} remaining)",
+    "transitLabel": "Transit access",
+    "walkinLabel": "Walk-in access",
+    "outdoorLabel": "Outdoor venue",
+    "whyWeightsTitle": "Why these weights?",
+    "whyWeights": "Transit carries the most weight because attendee travel is the biggest environmental factor, and it's the signal our data measures most precisely. To check the split isn't arbitrary, we re-scored every event across a wide range of weightings — from transit at 25% up to 65%. The ranking barely moved (rank correlation 0.90–0.99), and the key finding held every time: about half of top-rated events still can't be reached by an accessible metro. In other words, the results reflect the city's real transit infrastructure, not our weighting choices."
   },
   "mission": {
     "title": "Our Mission — MTLVerde",

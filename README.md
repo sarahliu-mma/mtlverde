@@ -28,6 +28,10 @@ Joohee Kim, and Chloee Liew.
   from the browser's `Accept-Language` header and reflected in the URL (`/fr`,
   `/en`).
 - **Filters** by event type, borough, audience, cost, and registration.
+- **Save events for later** — heart any event to bookmark it (kept in your
+  browser, no account needed) and revisit your picks on a **Saved** page. A
+  header badge counts them, and events the city later removes drop off the list
+  automatically.
 - **Two blended feeds:** ~3,500 city open-data events plus a hand-curated list
   of ~12 signature festivals (Jazz Festival, MURAL, Francofolies, …).
 - **Self-updating data** via a daily GitHub Actions pipeline — no manual
@@ -50,10 +54,10 @@ Ville de Montréal open data (CKAN API)
       seed.py ──► PostgreSQL (Railway)  ◄── festivals_montreal.json (curated)
             │
             ▼
-   FastAPI backend  (/events, /events/public, /events/all)
+   FastAPI backend  (/events, /events/public, /events/all, /events/live-count)
             │
             ▼
-   Next.js frontend (Vercel) — map, list, filters, i18n
+   Next.js frontend (Vercel) — map, list, filters, i18n, saved events
 ```
 
 | Layer | Stack | Hosting |
@@ -81,7 +85,8 @@ mtlverde/
 │   ├── PUBLIC_EVENTS.md            Data dictionary: source, filters, breakdowns
 │   └── Procfile / requirements.txt Railway deploy config
 ├── frontend/                       Next.js app (App Router, [lang] routing)
-│   └── app/[lang]/                 Pages, map, header, i18n dictionaries
+│   ├── app/[lang]/                 Pages (home, mission, saved), map, header, dictionaries
+│   └── lib/                        Bookmarks store (localStorage) + shared API base URL
 └── .github/workflows/
     └── update-public-events.yml    Daily fetch → commit → seed Postgres
 ```
@@ -124,11 +129,17 @@ Base URL: `https://mtlverde-production.up.railway.app`
 | `GET /events` | Curated festivals that have not yet ended |
 | `GET /events/public` | City open-data events overlapping the next 6 months |
 | `GET /events/all` | Combined feed (festivals + public events) — used by the frontend |
+| `POST /events/live-count` | Given `{ "ids": [...] }`, returns `{ "count": N }` — how many of those saved ids are still in the live feed (powers the saved-count badge) |
 
 Both feeds share the same normalized event shape (title, description [FR + EN],
 dates, type, audience, cost, borough, address, lat/long). Public events are
 served from Postgres, falling back to the committed JSON file if the table has
 not been seeded yet.
+
+Bookmarks themselves are **not** stored server-side — hearted events live in the
+visitor's browser (`localStorage`), so the feature needs no account or auth. The
+`live-count` endpoint only reports how many of those ids still exist, keeping the
+saved-count badge accurate without shipping the whole feed to the client.
 
 ---
 

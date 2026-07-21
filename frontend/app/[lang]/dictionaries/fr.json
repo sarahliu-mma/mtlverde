@@ -9,7 +9,18 @@
   },
   "nav": {
     "events": "Événements",
-    "mission": "Notre mission"
+    "mission": "Notre mission",
+    "sustainability": "Durabilité",
+    "saved": "Enregistrés"
+  },
+  "saved": {
+    "title": "Événements enregistrés — MTLVerde",
+    "heading": "Événements enregistrés",
+    "loading": "Chargement de vos événements enregistrés…",
+    "empty": "Aucun événement enregistré",
+    "emptyHint": "Touchez le cœur d'un événement pour l'enregistrer ici. Vos choix restent dans ce navigateur, prêts à votre retour.",
+    "browse": "Parcourir les événements",
+    "note": "Enregistré sur cet appareil. Effacer les données du navigateur les supprimera."
   },
   "filters": {
     "all": "Tous",
@@ -27,7 +38,46 @@
     "loadMore": "Voir plus ({count} restants)"
   },
   "event": {
-    "readMore": "En savoir plus →"
+    "readMore": "En savoir plus →",
+    "save": "Enregistrer l'événement",
+    "unsave": "Retirer des favoris"
+  },
+  "badge": {
+    "greenLeader": "Chef de file vert",
+    "ecoFriendly": "Écoresponsable",
+    "gettingThere": "En progrès",
+    "learnMore": "Notre méthode d'évaluation",
+    "wheelchairAccessible": "Métro accessible à proximité"
+  },
+  "sustainability": {
+    "title": "Notre méthode d'évaluation — MTLVerde",
+    "heading": "Notre méthode d'évaluation",
+    "intro": "Chaque événement reçoit un éco-badge qui mesure à quel point il est sobre en carbone et accessible d'y assister. Pour un événement communautaire, l'essentiel de l'empreinte environnementale ne vient pas de l'événement lui-même, mais des déplacements du public.",
+    "signalsTitle": "Ce qui compose le score",
+    "transitTitle": "Accès au transport (45 %)",
+    "transit": "La proximité d'une station de métro, d'un arrêt d'autobus ou d'une station BIXI. Le facteur le plus important : il détermine si une voiture est nécessaire.",
+    "walkinTitle": "Accès libre (35 %)",
+    "walkin": "La possibilité de se présenter sans inscription. Les événements exigeant une inscription en ligne excluent les personnes peu à l'aise avec le numérique ou le français, ou nouvellement arrivées.",
+    "outdoorTitle": "Lieu extérieur (20 %)",
+    "outdoor": "Les événements extérieurs et dans l'espace public consomment moins d'énergie et s'ouvrent sur la rue, où chacun peut se joindre.",
+    "tiersTitle": "Ce que signifient les feuilles",
+    "tier3": "Chef de file vert (90–100) : métro à la porte, en plein air et entrée libre.",
+    "tier2": "Écoresponsable (65–89) : facile d'accès en transport, avec un bémol — en salle ou payant.",
+    "tier1": "En progrès (0–64) : plus difficile d'accès sans voiture, ou nécessitant une inscription préalable.",
+    "wheelchairTitle": "Accessibilité en fauteuil roulant",
+    "wheelchair": "Nous indiquons séparément si un événement est accessible par une station de métro adaptée, car seules 25 des 68 stations de métro de Montréal le sont. Un éco-badge élevé ne garantit pas l'accessibilité en fauteuil roulant — nous l'indiquons donc à part.",
+    "honestTitle": "Ce que ce score n'est pas",
+    "honest": "Il ne mesure pas les émissions de carbone réelles d'un événement — nous n'avons aucune donnée sur l'énergie, les déchets ou la restauration. Il estime à quel point il est sobre en carbone et sans obstacle d'y assister. Les distances sont à vol d'oiseau, et non des trajets à pied. Lorsqu'un organisateur annonce une pratique écologique dans sa description, nous l'affichons comme une étiquette 🌱 autodéclarée.",
+    "dataNote": "Bâti sur des données ouvertes : événements de la Ville de Montréal, arrêts STM (CC BY 4.0) et stations BIXI (CC BY).",
+    "rankingTitle": "Tous les événements, classés",
+    "rankingIntro": "Tous les événements triés par score de durabilité. Touchez un événement pour voir le détail de son score.",
+    "rankingLoading": "Chargement du classement…",
+    "rankingLoadMore": "Voir plus ({count} restants)",
+    "transitLabel": "Accès au transport",
+    "walkinLabel": "Accès libre",
+    "outdoorLabel": "Lieu extérieur",
+    "whyWeightsTitle": "Pourquoi cette pondération ?",
+    "whyWeights": "Le transport a le plus de poids parce que les déplacements du public constituent le principal facteur environnemental, et c'est le signal que nos données mesurent le plus précisément. Pour vérifier que cette répartition n'est pas arbitraire, nous avons recalculé le score de chaque événement selon un large éventail de pondérations — du transport à 25 % jusqu'à 65 %. Le classement a à peine bougé (corrélation de rang de 0,90 à 0,99), et le constat principal s'est maintenu chaque fois : environ la moitié des événements les mieux notés restent inaccessibles par un métro adapté. Autrement dit, les résultats reflètent l'infrastructure de transport réelle de la ville, et non nos choix de pondération."
   },
   "mission": {
     "title": "Notre mission — MTLVerde",
