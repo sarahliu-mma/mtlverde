@@ -57,8 +57,7 @@
     "send": "Envoyer",
     "error": "Désolé, une erreur s'est produite.",
     "thinking": "Réflexion...",
-    "chatEmptyHint": "Demandez-moi n'importe quoi — par ex. « Montrez-moi des événements gratuits en plein air ce week-end » ou « Qu'est-ce qui convient aux enfants? »",
-  },
+"chatEmptyHint": "Demandez-moi n'importe quoi, comme « Montrez-moi des événements gratuits en plein air ce week-end » ou « Qu'est-ce qui convient aux enfants? »"  },
   "filters": {
     "all": "Tous",
     "type": "Type",

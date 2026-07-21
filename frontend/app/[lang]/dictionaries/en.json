@@ -57,8 +57,7 @@
     "send": "Send",
     "error": "Sorry, something went wrong.",
     "thinking": "Thinking...",
-    "chatEmptyHint": "Ask me anything — e.g. \"Show me free outdoor events this weekend\" or \"What's good for kids?\"",
-  },
+"chatEmptyHint": "Ask me anything, like \"Show me free outdoor events this weekend\" or \"What's good for kids?\""  },
   "filters": {
     "all": "All",
     "type": "Type",
