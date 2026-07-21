@@ -11,7 +11,8 @@
     "events": "Événements",
     "mission": "Notre mission",
     "sustainability": "Durabilité",
-    "saved": "Enregistrés"
+    "saved": "Enregistrés",
+    "recommendations": "Pour vous"
   },
   "saved": {
     "title": "Événements enregistrés — MTLVerde",
@@ -21,6 +22,34 @@
     "emptyHint": "Touchez le cœur d'un événement pour l'enregistrer ici. Vos choix restent dans ce navigateur, prêts à votre retour.",
     "browse": "Parcourir les événements",
     "note": "Enregistré sur cet appareil. Effacer les données du navigateur les supprimera."
+  },
+"recommendations": {
+    "title": "Recommandations — MTLVerde",
+    "heading": "Trouvez votre prochain événement",
+    "intro": "Choisissez ce qui vous intéresse, et on vous propose des festivals et événements qui correspondent.",
+    "loading": "Recherche d'événements pour vous…",
+    "empty": "Aucun événement ne correspond à ces filtres",
+    "emptyHint": "Essayez de retirer un ou deux filtres.",
+    "showResults": "Afficher les résultats",
+    "typeLabel": "Type d'événement",
+    "quickFilters": "Filtres rapides",
+    "freeOnly": "Gratuit seulement",
+    "ecoOnly": "Choix durables",
+    "familyOnly": "Adapté aux familles",
+    "outdoorOnly": "En plein air",
+    "types": {
+      "music": "Musique",
+      "art": "Art et artisanat",
+      "performance": "Théâtre et spectacle",
+      "film": "Cinéma",
+      "exhibition": "Exposition",
+      "market": "Fête et marché",
+      "food": "Cuisine",
+      "outdoor_sport": "Sport et plein air",
+      "tech": "Science et techno",
+      "reading": "Club de lecture et littérature",
+      "kids": "Enfants et famille"
+    }
   },
   "filters": {
     "all": "Tous",

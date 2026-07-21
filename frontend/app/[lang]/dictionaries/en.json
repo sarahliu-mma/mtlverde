@@ -11,7 +11,8 @@
     "events": "Events",
     "mission": "Our Mission",
     "sustainability": "Sustainability",
-    "saved": "Saved"
+    "saved": "Saved",
+    "recommendations": "For You"
   },
   "saved": {
     "title": "Saved events — MTLVerde",
@@ -21,6 +22,34 @@
     "emptyHint": "Tap the heart on any event to save it here. Your picks stay in this browser, ready when you come back.",
     "browse": "Browse events",
     "note": "Saved on this device. Clearing your browser data will remove them."
+  },
+"recommendations": {
+    "title": "Recommendations — MTLVerde",
+    "heading": "Find your next event",
+    "intro": "Pick what you're into, and we'll surface festivals and events that match.",
+    "loading": "Finding events for you…",
+    "empty": "No events match these filters yet",
+    "emptyHint": "Try removing a filter or two.",
+    "showResults": "Show results",
+    "typeLabel": "Type of event",
+    "quickFilters": "Quick filters",
+    "freeOnly": "Free only",
+    "ecoOnly": "Sustainable picks",
+    "familyOnly": "Family-friendly",
+    "outdoorOnly": "Outdoors",
+    "types": {
+      "music": "Music",
+      "art": "Arts & crafts",
+      "performance": "Theatre & performance",
+      "film": "Cinema",
+      "exhibition": "Exhibition",
+      "market": "Festivals & markets",
+      "food": "Cooking",
+      "outdoor_sport": "Sports & outdoors",
+      "tech": "Science & tech",
+      "reading": "Book club & literature",
+      "kids": "Kids & family"
+    }
   },
   "filters": {
     "all": "All",
