@@ -126,11 +126,18 @@ def chat(req: ChatRequest, db: Session = Depends(get_db)):
         else "No matching events found in the database for these keywords."
     )
 
-    lang_instruction = (
-        "Always reply in English, regardless of what language the user writes in."
-        if req.lang == "en"
-        else "Réponds toujours en français, peu importe la langue utilisée par l'utilisateur."
-    )
+# Language rule: detect the language of the user's message and reply in
+# kind. Only English and French are supported (matches the site's
+# [lang] locales). This intentionally overrides req.lang (the current
+# UI locale) — req.lang is still useful for other templated strings,
+# but the reply language always follows what the user actually typed.
+lang_instruction = (
+    "Detect the language of the user's message below and reply entirely "
+    "in that language. If the message is in French, reply entirely in "
+    "French. If the message is in English, or in any other language, "
+    "reply entirely in English. Do not mix languages within a single "
+    "reply, and do not mention that you are detecting the language."
+)
 
     system_prompt = (
         f"{lang_instruction}\n\n"
