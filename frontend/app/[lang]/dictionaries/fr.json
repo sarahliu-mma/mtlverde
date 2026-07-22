@@ -73,6 +73,8 @@
     "lieu": "Lieu",
     "public": "Public",
     "inscription": "Inscription",
+    "clear": "Effacer",
+    "selectedCount": "{count} sélectionné(s)",
     "startDate": "Date de début",
     "endDate": "Date de fin"
   },

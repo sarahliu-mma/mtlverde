@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import Header from "./Header";
 import EventCard from "./EventCard";
+import MultiSelect from "./MultiSelect";
 import { tField } from "./eventData";
 import { useBookmarks } from "@/lib/bookmarks";
 import { API_BASE } from "@/lib/api";
@@ -19,11 +20,13 @@ const PAGE_SIZE = 24;
 
 export default function HomeClient({ dict, lang, initialEvents = [] }) {
   const [events, setEvents] = useState(initialEvents);
-  const [typeFilter, setTypeFilter] = useState(ALL);
-  const [arrFilter, setArrFilter] = useState(ALL);
+  // Multi-select filters hold an array of chosen values; [] means "no filter".
+  const [typeFilter, setTypeFilter] = useState([]);
+  const [arrFilter, setArrFilter] = useState([]);
+  const [audFilter, setAudFilter] = useState([]);
+  // Single-select filters keep the ALL sentinel.
   const [coutFilter, setCoutFilter] = useState(ALL);
   const [empFilter, setEmpFilter] = useState(ALL);
-  const [audFilter, setAudFilter] = useState(ALL);
   const [inscFilter, setInscFilter] = useState(ALL);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -60,11 +63,11 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
   // The six dropdown filters. Labels come from the dictionary; `field` maps to
   // the (French) event data keys, which are unchanged.
   const selectFilters = [
-    { label: dict.filters.type, field: "type_evenement", value: typeFilter, set: setTypeFilter },
-    { label: dict.filters.arrondissement, field: "arrondissement", value: arrFilter, set: setArrFilter },
+    { label: dict.filters.type, field: "type_evenement", value: typeFilter, set: setTypeFilter, multi: true },
+    { label: dict.filters.arrondissement, field: "arrondissement", value: arrFilter, set: setArrFilter, multi: true },
     { label: dict.filters.cout, field: "cout", value: coutFilter, set: setCoutFilter },
     { label: dict.filters.lieu, field: "emplacement", value: empFilter, set: setEmpFilter },
-    { label: dict.filters.public, field: "public_cible", value: audFilter, set: setAudFilter },
+    { label: dict.filters.public, field: "public_cible", value: audFilter, set: setAudFilter, multi: true },
     { label: dict.filters.inscription, field: "inscription", value: inscFilter, set: setInscFilter },
   ];
 
@@ -72,18 +75,23 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
   // -- not on every render. This keeps the Map from clearing and rebuilding all
   // ~3k markers when unrelated state (selected card, load-more) updates.
   const filtered = useMemo(() => {
-    const active = [
+    // Multi-select filters: an event matches if it's in the chosen set (OR
+    // within a filter). Single-select filters keep the ALL sentinel. Filters
+    // still combine with AND across fields.
+    const multi = [
       ["type_evenement", typeFilter],
       ["arrondissement", arrFilter],
+      ["public_cible", audFilter],
+    ];
+    const single = [
       ["cout", coutFilter],
       ["emplacement", empFilter],
-      ["public_cible", audFilter],
       ["inscription", inscFilter],
     ];
     return events.filter((e) => {
-      const selectMatch = active.every(
-        ([field, value]) => value === ALL || e[field] === value
-      );
+      const selectMatch =
+        multi.every(([field, values]) => values.length === 0 || values.includes(e[field])) &&
+        single.every(([field, value]) => value === ALL || e[field] === value);
       // Date bounds (ISO strings compare chronologically): keep events starting
       // on/after startDate and ending on/before endDate. Empty = no bound.
       const startMatch = !startDate || (e.date_debut && e.date_debut >= startDate);
@@ -97,7 +105,7 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
   // during render (React's "adjust state when an input changes" pattern) by
   // comparing against the previous filter signature -- avoids the extra render
   // pass an effect would cause.
-  const filterKey = [typeFilter, arrFilter, coutFilter, empFilter, audFilter, inscFilter, startDate, endDate].join("|");
+  const filterKey = JSON.stringify([typeFilter, arrFilter, coutFilter, empFilter, audFilter, inscFilter, startDate, endDate]);
   const [prevFilterKey, setPrevFilterKey] = useState(filterKey);
   if (filterKey !== prevFilterKey) {
     setPrevFilterKey(filterKey);
@@ -118,20 +126,33 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
 
         {/* Filters */}
         <div className="bg-white rounded-xl shadow p-5 mb-6 flex flex-wrap gap-6">
-          {selectFilters.map((f) => (
-            <div key={f.field}>
-              <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">{f.label}</label>
-              <select
-                className="border border-gray-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
-                value={f.value}
-                onChange={(e) => f.set(e.target.value)}
-              >
-                {options[f.field].map((o) => (
-                  <option key={o} value={o}>{o === ALL ? dict.filters.all : tField(f.field, o, lang)}</option>
-                ))}
-              </select>
-            </div>
-          ))}
+          {selectFilters.map((f) =>
+            f.multi ? (
+              <MultiSelect
+                key={f.field}
+                label={f.label}
+                field={f.field}
+                options={options[f.field].filter((o) => o !== ALL)}
+                selected={f.value}
+                onChange={f.set}
+                dict={dict}
+                lang={lang}
+              />
+            ) : (
+              <div key={f.field}>
+                <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">{f.label}</label>
+                <select
+                  className="border border-gray-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
+                  value={f.value}
+                  onChange={(e) => f.set(e.target.value)}
+                >
+                  {options[f.field].map((o) => (
+                    <option key={o} value={o}>{o === ALL ? dict.filters.all : tField(f.field, o, lang)}</option>
+                  ))}
+                </select>
+              </div>
+            )
+          )}
           <div>
             <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">{dict.filters.startDate}</label>
             <input

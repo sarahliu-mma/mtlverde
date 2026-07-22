@@ -74,6 +74,8 @@
     "lieu": "Location",
     "public": "Audience",
     "inscription": "Registration",
+    "clear": "Clear",
+    "selectedCount": "{count} selected",
     "startDate": "Start date",
     "endDate": "End date"
   },
