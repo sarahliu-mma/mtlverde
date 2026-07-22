@@ -187,7 +187,7 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
               lang={lang}
               dict={dict}
               selected={selectedId === event.id}
-              onSelect={() => setSelectedId(event.id)}
+              onSelect={() => setSelectedId((id) => (id === event.id ? null : event.id))}
               saved={isSaved(event.id)}
               onToggleSave={() => toggle(event.id)}
             />
