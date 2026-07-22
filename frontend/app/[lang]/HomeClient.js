@@ -7,7 +7,6 @@ import MultiSelect from "./MultiSelect";
 import { tField } from "./eventData";
 import { useBookmarks } from "@/lib/bookmarks";
 import { API_BASE } from "@/lib/api";
-import ChatWidget from "./ChatWidget";
 
 const Map = dynamic(() => import("./Map"), { ssr: false });
 
@@ -87,146 +86,31 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
 
   const visible = filtered.slice(0, visibleCount);
 
-  const t = (en, fr) => lang === "fr" ? fr : en;
-
-  const navItems = [
-    { label: t("Events", "Événements"),         href: `/${lang}` },
-    { label: t("Sustainability", "Durabilité"),  href: `/${lang}/sustainability`, highlight: true },
-    { label: t("Recommendations", "Suggestions"),href: `/${lang}/recommendations` },
-    { label: t("Saved", "Sauvegardés"),          href: `/${lang}/saved` },
-    { label: t("Mission", "Mission"),            href: `/${lang}/mission` },
-  ];
-
   return (
     <div className="min-h-screen bg-gray-50">
-
-      {/* ── Top navigation bar ── */}
-      <nav style={{
-        position: "sticky", top: 0, zIndex: 50,
-        background: "#1e4d2b",
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        padding: "0 24px", height: 48,
-        boxShadow: "0 1px 8px rgba(0,0,0,0.15)",
-      }}>
-        <div style={{ display: "flex", gap: 4 }}>
-          {navItems.map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              style={{
-                fontSize: 13,
-                fontWeight: item.highlight ? 800 : 500,
-                color: item.highlight ? "#fff" : "rgba(255,255,255,0.7)",
-                textDecoration: "none",
-                padding: "6px 14px",
-                borderRadius: 999,
-                background: item.highlight ? "rgba(255,255,255,0.15)" : "transparent",
-                border: item.highlight ? "1px solid rgba(255,255,255,0.3)" : "1px solid transparent",
-                transition: "all 0.2s",
-                display: "flex", alignItems: "center", gap: 5,
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = "rgba(255,255,255,0.2)";
-                e.currentTarget.style.color = "#fff";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = item.highlight ? "rgba(255,255,255,0.15)" : "transparent";
-                e.currentTarget.style.color = item.highlight ? "#fff" : "rgba(255,255,255,0.7)";
-              }}
-            >
-              {item.highlight && <span>🌿</span>}
-              {item.label}
-            </a>
-          ))}
-        </div>
-
-        {/* Language switcher */}
-        <div style={{ display: "flex", background: "rgba(255,255,255,0.12)", borderRadius: 999, padding: 2 }}>
-          {["en", "fr"].map((l) => (
-            <a
-              key={l}
-              href={`/${l}`}
-              style={{
-                display: "block",
-                background: lang === l ? "#fff" : "transparent",
-                color: lang === l ? "#1e4d2b" : "rgba(255,255,255,0.6)",
-                borderRadius: 999, padding: "3px 12px",
-                fontSize: 11, fontWeight: 800,
-                textDecoration: "none", transition: "all 0.2s",
-              }}
-            >
-              {l.toUpperCase()}
-            </a>
-          ))}
-        </div>
-      </nav>
 
       <Header dict={dict} lang={lang} subtitle={dict.header.subtitle} />
 
       {/* ── Sustainability teaser ── */}
-      <div style={{
-        position: "relative",
-        overflow: "hidden",
-        minHeight: 220,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}>
-        {/* Background nature photo */}
+      <div style={{ position:"relative", overflow:"hidden", minHeight:220, display:"flex", alignItems:"center", justifyContent:"center" }}>
         <img
           src="https://images.unsplash.com/photo-1448375240586-882707db888b?w=1400&q=80"
-          alt=""
-          aria-hidden
-          style={{
-            position: "absolute", inset: 0,
-            width: "100%", height: "100%",
-            objectFit: "cover",
-            filter: "brightness(0.45)",
-          }}
+          alt="" aria-hidden
+          style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover", filter:"brightness(0.45)" }}
         />
-        {/* Content */}
-        <div style={{
-          position: "relative", zIndex: 1,
-          textAlign: "center",
-          padding: "40px 24px",
-          maxWidth: 560,
-        }}>
-          <div style={{ fontSize: 28, marginBottom: 8 }}>🌿</div>
-          <h2 style={{
-            fontSize: "clamp(1.25rem, 3vw, 1.75rem)",
-            fontWeight: 800,
-            color: "#fff",
-            letterSpacing: "-0.02em",
-            marginBottom: 10,
-            textTransform: "uppercase",
-          }}>
+        <div style={{ position:"relative", zIndex:1, textAlign:"center", padding:"40px 24px", maxWidth:560 }}>
+          <div style={{ fontSize:28, marginBottom:8 }}>🌿</div>
+          <h2 style={{ fontSize:"clamp(1.25rem,3vw,1.75rem)", fontWeight:800, color:"#fff", letterSpacing:"-0.02em", marginBottom:10, textTransform:"uppercase" }}>
             {lang === "fr" ? "La durabilité, c'est notre objectif" : "Sustainability is our goal"}
           </h2>
-          <p style={{
-            color: "rgba(255,255,255,0.8)",
-            fontSize: 14,
-            lineHeight: 1.6,
-            marginBottom: 20,
-          }}>
+          <p style={{ color:"rgba(255,255,255,0.8)", fontSize:14, lineHeight:1.6, marginBottom:20 }}>
             {lang === "fr"
               ? "Chaque événement reçoit un score écologique basé sur son accessibilité, son empreinte carbone et plus encore."
               : "Every event gets an eco-score based on transit access, carbon footprint, and more."}
           </p>
           <a
             href={`/${lang}/sustainability`}
-            style={{
-              display: "inline-flex", alignItems: "center", gap: 6,
-              background: "#1e4d2b",
-              color: "#fff",
-              textDecoration: "none",
-              padding: "10px 22px",
-              borderRadius: 999,
-              fontSize: 13,
-              fontWeight: 700,
-              letterSpacing: "0.03em",
-              border: "1px solid rgba(255,255,255,0.25)",
-              transition: "background 0.2s",
-            }}
+            style={{ display:"inline-flex", alignItems:"center", gap:6, background:"#1e4d2b", color:"#fff", textDecoration:"none", padding:"10px 22px", borderRadius:999, fontSize:13, fontWeight:700, border:"1px solid rgba(255,255,255,0.25)" }}
           >
             {lang === "fr" ? "Voir les scores" : "Explore sustainability"} →
           </a>
@@ -321,8 +205,5 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
         )}
       </main>
     </div>
-
-      {/* ── Floating chat widget ── */}
-      <ChatWidget lang={lang} dict={dict} />
   );
 }
