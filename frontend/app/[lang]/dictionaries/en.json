@@ -22,6 +22,23 @@
     "browse": "Browse events",
     "note": "Saved on this device. Clearing your browser data will remove them."
   },
+  "auth": {
+    "logIn": "Log in",
+    "logOut": "Log out",
+    "signInTab": "Sign in",
+    "signUpTab": "Sign up",
+    "email": "Email",
+    "password": "Password",
+    "signInHeading": "Sign in",
+    "signUpHeading": "Create your account",
+    "subtitle": "Save events to your account and find them on any device.",
+    "signInAction": "Sign in",
+    "signUpAction": "Create account",
+    "toSignUp": "New here? Create an account",
+    "toSignIn": "Already have an account? Sign in",
+    "checkEmail": "Almost there — check your email to confirm your account, then sign in.",
+    "working": "Working…"
+  },
 "recommendations": {
     "title": "Recommendations — MTLVerde",
     "heading": "Find your next event",

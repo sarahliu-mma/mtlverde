@@ -22,6 +22,23 @@
     "browse": "Parcourir les événements",
     "note": "Enregistré sur cet appareil. Effacer les données du navigateur les supprimera."
   },
+  "auth": {
+    "logIn": "Connexion",
+    "logOut": "Déconnexion",
+    "signInTab": "Connexion",
+    "signUpTab": "Inscription",
+    "email": "Courriel",
+    "password": "Mot de passe",
+    "signInHeading": "Connexion",
+    "signUpHeading": "Créer votre compte",
+    "subtitle": "Enregistrez des événements dans votre compte et retrouvez-les sur tous vos appareils.",
+    "signInAction": "Se connecter",
+    "signUpAction": "Créer un compte",
+    "toSignUp": "Nouveau ? Créez un compte",
+    "toSignIn": "Vous avez déjà un compte ? Connectez-vous",
+    "checkEmail": "Presque terminé — vérifiez votre courriel pour confirmer votre compte, puis connectez-vous.",
+    "working": "Traitement…"
+  },
 "recommendations": {
     "title": "Recommandations — MTLVerde",
     "heading": "Trouvez votre prochain événement",

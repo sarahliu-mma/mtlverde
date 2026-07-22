@@ -3,6 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useBookmarks } from "@/lib/bookmarks";
+import { useAuth } from "./AuthProvider";
 import { API_BASE } from "@/lib/api";
 
 const GREEN_DARK  = "#1e4d2b";
@@ -11,6 +12,7 @@ const GREEN_LIGHT = "#e8f0e4";
 export default function Header({ dict, lang }) {
   const pathname = usePathname();
   const { ids } = useBookmarks();
+  const { user, signOut } = useAuth();
   const otherLocale = lang === "fr" ? "en" : "fr";
   const [liveCount, setLiveCount] = useState(0);
   const [scrolled, setScrolled] = useState(false);
@@ -104,32 +106,68 @@ export default function Header({ dict, lang }) {
         ))}
       </nav>
 
-      {/* EN / FR pill toggle — right */}
-      <div style={{
-        display: "flex",
-        background: scrolled ? GREEN_LIGHT : "rgba(255,255,255,0.18)",
-        borderRadius: 999,
-        padding: 3,
-        flexShrink: 0,
-      }}>
-        {["en", "fr"].map((l) => (
-          <a
-            key={l}
-            href={`/${l}${rest || ""}`}
+      {/* Auth + EN / FR pill toggle — right */}
+      <div style={{ display: "flex", alignItems: "center", gap: 14, flexShrink: 0 }}>
+        {user ? (
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <span style={{ fontSize: 13, color: linkColor, maxWidth: 150, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              {user.email}
+            </span>
+            <button
+              type="button"
+              onClick={() => signOut()}
+              style={{
+                fontSize: 12, fontWeight: 800,
+                color: scrolled ? "#fff" : GREEN_DARK,
+                background: scrolled ? GREEN_DARK : "#fff",
+                border: "none", borderRadius: 999, padding: "6px 14px",
+                cursor: "pointer", transition: "all 0.2s",
+              }}
+            >
+              {dict.auth.logOut}
+            </button>
+          </div>
+        ) : (
+          <Link
+            href={`/${lang}/login`}
             style={{
-              display: "block",
-              background: lang === l ? (scrolled ? GREEN_DARK : "#fff") : "transparent",
-              color: lang === l ? (scrolled ? "#fff" : GREEN_DARK) : (scrolled ? "#666" : "rgba(255,255,255,0.75)"),
-              borderRadius: 999,
-              padding: "5px 14px",
-              fontSize: 12, fontWeight: 800,
-              textDecoration: "none",
+              fontSize: 12, fontWeight: 800, textDecoration: "none",
+              color: scrolled ? "#fff" : GREEN_DARK,
+              background: scrolled ? GREEN_DARK : "#fff",
+              borderRadius: 999, padding: "6px 14px",
               transition: "all 0.2s",
             }}
           >
-            {l.toUpperCase()}
-          </a>
-        ))}
+            {dict.auth.logIn}
+          </Link>
+        )}
+
+        {/* EN / FR pill toggle */}
+        <div style={{
+          display: "flex",
+          background: scrolled ? GREEN_LIGHT : "rgba(255,255,255,0.18)",
+          borderRadius: 999,
+          padding: 3,
+        }}>
+          {["en", "fr"].map((l) => (
+            <a
+              key={l}
+              href={`/${l}${rest || ""}`}
+              style={{
+                display: "block",
+                background: lang === l ? (scrolled ? GREEN_DARK : "#fff") : "transparent",
+                color: lang === l ? (scrolled ? "#fff" : GREEN_DARK) : (scrolled ? "#666" : "rgba(255,255,255,0.75)"),
+                borderRadius: 999,
+                padding: "5px 14px",
+                fontSize: 12, fontWeight: 800,
+                textDecoration: "none",
+                transition: "all 0.2s",
+              }}
+            >
+              {l.toUpperCase()}
+            </a>
+          ))}
+        </div>
       </div>
 
     </header>
