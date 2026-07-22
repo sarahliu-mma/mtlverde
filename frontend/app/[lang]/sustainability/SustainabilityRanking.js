@@ -79,8 +79,8 @@ export default function SustainabilityRanking({ dict, lang }) {
                 onClick={() => setOpenId(open ? null : event.id)}
                 aria-expanded={open}
                 style={{ width: "100%", textAlign: "left", padding: "18px 22px", display: "flex", alignItems: "center", gap: 16, background: "none", border: "none", cursor: "pointer", transition: "background 0.15s" }}
-                onMouseEnter={e => e.currentTarget.style.background = CREAM}
-                onMouseLeave={e => e.currentTarget.style.background = "none"}
+                onMouseEnter={e => { e.currentTarget.style.background = CREAM; }}
+                onMouseLeave={e => { e.currentTarget.style.background = "none"; }}
               >
                 {/* Rank */}
                 <span style={{ fontSize: 12, fontFamily: "monospace", color: "#ccc", width: 28, flexShrink: 0, textAlign: "right" }}>{i + 1}</span>
