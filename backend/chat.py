@@ -28,6 +28,7 @@ class ChatRequest(BaseModel):
 
 class ChatResponse(BaseModel):
     reply: str
+    events: list[dict] = []
 
 
 def extract_keywords(message: str):
@@ -87,6 +88,34 @@ def format_events_for_prompt(events):
     return "\n".join(lines)
 
 
+# Serializes an event to the same shape EventCard.js expects (matches
+# recommendations.py's _serialize), so chat replies can render real cards.
+def _serialize_event(item):
+    return {
+        "id": item.id,
+        "titre": getattr(item, "titre", None),
+        "titre_en": getattr(item, "titre_en", None),
+        "description": getattr(item, "description", None),
+        "description_en": getattr(item, "description_en", None),
+        "type_evenement": getattr(item, "type_evenement", None),
+        "public_cible": getattr(item, "public_cible", None),
+        "cout": getattr(item, "cout", None),
+        "inscription": getattr(item, "inscription", None),
+        "emplacement": getattr(item, "emplacement", None),
+        "date_debut": getattr(item, "date_debut", None),
+        "date_fin": getattr(item, "date_fin", None),
+        "arrondissement": getattr(item, "arrondissement", None),
+        "url_fiche": getattr(item, "url_fiche", None),
+        "eco_flag": getattr(item, "eco_flag", None),
+        "sustainability_score": getattr(item, "sustainability_score", None),
+        "badge": getattr(item, "badge", None),
+        "badge_icon": getattr(item, "badge_icon", None),
+        "wheelchair_metro_accessible": getattr(item, "wheelchair_metro_accessible", None),
+        "lat": getattr(item, "lat", None),
+        "long": getattr(item, "long", None),
+    }
+
+
 @router.post("/chat", response_model=ChatResponse)
 def chat(req: ChatRequest, db: Session = Depends(get_db)):
     keywords = extract_keywords(req.message)
@@ -110,9 +139,11 @@ def chat(req: ChatRequest, db: Session = Depends(get_db)):
         "listed below to make recommendations. Do NOT use any outside knowledge "
         "about festivals, venues, or events, even ones you are confident exist. "
         "If none of the listed events fit the user's request, say so honestly "
-        "and do not suggest anything not in the list. When you recomend a "
-        "specific event, include its id in the format [id: EVENT_ID] so the app "
-        "can render an event card.\n\n"
+        "and do not suggest anything not in the list. When you recommend a "
+        "specific event, mention its name and a brief one-line reason it fits, "
+        "then include its id in the format [id: EVENT_ID] on its own — the app "
+        "renders a full card with the date, location, cost, and description "
+        "automatically, so do NOT repeat those details in your text.\n\n"
         f"Available events matching this query:\n{events_context}"
     )
 
@@ -123,4 +154,5 @@ def chat(req: ChatRequest, db: Session = Depends(get_db)):
         messages=[{"role": "user", "content": req.message}],
     )
     reply_text = response.content[0].text
-    return ChatResponse(reply=reply_text)
+    serialized_events = [_serialize_event(e) for e in events]
+    return ChatResponse(reply=reply_text, events=serialized_events)
