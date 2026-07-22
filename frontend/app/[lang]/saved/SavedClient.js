@@ -4,6 +4,7 @@ import Link from "next/link";
 import Header from "../Header";
 import EventCard from "../EventCard";
 import { useBookmarks } from "@/lib/bookmarks";
+import { useAuth } from "../AuthProvider";
 import { API_BASE } from "@/lib/api";
 
 const PINE  = "#1a2e1a";
@@ -37,6 +38,7 @@ export default function SavedClient({ dict, lang }) {
   const [events, setEvents] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const { isSaved, toggle, count } = useBookmarks();
+  const { user } = useAuth();
 
   useEffect(() => {
     fetch(`${API_BASE}/events/all`)
@@ -185,7 +187,7 @@ export default function SavedClient({ dict, lang }) {
             </div>
 
             <p style={{ fontSize: 11, color: "#bbb", textAlign: "center", marginTop: 48, lineHeight: 1.8 }}>
-              {dict.saved.note}
+              {user ? dict.saved.noteAccount : dict.saved.note}
             </p>
           </>
         )}

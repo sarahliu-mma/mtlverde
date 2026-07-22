@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import "../globals.css";
 import { getDictionary, hasLocale, locales } from "./dictionaries";
 import { AuthProvider } from "./AuthProvider";
+import { BookmarksProvider } from "@/lib/bookmarks";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,8 +42,10 @@ export default async function RootLayout({ children, params }) {
     <html lang={lang}>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
   <AuthProvider>
-    {children}
-    <ChatWidget lang={lang} dict={dict} />
+    <BookmarksProvider>
+      {children}
+      <ChatWidget lang={lang} dict={dict} />
+    </BookmarksProvider>
   </AuthProvider>
 </body>
     </html>

@@ -20,7 +20,8 @@
     "empty": "No saved events yet",
     "emptyHint": "Tap the heart on any event to save it here. Your picks stay in this browser, ready when you come back.",
     "browse": "Browse events",
-    "note": "Saved on this device. Clearing your browser data will remove them."
+    "note": "Saved on this device. Clearing your browser data will remove them.",
+    "noteAccount": "Saved to your account — available on any device you sign in on."
   },
   "auth": {
     "logIn": "Log in",

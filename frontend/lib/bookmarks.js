@@ -1,28 +1,27 @@
 "use client";
-import { useCallback, useSyncExternalStore } from "react";
+import { createContext, useCallback, useContext, useEffect, useState, useSyncExternalStore } from "react";
+import { useAuth } from "@/app/[lang]/AuthProvider";
+import { supabase } from "@/lib/supabase";
 
-// Guest bookmarks: hearted event ids kept in the browser's localStorage, no
-// account or backend required. We store only ids (not whole events), so the
-// saved page intersects them against the live feed -- an event the city drops
-// simply stops appearing rather than lingering as a stale snapshot.
+// Event bookmarks with two backends behind one interface:
+//   - guest (signed out): hearted event ids in the browser's localStorage
+//   - signed in: rows in the Supabase `bookmarks` table (synced across devices)
+// A single BookmarksProvider holds the active source so every consumer (header
+// count, event cards, saved page) stays in sync. Only event ids are stored, so
+// the saved page can intersect them against the live feed and drop removed events.
+
 const KEY = "mtlverde:bookmarks";
-
-// The native "storage" event only fires in *other* tabs, so we also dispatch
-// this custom event to keep hooks in the *current* tab (cards + header count +
-// saved page) in sync after a toggle.
+// The native "storage" event only fires in *other* tabs; this custom event keeps
+// the current tab's guest reader in sync after a write.
 const CHANGED = "mtlverde:bookmarks-changed";
-
-// Stable empty reference for the server snapshot and the parse-failure case, so
-// useSyncExternalStore never sees a brand-new array when nothing has changed.
+// Stable empty reference so useSyncExternalStore never sees a fresh array when
+// nothing changed.
 const EMPTY = [];
 
 // getSnapshot must return a cached reference until the stored value actually
-// changes; parsing on every call would hand React a fresh array each render and
-// trip its "getSnapshot should be cached" infinite loop. We memoize on the raw
-// string and only reparse when it differs.
+// changes, or React's useSyncExternalStore loops. Memoize on the raw string.
 let cache = { raw: null, ids: EMPTY };
-
-function getSnapshot() {
+function guestSnapshot() {
   const raw = localStorage.getItem(KEY);
   if (raw !== cache.raw) {
     let ids = EMPTY;
@@ -36,12 +35,10 @@ function getSnapshot() {
   }
   return cache.ids;
 }
-
-function getServerSnapshot() {
+function guestServerSnapshot() {
   return EMPTY;
 }
-
-function subscribe(callback) {
+function guestSubscribe(callback) {
   window.addEventListener("storage", callback);
   window.addEventListener(CHANGED, callback);
   return () => {
@@ -49,22 +46,102 @@ function subscribe(callback) {
     window.removeEventListener(CHANGED, callback);
   };
 }
+function writeGuest(ids) {
+  localStorage.setItem(KEY, JSON.stringify(ids));
+  window.dispatchEvent(new Event(CHANGED));
+}
 
-export function useBookmarks() {
-  const ids = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+// Exposed for the merge-on-sign-in step.
+export function readGuestIds() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(KEY));
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+export function clearGuestIds() {
+  localStorage.removeItem(KEY);
+  window.dispatchEvent(new Event(CHANGED));
+}
 
-  const toggle = useCallback((id) => {
-    if (id == null) return;
-    const key = String(id);
-    const next = getSnapshot().slice();
-    const at = next.indexOf(key);
-    if (at === -1) next.push(key);
-    else next.splice(at, 1);
-    localStorage.setItem(KEY, JSON.stringify(next));
-    window.dispatchEvent(new Event(CHANGED));
-  }, []);
+const BookmarksContext = createContext({
+  ids: EMPTY,
+  count: 0,
+  toggle: () => {},
+  isSaved: () => false,
+});
+
+export function BookmarksProvider({ children }) {
+  const { user } = useAuth();
+  const guestIds = useSyncExternalStore(guestSubscribe, guestSnapshot, guestServerSnapshot);
+  const [accountIds, setAccountIds] = useState(EMPTY);
+
+  // On sign-in: merge any guest (localStorage) bookmarks into the account, then
+  // load this user's bookmarks from Supabase. RLS scopes the query to their own
+  // rows. State is only written in the async callback, so nothing is set
+  // synchronously in the effect.
+  useEffect(() => {
+    if (!user) return;
+    let cancelled = false;
+    (async () => {
+      // Carry a guest's saved events into their account, then clear the local
+      // copy so it doesn't linger. ignoreDuplicates makes events already in the
+      // account a no-op. Only clear if the merge succeeded, to avoid data loss.
+      const guest = readGuestIds();
+      if (guest.length) {
+        const { error } = await supabase
+          .from("bookmarks")
+          .upsert(
+            guest.map((event_id) => ({ user_id: user.id, event_id })),
+            { onConflict: "user_id,event_id", ignoreDuplicates: true },
+          );
+        if (!error) clearGuestIds();
+      }
+      const { data } = await supabase.from("bookmarks").select("event_id");
+      if (!cancelled) setAccountIds((data ?? []).map((row) => row.event_id));
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
+
+  const ids = user ? accountIds : guestIds;
+
+  const toggle = useCallback(
+    (id) => {
+      if (id == null) return;
+      const key = String(id);
+
+      if (user) {
+        const saved = accountIds.includes(key);
+        // Optimistic update, reverted if the write fails.
+        setAccountIds((prev) => (saved ? prev.filter((x) => x !== key) : [...prev, key]));
+        const request = saved
+          ? supabase.from("bookmarks").delete().eq("user_id", user.id).eq("event_id", key)
+          : supabase.from("bookmarks").insert({ user_id: user.id, event_id: key });
+        request.then(({ error }) => {
+          if (error) {
+            setAccountIds((prev) => (saved ? [...prev, key] : prev.filter((x) => x !== key)));
+          }
+        });
+      } else {
+        const current = guestSnapshot();
+        writeGuest(current.includes(key) ? current.filter((x) => x !== key) : [...current, key]);
+      }
+    },
+    [user, accountIds],
+  );
 
   const isSaved = useCallback((id) => ids.includes(String(id)), [ids]);
 
-  return { ids, count: ids.length, toggle, isSaved };
+  return (
+    <BookmarksContext.Provider value={{ ids, count: ids.length, toggle, isSaved }}>
+      {children}
+    </BookmarksContext.Provider>
+  );
+}
+
+export function useBookmarks() {
+  return useContext(BookmarksContext);
 }
