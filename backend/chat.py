@@ -139,7 +139,7 @@ lang_instruction = (
     "reply, and do not mention that you are detecting the language."
 )
 
-    system_prompt = (
+system_prompt = (
         f"{lang_instruction}\n\n"
         "You are the event recommendation assistant for MTLVerde, a bilingual "
         "website that helps people discover free and low-cost community events "
