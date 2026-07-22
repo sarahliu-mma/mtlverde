@@ -14,8 +14,8 @@ export default function Collapsible({ title, children, defaultOpen = false }) {
         onClick={() => setOpen(!open)}
         aria-expanded={open}
         style={{ width: "100%", textAlign: "left", padding: "18px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, background: "none", border: "none", cursor: "pointer", transition: "background 0.15s" }}
-        onMouseEnter={e => e.currentTarget.style.background = CREAM}
-        onMouseLeave={e => e.currentTarget.style.background = "none"}
+        onMouseEnter={e => { e.currentTarget.style.background = CREAM; }}
+        onMouseLeave={e => { e.currentTarget.style.background = "none"; }}
       >
         <span style={{ fontSize: 16, fontWeight: 700, color: PINE }}>{title}</span>
         <span
