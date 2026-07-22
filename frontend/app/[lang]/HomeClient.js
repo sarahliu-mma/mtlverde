@@ -8,7 +8,6 @@ const Map = dynamic(() => import("./Map"), { ssr: false });
 
 const ALL = "Tous";
 
-// Palette
 const GREEN_DARK  = "#1e4d2b";
 const GREEN_MID   = "#6a9e5a";
 const GREEN_LIGHT = "#e8f0e4";
@@ -17,7 +16,6 @@ const RED_LIGHT   = "#fdf0ee";
 const CREAM       = "#f9f6f1";
 const DARK        = "#111";
 
-// Montreal photos by event type
 const EVENT_PHOTOS = {
   "Musique":                        "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=120&q=80",
   "Initiation à la musique":        "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=120&q=80",
@@ -60,6 +58,19 @@ const PURPOSE = [
   { img: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800&q=85", title: { en: "Built for You",       fr: "Personnalisé pour vous" }, desc: { en: "Filter by type, date, audience, and cost to find your perfect fit.", fr: "Filtrez par type, date, public et coût pour trouver votre événement idéal." } },
 ];
 
+const DICT = {
+  en: {
+    nav: { events: "Events", mission: "Our Mission", sustainability: "Sustainability", saved: "Saved", recommendations: "Recommendations" },
+    lang: { label: "Switch to French", switchTo: "FR" },
+    header: { brand: "MTLVerde" },
+  },
+  fr: {
+    nav: { events: "Événements", mission: "Notre mission", sustainability: "Durabilité", saved: "Sauvegardés", recommendations: "Suggestions" },
+    lang: { label: "Switch to English", switchTo: "EN" },
+    header: { brand: "MTLVerde" },
+  },
+};
+
 export default function HomeClient({ dict, lang }) {
   const [events, setEvents]         = useState([]);
   const [typeFilter, setTypeFilter] = useState(ALL);
@@ -73,8 +84,6 @@ export default function HomeClient({ dict, lang }) {
   const [showEvents, setShowEvents] = useState(false);
   const [email, setEmail]           = useState("");
   const [subscribed, setSubscribed] = useState(false);
-  const [scrolled, setScrolled]     = useState(false);
-  const [menuOpen, setMenuOpen]     = useState(false);
 
   const eventsRef     = useRef(null);
   const purposeRef    = useRef(null);
@@ -87,24 +96,18 @@ export default function HomeClient({ dict, lang }) {
       .then((data) => setEvents(data));
   }, []);
 
-  useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 60);
-    window.addEventListener("scroll", fn);
-    return () => window.removeEventListener("scroll", fn);
-  }, []);
-
-  const scrollTo = (ref) => { ref.current?.scrollIntoView({ behavior: "smooth" }); setMenuOpen(false); };
+  const scrollTo = (ref) => { ref.current?.scrollIntoView({ behavior: "smooth" }); };
 
   const optionsFor = (field) =>
     [ALL, ...[...new Set(events.map((e) => e[field]).filter(Boolean))].sort()];
 
   const selectFilters = [
-    { label: dict.filters.type,           field: "type_evenement", value: typeFilter,  set: setTypeFilter  },
-    { label: dict.filters.arrondissement, field: "arrondissement",  value: arrFilter,   set: setArrFilter   },
-    { label: dict.filters.cout,           field: "cout",            value: coutFilter,  set: setCoutFilter  },
-    { label: dict.filters.lieu,           field: "emplacement",     value: empFilter,   set: setEmpFilter   },
-    { label: dict.filters.public,         field: "public_cible",    value: audFilter,   set: setAudFilter   },
-    { label: dict.filters.inscription,    field: "inscription",     value: inscFilter,  set: setInscFilter  },
+    { label: (dict || DICT[lang]).filters?.type           || "Type",           field: "type_evenement", value: typeFilter,  set: setTypeFilter  },
+    { label: (dict || DICT[lang]).filters?.arrondissement || "Arrondissement", field: "arrondissement",  value: arrFilter,   set: setArrFilter   },
+    { label: (dict || DICT[lang]).filters?.cout           || "Cost",           field: "cout",            value: coutFilter,  set: setCoutFilter  },
+    { label: (dict || DICT[lang]).filters?.lieu           || "Location",       field: "emplacement",     value: empFilter,   set: setEmpFilter   },
+    { label: (dict || DICT[lang]).filters?.public         || "Audience",       field: "public_cible",    value: audFilter,   set: setAudFilter   },
+    { label: (dict || DICT[lang]).filters?.inscription    || "Registration",   field: "inscription",     value: inscFilter,  set: setInscFilter  },
   ];
 
   const filtered = events.filter((e) => {
@@ -115,30 +118,14 @@ export default function HomeClient({ dict, lang }) {
   });
 
   const t = (en, fr) => lang === "fr" ? fr : en;
-
-  const navLinks = [
-    { label: t("Our Purpose",    "Notre mission"),  action: () => scrollTo(purposeRef) },
-    { label: t("Our Mission",    "Notre mission"),  action: () => { window.location.href = `/${lang}/mission`; } },
-    { label: t("Sustainability", "Durabilité"),     action: () => { window.location.href = `/${lang}/sustainability`; } },
-    { label: t("Events",         "Événements"),     action: () => { setShowEvents(true); setTimeout(() => scrollTo(eventsRef), 80); } },
-    { label: t("About the Team", "L'équipe"),       action: () => scrollTo(teamRef) },
-    { label: t("Saved",          "Sauvegardés"),    action: () => { window.location.href = `/${lang}/saved`; } },
-    { label: t("Newsletter",     "Infolettre"),     action: () => scrollTo(newsletterRef) },
-    { label: t("Ask MTLVerde",   "Ask MTLVerde"),   action: () => { window.location.href = `/${lang}/ask`; } },
-    { label: t("Contact Us",     "Nous joindre"),   action: () => { window.location.href = "mailto:mtlverde@gmail.com"; } },
-  ];
+  const headerDict = dict || DICT[lang];
 
   return (
     <div style={{ fontFamily: "'DM Sans','Inter',sans-serif", background: "#fff", color: DARK, margin: 0, padding: 0 }}>
 
       <style>{`
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        .nav-links { display: flex; align-items: center; gap: 28px; }
-        .hamburger { display: none; }
-        .mobile-menu { display: none; }
-        .hero h1 { font-size: clamp(40px, 7vw, 80px); }
         .section-pad { padding: 100px 48px; }
-        .purpose-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; }
         .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 32px; }
         .events-preview { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 28px; margin-bottom: 48px; }
         .filters-wrap { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-end; }
@@ -154,15 +141,7 @@ export default function HomeClient({ dict, lang }) {
         .badge-purple { background: #f3e8ff; color: #6b21a8; }
         .badge-pink  { background: #fce7f3; color: #9d174d; }
         @media (max-width: 768px) {
-          .nav-links { display: none; }
-          .hamburger { display: flex; flex-direction: column; gap: 5px; cursor: pointer; padding: 8px; background: none; border: none; }
-          .hamburger span { display: block; width: 22px; height: 2px; transition: all 0.3s; border-radius: 2px; }
-          .mobile-menu { display: flex; flex-direction: column; position: fixed; top: 68px; left: 0; right: 0; background: white; padding: 24px 28px; gap: 4px; z-index: 99; box-shadow: 0 8px 32px rgba(0,0,0,0.12); border-top: 1px solid #f0f0f0; }
-          .mobile-menu.closed { display: none; }
-          .mobile-menu button { text-align: left; padding: 14px 0; font-size: 16px; font-weight: 600; color: #111; background: none; border: none; border-bottom: 1px solid #f5f5f5; cursor: pointer; }
-          .hero h1 { font-size: clamp(36px, 10vw, 56px); }
           .section-pad { padding: 64px 24px; }
-          .purpose-grid { grid-template-columns: 1fr; }
           .team-grid { grid-template-columns: repeat(2, 1fr); gap: 24px; }
           .events-preview { grid-template-columns: 1fr; }
           .filters-wrap > div { width: 100%; }
@@ -179,71 +158,11 @@ export default function HomeClient({ dict, lang }) {
         }
       `}</style>
 
-      {/* ── NAV ── */}
-      <nav style={{
-        position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        padding: "0 32px", height: 68,
-        background: scrolled ? "rgba(255,255,255,0.97)" : "transparent",
-        backdropFilter: scrolled ? "blur(16px)" : "none",
-        borderBottom: scrolled ? `1px solid ${GREEN_LIGHT}` : "none",
-        transition: "all 0.35s ease",
-      }}>
-        <img src="/MTLVerde_Logo.png" alt="MTLVerde"
-          style={{ height: 90, filter: scrolled ? "none" : "brightness(10)", cursor: "pointer" }}
-          onError={(e) => { e.currentTarget.style.display = "none"; }} />
-
-        <div className="nav-links">
-          {navLinks.map((item) => (
-            <button key={item.label} onClick={item.action} style={{
-              background: "none", border: "none", cursor: "pointer",
-              fontSize: 14, fontWeight: 500, padding: "4px 0",
-              color: scrolled ? "#333" : "rgba(255,255,255,0.92)", transition: "color 0.2s",
-            }}
-              onMouseEnter={e => e.currentTarget.style.color = scrolled ? GREEN_DARK : "#fff"}
-              onMouseLeave={e => e.currentTarget.style.color = scrolled ? "#333" : "rgba(255,255,255,0.92)"}>
-              {item.label}
-            </button>
-          ))}
-
-          <div style={{ display: "flex", background: scrolled ? GREEN_LIGHT : "rgba(255,255,255,0.18)", borderRadius: 999, padding: 3 }}>
-            {["en", "fr"].map((l) => (
-              <a key={l} href={`/${l}`} style={{
-                display: "block",
-                background: lang === l ? (scrolled ? GREEN_DARK : "#fff") : "transparent",
-                color: lang === l ? (scrolled ? "#fff" : GREEN_DARK) : (scrolled ? "#666" : "rgba(255,255,255,0.75)"),
-                borderRadius: 999, padding: "5px 14px", fontSize: 12, fontWeight: 800,
-                textDecoration: "none", transition: "all 0.2s",
-              }}>{l.toUpperCase()}</a>
-            ))}
-          </div>
-        </div>
-
-        <button className="hamburger" onClick={() => setMenuOpen(!menuOpen)}>
-          <span style={{ transform: menuOpen ? "rotate(45deg) translate(5px, 5px)" : "none", background: scrolled ? "#111" : "#fff" }} />
-          <span style={{ opacity: menuOpen ? 0 : 1, background: scrolled ? "#111" : "#fff" }} />
-          <span style={{ transform: menuOpen ? "rotate(-45deg) translate(5px, -5px)" : "none", background: scrolled ? "#111" : "#fff" }} />
-        </button>
-      </nav>
-
-      <div className={`mobile-menu${menuOpen ? "" : " closed"}`}>
-        {navLinks.map((item) => (
-          <button key={item.label} onClick={item.action}>{item.label}</button>
-        ))}
-        <div style={{ display: "flex", gap: 8, paddingTop: 16 }}>
-          {["en", "fr"].map((l) => (
-            <a key={l} href={`/${l}`} style={{
-              background: lang === l ? GREEN_DARK : GREEN_LIGHT,
-              color: lang === l ? "#fff" : GREEN_DARK,
-              borderRadius: 999, padding: "8px 20px",
-              fontSize: 13, fontWeight: 800, textDecoration: "none",
-            }}>{l.toUpperCase()}</a>
-          ))}
-        </div>
-      </div>
+      {/* ── HEADER ── */}
+      <Header dict={headerDict} lang={lang} />
 
       {/* ── HERO ── */}
-      <section className="hero" style={{ position: "relative", height: "100vh", minHeight: 600, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <section style={{ position: "relative", height: "100vh", minHeight: 600, display: "flex", alignItems: "center", justifyContent: "center" }}>
         <img src="https://images.unsplash.com/photo-1445296608114-4b8fabe48256?w=1800&q=90" alt="Montreal"
           style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
         <div style={{ position: "absolute", inset: 0, background: `linear-gradient(135deg, rgba(30,77,43,0.85) 0%, rgba(0,0,0,0.45) 50%, rgba(181,40,28,0.38) 100%)` }} />
@@ -463,7 +382,7 @@ export default function HomeClient({ dict, lang }) {
           ) : (
             <>
               <div style={{ borderRadius: 20, overflow: "hidden", boxShadow: "0 4px 24px rgba(0,0,0,0.10)", marginBottom: 32, border: `1px solid ${GREEN_LIGHT}` }}>
-                <Map events={filtered} lang={lang} readMoreLabel={dict.event?.readMore || "Read more"} />
+                <Map events={filtered} lang={lang} readMoreLabel={(dict || DICT[lang]).event?.readMore || "Read more"} />
               </div>
 
               <div className="filters-wrap" style={{ background: CREAM, borderRadius: 16, padding: "24px 28px", marginBottom: 28 }}>
@@ -473,20 +392,20 @@ export default function HomeClient({ dict, lang }) {
                     <select style={{ border: `1.5px solid ${GREEN_LIGHT}`, borderRadius: 10, padding: "9px 14px", fontSize: 13, background: "#fff", cursor: "pointer", color: DARK }}
                       value={f.value} onChange={(e) => f.set(e.target.value)}>
                       {optionsFor(f.field).map((o) => (
-                        <option key={o} value={o}>{o === ALL ? dict.filters.all : tField(f.field, o, lang)}</option>
+                        <option key={o} value={o}>{o === ALL ? ((dict || DICT[lang]).filters?.all || "All") : tField(f.field, o, lang)}</option>
                       ))}
                     </select>
                   </div>
                 ))}
                 <div>
-                  <label style={{ display: "block", fontSize: 10, fontWeight: 800, color: "#999", textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 7 }}>{dict.filters.startDate}</label>
+                  <label style={{ display: "block", fontSize: 10, fontWeight: 800, color: "#999", textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 7 }}>{(dict || DICT[lang]).filters?.startDate || "Start date"}</label>
                   <input type="date" style={{ border: `1.5px solid ${GREEN_LIGHT}`, borderRadius: 10, padding: "9px 14px", fontSize: 13, color: DARK }} value={startDate} onChange={(e) => setStartDate(e.target.value)} />
                 </div>
                 <div>
-                  <label style={{ display: "block", fontSize: 10, fontWeight: 800, color: "#999", textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 7 }}>{dict.filters.endDate}</label>
+                  <label style={{ display: "block", fontSize: 10, fontWeight: 800, color: "#999", textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 7 }}>{(dict || DICT[lang]).filters?.endDate || "End date"}</label>
                   <input type="date" style={{ border: `1.5px solid ${GREEN_LIGHT}`, borderRadius: 10, padding: "9px 14px", fontSize: 13, color: DARK }} value={endDate} onChange={(e) => setEndDate(e.target.value)} />
                 </div>
-                <p style={{ fontSize: 13, color: "#aaa" }}>{dict.results.count.replace("{count}", filtered.length)}</p>
+                <p style={{ fontSize: 13, color: "#aaa" }}>{(dict || DICT[lang]).results?.count?.replace("{count}", filtered.length) || `${filtered.length} events`}</p>
               </div>
 
               <div style={{ display: "grid", gap: 12 }}>
@@ -507,7 +426,7 @@ export default function HomeClient({ dict, lang }) {
                             style={{ fontSize: 12, fontWeight: 700, color: GREEN_DARK, textDecoration: "none" }}
                             onMouseEnter={e => e.currentTarget.style.textDecoration = "underline"}
                             onMouseLeave={e => e.currentTarget.style.textDecoration = "none"}>
-                            {dict.event?.readMore || "Read more"} →
+                            {(dict || DICT[lang]).event?.readMore || "Read more"} →
                           </a>
                         )}
                       </div>
