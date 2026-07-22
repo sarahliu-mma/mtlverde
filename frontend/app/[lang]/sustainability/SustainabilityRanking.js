@@ -1,157 +1,153 @@
 "use client";
-
 // frontend/app/[lang]/sustainability/SustainabilityRanking.js
-//
-// Ranks every event by sustainability score (highest first) and shows the
-// score breakdown per event on click. Interactive, so it's a client component.
-// Reuses the same /events/all feed the home map uses; sorting and paging happen
-// in the browser (the feed is already loaded once, so no extra backend work).
-
 import { useEffect, useMemo, useState } from "react";
 import { API_BASE } from "@/lib/api";
 import { eventTitle, tField } from "../eventData";
 
-// Map the English badge value on the event to a dictionary key (name is
-// translated; the leaf icon comes straight from the event).
+const PINE  = "#1a2e1a";
+const MOSS  = "#3d5a3e";
+const SAGE  = "#7a9e7e";
+const STONE = "#c8b89a";
+const CREAM = "#f5f0e8";
+const WHITE = "#ffffff";
+
 const BADGE_KEY = {
   "Green Leader": "greenLeader",
   "Eco-Friendly": "ecoFriendly",
   "Getting There": "gettingThere",
 };
 
-// Max points per component, so each bar fills relative to its own ceiling.
+const BADGE_STYLE = {
+  "Green Leader": { bg: "#d4e8d4", color: MOSS  },
+  "Eco-Friendly": { bg: "#e8f0e4", color: "#4a7a4a" },
+  "Getting There": { bg: "#f0e8dc", color: "#7a5a2a" },
+};
+
 const COMPONENTS = [
   { key: "transit_access", max: 45, labelKey: "transitLabel", fallback: "Transit access" },
-  { key: "walkin_access", max: 35, labelKey: "walkinLabel", fallback: "Walk-in access" },
-  { key: "outdoor_green", max: 20, labelKey: "outdoorLabel", fallback: "Outdoor venue" },
+  { key: "walkin_access",  max: 35, labelKey: "walkinLabel",  fallback: "Walk-in access" },
+  { key: "outdoor_green",  max: 20, labelKey: "outdoorLabel", fallback: "Outdoor venue"  },
 ];
 
 const PAGE_SIZE = 50;
 
 export default function SustainabilityRanking({ dict, lang }) {
-  const [events, setEvents] = useState([]);
+  const [events, setEvents]   = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [error, setError]     = useState(false);
   const [visible, setVisible] = useState(PAGE_SIZE);
-  const [openId, setOpenId] = useState(null);
+  const [openId, setOpenId]   = useState(null);
 
   useEffect(() => {
     let cancelled = false;
     fetch(`${API_BASE}/events/all`)
-      .then((res) => res.json())
-      .then((data) => {
+      .then(res => res.json())
+      .then(data => {
         if (cancelled) return;
-        // Keep only scored events, then sort by score descending (nulls out).
         const scored = (Array.isArray(data) ? data : []).filter(
-          (e) => typeof e.sustainability_score === "number"
+          e => typeof e.sustainability_score === "number"
         );
         scored.sort((a, b) => b.sustainability_score - a.sustainability_score);
         setEvents(scored);
         setLoading(false);
       })
-      .catch(() => {
-        if (!cancelled) {
-          setError(true);
-          setLoading(false);
-        }
-      });
-    return () => {
-      cancelled = true;
-    };
+      .catch(() => { if (!cancelled) { setError(true); setLoading(false); } });
+    return () => { cancelled = true; };
   }, []);
 
   const shown = useMemo(() => events.slice(0, visible), [events, visible]);
   const b = dict.badge ?? {};
   const s = dict.sustainability ?? {};
 
-  if (loading) return <p className="text-gray-500 mt-6">{s.rankingLoading ?? "Loading ranking…"}</p>;
-  if (error) return <p className="text-gray-500 mt-6">{s.rankingError ?? "Couldn't load events right now."}</p>;
-  if (events.length === 0) return <p className="text-gray-500 mt-6">{s.rankingEmpty ?? "No scored events yet."}</p>;
+  if (loading) return <p style={{ color: "#bbb", marginTop: 24, fontSize: 14 }}>{s.rankingLoading ?? "Loading ranking…"}</p>;
+  if (error)   return <p style={{ color: "#bbb", marginTop: 24, fontSize: 14 }}>{s.rankingError ?? "Couldn't load events right now."}</p>;
+  if (events.length === 0) return <p style={{ color: "#bbb", marginTop: 24, fontSize: 14 }}>{s.rankingEmpty ?? "No scored events yet."}</p>;
 
   return (
-    <div className="mt-6">
-      <ol className="grid gap-3">
+    <div style={{ marginTop: 8 }}>
+      <ol style={{ display: "grid", gap: 10, listStyle: "none", padding: 0, margin: 0 }}>
         {shown.map((event, i) => {
-          const rank = i + 1;
-          const open = openId === event.id;
-          const badgeName = b[BADGE_KEY[event.badge]] ?? event.badge;
-          const breakdown = event.score_breakdown || {};
+          const open       = openId === event.id;
+          const badgeName  = b[BADGE_KEY[event.badge]] ?? event.badge;
+          const badgeStyle = BADGE_STYLE[event.badge] ?? { bg: "#eee", color: "#666" };
+          const breakdown  = event.score_breakdown || {};
+
           return (
-            <li key={event.id} className="bg-white rounded-xl shadow-sm overflow-hidden">
+            <li key={event.id} style={{ background: WHITE, borderRadius: 18, overflow: "hidden", border: "1px solid rgba(0,0,0,0.06)" }}>
               <button
                 type="button"
                 onClick={() => setOpenId(open ? null : event.id)}
                 aria-expanded={open}
-                className="w-full text-left px-5 py-4 flex items-center gap-4 hover:bg-gray-50 transition"
+                style={{ width: "100%", textAlign: "left", padding: "18px 22px", display: "flex", alignItems: "center", gap: 16, background: "none", border: "none", cursor: "pointer", transition: "background 0.15s" }}
+                onMouseEnter={e => e.currentTarget.style.background = CREAM}
+                onMouseLeave={e => e.currentTarget.style.background = "none"}
               >
-                <span className="text-sm font-mono text-gray-400 w-8 shrink-0">{rank}</span>
-                <span className="flex-1 min-w-0">
-                  <span className="block font-semibold text-gray-800 truncate">
+                {/* Rank */}
+                <span style={{ fontSize: 12, fontFamily: "monospace", color: "#ccc", width: 28, flexShrink: 0, textAlign: "right" }}>{i + 1}</span>
+
+                {/* Title + badges */}
+                <span style={{ flex: 1, minWidth: 0 }}>
+                  <span style={{ display: "block", fontWeight: 700, fontSize: 14, color: PINE, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                     {eventTitle(event, lang)}
                   </span>
-                  <span className="block text-sm text-gray-500 truncate">
+                  <span style={{ display: "block", fontSize: 12, color: "#aaa", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginTop: 2 }}>
                     {event.arrondissement}
                   </span>
-                  <span className="flex flex-wrap gap-1.5 mt-1.5">
+                  <span style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 8 }}>
                     {event.type_evenement && (
-                      <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-purple-100 text-purple-700">
+                      <span style={{ fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 999, background: "#f3e8ff", color: "#6b21a8" }}>
                         {tField("type_evenement", event.type_evenement, lang)}
                       </span>
                     )}
                     {event.public_cible && (
-                      <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-pink-100 text-pink-700">
+                      <span style={{ fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 999, background: "#fce7f3", color: "#9d174d" }}>
                         {tField("public_cible", event.public_cible, lang)}
                       </span>
                     )}
                     {event.cout && (
-                      <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">
+                      <span style={{ fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 999, background: "#e8f0e4", color: MOSS }}>
                         {tField("cout", event.cout, lang)}
                       </span>
                     )}
                   </span>
                 </span>
-                <span className="shrink-0 text-right">
-                  <span className="block whitespace-nowrap">
-                    {event.badge_icon}{" "}
-                    <span className="text-sm font-semibold text-gray-700">{badgeName}</span>
+
+                {/* Badge + score */}
+                <span style={{ flexShrink: 0, textAlign: "right" }}>
+                  <span style={{ display: "block", fontSize: 11, fontWeight: 800, padding: "4px 12px", borderRadius: 999, background: badgeStyle.bg, color: badgeStyle.color, marginBottom: 5, whiteSpace: "nowrap" }}>
+                    {badgeName}
                   </span>
-                  <span className="block text-xs font-mono text-gray-400">
+                  <span style={{ display: "block", fontSize: 11, fontFamily: "monospace", color: "#bbb" }}>
                     {event.sustainability_score} / 100
-                    {event.wheelchair_metro_accessible ? "  \u267F" : ""}
+                    {event.wheelchair_metro_accessible ? " (A)" : ""}
                   </span>
                 </span>
-                <span
-                  className={`shrink-0 text-gray-400 text-xs transition-transform ${open ? "rotate-180" : ""}`}
-                  aria-hidden="true"
-                >
-                  {"\u25BC"}
+
+                {/* Chevron */}
+                <span style={{ flexShrink: 0, color: "#ccc", fontSize: 10, transition: "transform 0.2s", transform: open ? "rotate(180deg)" : "none" }} aria-hidden="true">
+                  {"▼"}
                 </span>
               </button>
 
               {open && (
-                <div className="px-5 pb-5 pt-1 border-t border-gray-100">
-                  <div className="grid gap-2.5 pt-3">
-                    {COMPONENTS.map((c) => {
+                <div style={{ padding: "12px 22px 22px", borderTop: `1px solid ${CREAM}` }}>
+                  <div style={{ display: "grid", gap: 12, paddingTop: 12 }}>
+                    {COMPONENTS.map(c => {
                       const pts = breakdown[c.key] ?? 0;
                       const pct = Math.max(0, Math.min(100, (pts / c.max) * 100));
                       return (
-                        <div key={c.key} className="grid grid-cols-[110px_1fr_54px] items-center gap-3">
-                          <span className="text-sm text-gray-600">{s[c.labelKey] ?? c.fallback}</span>
-                          <span className="h-2 rounded-full bg-gray-100 overflow-hidden">
-                            <span
-                              className="block h-full bg-green-600 rounded-full"
-                              style={{ width: `${pct}%` }}
-                            />
+                        <div key={c.key} style={{ display: "grid", gridTemplateColumns: "130px 1fr 56px", alignItems: "center", gap: 12 }}>
+                          <span style={{ fontSize: 12, color: "#777" }}>{s[c.labelKey] ?? c.fallback}</span>
+                          <span style={{ height: 6, borderRadius: 999, background: "#e4dfd5", overflow: "hidden", display: "block" }}>
+                            <span style={{ display: "block", height: "100%", borderRadius: 999, background: MOSS, width: `${pct}%` }} />
                           </span>
-                          <span className="text-xs font-mono text-gray-500 text-right">
-                            {pts} / {c.max}
-                          </span>
+                          <span style={{ fontSize: 11, fontFamily: "monospace", color: "#bbb", textAlign: "right" }}>{pts} / {c.max}</span>
                         </div>
                       );
                     })}
                   </div>
                   {event.wheelchair_note && (
-                    <p className="text-xs text-gray-500 mt-3">{"\u267F"} {event.wheelchair_note}</p>
+                    <p style={{ fontSize: 12, color: "#aaa", marginTop: 12 }}>(A) {event.wheelchair_note}</p>
                   )}
                 </div>
               )}
@@ -161,13 +157,15 @@ export default function SustainabilityRanking({ dict, lang }) {
       </ol>
 
       {visible < events.length && (
-        <div className="mt-5 text-center">
+        <div style={{ marginTop: 28, textAlign: "center" }}>
           <button
             type="button"
-            onClick={() => setVisible((v) => v + PAGE_SIZE)}
-            className="text-sm font-semibold text-green-700 border border-green-300 rounded-lg px-5 py-2 hover:bg-green-50 transition"
+            onClick={() => setVisible(v => v + PAGE_SIZE)}
+            style={{ fontSize: 13, fontWeight: 800, color: MOSS, border: `1.5px solid ${MOSS}`, borderRadius: 999, padding: "11px 28px", background: "transparent", cursor: "pointer", transition: "all 0.2s" }}
+            onMouseEnter={e => { e.currentTarget.style.background = MOSS; e.currentTarget.style.color = WHITE; }}
+            onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = MOSS; }}
           >
-            {(s.rankingLoadMore ?? "Show more").replace("{count}", events.length - visible)}
+            {(s.rankingLoadMore ?? "Show {count} more").replace("{count}", events.length - visible)}
           </button>
         </div>
       )}
