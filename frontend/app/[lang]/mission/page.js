@@ -34,6 +34,7 @@ const STATS=[
 ];
 
 const CSS=`
+*{box-sizing:border-box;margin:0;padding:0}
 .sg{display:grid;grid-template-columns:repeat(4,1fr);gap:32px}
 .sp{display:grid;grid-template-columns:1fr 1fr;height:80vh;max-height:720px;border-bottom:1px solid #e8e8e8}
 .sp .si{overflow:hidden}
@@ -71,17 +72,11 @@ const DICT = {
   },
 };
 
-export default function Mission(){
-  const [lang,setLang]=useState("en");
+export default function MissionClient({ lang }) {
+  const e = lang === "en";
+  const d = SECS[lang];
 
-  useEffect(()=>{
-    setLang(window.location.pathname.startsWith("/fr")?"fr":"en");
-  },[]);
-
-  const e=lang==="en";
-  const d=SECS[lang];
-
-  return(
+  return (
     <div style={{fontFamily:"'Inter','Helvetica Neue',Arial,sans-serif",background:"#fff",color:"#111"}}>
       <style>{CSS}</style>
 
