@@ -64,11 +64,13 @@ const DICT = {
     nav: { events:"Events", mission:"Our Mission", sustainability:"Sustainability", saved:"Saved", recommendations:"Recommendations" },
     lang: { label:"Switch to French", switchTo:"FR" },
     header: { brand:"MTLVerde" },
+    auth: { logIn:"Log In", logOut:"Log Out" },
   },
   fr: {
     nav: { events:"Événements", mission:"Notre mission", sustainability:"Durabilité", saved:"Sauvegardés", recommendations:"Suggestions" },
     lang: { label:"Switch to English", switchTo:"EN" },
     header: { brand:"MTLVerde" },
+    auth: { logIn:"Connexion", logOut:"Déconnexion" },
   },
 };
 
