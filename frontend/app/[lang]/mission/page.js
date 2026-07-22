@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import Header from "../Header";
 
 const G="#1e4d2b",R="#b5281c";
 const P={
@@ -10,7 +11,6 @@ const P={
   p4:"https://images.unsplash.com/photo-1581408864626-43a5394853de?fm=jpg&w=1200&q=80&auto=format&fit=crop",
 };
 
-// f:true = full-bleed overlay, f:false = split (image left, text right)
 const SECS={
   en:[
     {n:"01",t:"The Problem",b:"The city publishes 4,400+ free events a year across 20 boroughs. Existing tools serve tourists — not the person who just moved in.",i:P.p1,f:false},
@@ -34,12 +34,6 @@ const STATS=[
 ];
 
 const CSS=`
-*{box-sizing:border-box;margin:0;padding:0}
-.nl{display:flex;align-items:center;gap:24px}
-.hb{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;background:none;border:none}
-.mm{display:none;flex-direction:column;position:fixed;top:68px;left:0;right:0;background:#fff;padding:24px 28px;gap:4px;z-index:99;box-shadow:0 8px 32px rgba(0,0,0,.12)}
-.mm.o{display:flex}
-.mm a{padding:14px 0;font-size:16px;font-weight:600;color:#111;text-decoration:none;border-bottom:1px solid #f0f0f0;display:block}
 .sg{display:grid;grid-template-columns:repeat(4,1fr);gap:32px}
 .sp{display:grid;grid-template-columns:1fr 1fr;height:80vh;max-height:720px;border-bottom:1px solid #e8e8e8}
 .sp .si{overflow:hidden}
@@ -55,7 +49,6 @@ const CSS=`
 .fl{display:block;font-size:13px;color:rgba(255,255,255,.4);margin-bottom:12px;text-decoration:none;transition:color .2s}
 .fl:hover{color:rgba(255,255,255,.85)}
 @media(max-width:900px){
-  .nl{display:none}.hb{display:flex}
   .sp{grid-template-columns:1fr;height:auto;max-height:none}
   .sp .si{height:56vw;min-height:220px}
   .sp .st{padding:40px 24px 52px}
@@ -65,47 +58,34 @@ const CSS=`
 }
 `;
 
+const DICT = {
+  en: {
+    nav: { events:"Events", mission:"Our Mission", sustainability:"Sustainability", saved:"Saved", recommendations:"Recommendations" },
+    lang: { label:"Switch to French", switchTo:"FR" },
+    header: { brand:"MTLVerde" },
+  },
+  fr: {
+    nav: { events:"Événements", mission:"Notre mission", sustainability:"Durabilité", saved:"Sauvegardés", recommendations:"Suggestions" },
+    lang: { label:"Switch to English", switchTo:"EN" },
+    header: { brand:"MTLVerde" },
+  },
+};
+
 export default function Mission(){
   const [lang,setLang]=useState("en");
-  const [scrolled,setScrolled]=useState(false);
-  const [open,setOpen]=useState(false);
 
   useEffect(()=>{
     setLang(window.location.pathname.startsWith("/fr")?"fr":"en");
-    const fn=()=>setScrolled(window.scrollY>60);
-    window.addEventListener("scroll",fn);
-    return()=>window.removeEventListener("scroll",fn);
   },[]);
 
   const e=lang==="en";
   const d=SECS[lang];
-  const NAV=e
-    ?[["Our Purpose","/en#purpose"],["Mission","/en/mission"],["Team","/en#team"],["Events","/en#events"],["Contact","mailto:mtlverde@gmail.com"]]
-    :[["Notre objectif","/fr#purpose"],["Mission","/fr/mission"],["Équipe","/fr#team"],["Événements","/fr#events"],["Contact","mailto:mtlverde@gmail.com"]];
 
   return(
     <div style={{fontFamily:"'Inter','Helvetica Neue',Arial,sans-serif",background:"#fff",color:"#111"}}>
       <style>{CSS}</style>
 
-      <nav style={{position:"fixed",top:0,left:0,right:0,zIndex:100,display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 40px",height:68,background:scrolled?"rgba(255,255,255,.97)":"transparent",backdropFilter:scrolled?"blur(12px)":"none",borderBottom:scrolled?"1px solid #eee":"none",transition:"all .3s"}}>
-        <a href={"/"+lang}><img src="/MTLVerde_Logo.png" alt="MTLVerde" style={{height:90,filter:scrolled?"none":"brightness(10)",cursor:"pointer",display:"block"}}/></a>
-        <div className="nl">
-          {NAV.map(([l,h])=><a key={l} href={h} style={{fontSize:14,fontWeight:500,textDecoration:"none",color:scrolled?"#333":"rgba(255,255,255,.92)"}}>{l}</a>)}
-          <div style={{display:"flex",background:scrolled?"#f0f0f0":"rgba(255,255,255,.15)",borderRadius:999,padding:3}}>
-            {["en","fr"].map(l=><a key={l} href={"/"+l+"/mission"} style={{display:"block",borderRadius:999,padding:"4px 14px",fontSize:12,fontWeight:800,textDecoration:"none",background:lang===l?(scrolled?"#111":"#fff"):"transparent",color:lang===l?(scrolled?"#fff":G):(scrolled?"#666":"rgba(255,255,255,.7)")}}>{l.toUpperCase()}</a>)}
-          </div>
-        </div>
-        <button className="hb" onClick={()=>setOpen(!open)}>
-          {[0,1,2].map(i=><span key={i} style={{display:"block",width:22,height:2,background:scrolled?"#111":"#fff",borderRadius:2}}/>)}
-        </button>
-      </nav>
-
-      <div className={"mm"+(open?" o":"")}>
-        {NAV.map(([l,h])=><a key={l} href={h} onClick={()=>setOpen(false)}>{l}</a>)}
-        <div style={{display:"flex",gap:8,paddingTop:16}}>
-          {["en","fr"].map(l=><a key={l} href={"/"+l+"/mission"} style={{background:lang===l?G:"#e8f0e4",color:lang===l?"#fff":G,borderRadius:999,padding:"8px 20px",fontSize:13,fontWeight:800,textDecoration:"none"}}>{l.toUpperCase()}</a>)}
-        </div>
-      </div>
+      <Header dict={DICT[lang]} lang={lang} />
 
       <section style={{position:"relative",height:"55vh",minHeight:380,display:"flex",alignItems:"center"}}>
         <img src={P.hero} alt="Montreal" style={{position:"absolute",inset:0,width:"100%",height:"100%",objectFit:"cover",objectPosition:"center 60%"}}/>
