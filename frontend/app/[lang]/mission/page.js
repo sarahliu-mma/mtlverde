@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { use, useState, useEffect } from "react";
 import Header from "../Header";
 
 const G="#1e4d2b",R="#b5281c";
@@ -72,7 +72,8 @@ const DICT = {
   },
 };
 
-export default function MissionClient({ lang }) {
+export default function Page({ params }) {
+  const { lang } = use(params);
   const e = lang === "en";
   const d = SECS[lang];
 
