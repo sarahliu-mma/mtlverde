@@ -26,26 +26,35 @@ export default function Map({ events, lang, readMoreLabel, selectedId }) {
   // rendered element count roughly constant (a few dozen bubbles) no matter how
   // many events there are, which is what keeps pan/zoom smooth at ~3k+ markers.
   useEffect(() => {
-    if (mapRef.current) return;
+  if (mapRef.current) return;
 
-    // Make the map theme CARTO Positron,a theme picked from Leaflet Provider Demo
-    const map = L.map("map").setView([45.5088, -73.5683], 12);
-    L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
-      attribution: "© OpenStreetMap contributors © CARTO",
-    }).addTo(map);
+  const montrealBounds = L.latLngBounds(
+    [45.35, -73.95],
+    [45.75, -73.35]
+  );
 
-    const cluster = L.markerClusterGroup({ chunkedLoading: true });
-    map.addLayer(cluster);
+  const map = L.map("map", {
+    maxBounds: montrealBounds,
+    maxBoundsViscosity: 1.0,
+    minZoom: 10,
+  }).setView([45.5088, -73.5683], 12);
 
-    mapRef.current = map;
-    clusterRef.current = cluster;
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+    attribution: "© OpenStreetMap contributors © CARTO",
+  }).addTo(map);
 
-    return () => {
-      map.remove();
-      mapRef.current = null;
-      clusterRef.current = null;
-      markersById.current = {};
-    };
+  const cluster = L.markerClusterGroup({ chunkedLoading: true });
+  map.addLayer(cluster);
+
+  mapRef.current = map;
+  clusterRef.current = cluster;
+
+  return () => {
+    map.remove();
+    mapRef.current = null;
+    clusterRef.current = null;
+    markersById.current = {};
+  };
   }, []);
 
   // Rebuild markers when the filtered events change. addLayers() adds the whole
