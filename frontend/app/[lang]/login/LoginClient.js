@@ -22,6 +22,7 @@ export default function LoginClient({ dict, lang }) {
   const [error, setError]       = useState("");
   const [info, setInfo]         = useState("");
   const [busy, setBusy]         = useState(false);
+  const [focusedField, setFocusedField] = useState(null);
 
   const isSignup = mode === "signup";
 
@@ -39,66 +40,67 @@ export default function LoginClient({ dict, lang }) {
     router.push(`/${lang}/saved`);
   }
 
-  return (
-    <div style={{ minHeight: "100vh", fontFamily: "'DM Sans','Inter',sans-serif", position: "relative", background: CREAM }}>
+  function switchMode() {
+    setMode(isSignup ? "signin" : "signup");
+    setError("");
+    setInfo("");
+  }
 
-      {/* Background */}
+  const inputStyle = (field) => ({
+    width: "100%",
+    border: "none",
+    borderBottom: `2px solid ${focusedField === field ? DARK : "#ccc"}`,
+    borderRadius: 0,
+    padding: "12px 0",
+    fontSize: 16,
+    color: DARK,
+    background: "transparent",
+    outline: "none",
+    boxSizing: "border-box",
+    transition: "border-color 0.2s",
+  });
+
+  return (
+    <div style={{ minHeight: "100vh", fontFamily: "'DM Sans','Inter',sans-serif", color: DARK, position: "relative" }}>
+
+      {/* Nature background */}
       <div style={{ position: "fixed", inset: 0, zIndex: 0 }}>
         <img
           src="https://images.unsplash.com/photo-1448375240586-882707db888b?w=1800&q=85"
           alt=""
           style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
         />
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(135deg, rgba(30,77,43,0.80) 0%, rgba(0,0,0,0.50) 60%, rgba(181,40,28,0.30) 100%)" }} />
+        <div style={{ position: "absolute", inset: 0, background: "rgba(249,246,241,0.88)" }} />
       </div>
 
-      {/* Header */}
-      <div style={{ position: "relative", zIndex: 10 }}>
-        <Header dict={dict} lang={lang} />
-      </div>
+      <div style={{ position: "relative", zIndex: 1 }}>
+      <Header dict={dict} lang={lang} />
 
-      {/* Card */}
-      <main style={{ position: "relative", zIndex: 10, display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", padding: "100px 24px 60px" }}>
-        <div style={{ width: "100%", maxWidth: 420, background: "rgba(249,246,241,0.97)", borderRadius: 24, padding: "44px 40px 40px", boxShadow: "0 32px 80px rgba(0,0,0,0.35)" }}>
+      <main style={{ maxWidth: 1100, margin: "0 auto", padding: "120px 48px 80px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80, alignItems: "start" }}>
 
-          {/* Logo mark */}
-          <div style={{ display: "flex", justifyContent: "center", marginBottom: 28 }}>
-            <div style={{ width: 48, height: 48, borderRadius: "50%", background: GREEN_DARK, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" />
-                <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
-              </svg>
-            </div>
-          </div>
-
-          <h1 style={{ fontSize: 26, fontWeight: 900, color: DARK, letterSpacing: "-0.5px", marginBottom: 8, textAlign: "center" }}>
-            {isSignup ? t.signUpHeading : t.signInHeading}
+        {/* ── LEFT: Form ── */}
+        <div>
+          <h1 style={{ fontSize: "clamp(40px, 5vw, 72px)", fontWeight: 900, letterSpacing: "-2px", lineHeight: 1, marginBottom: 48, color: DARK }}>
+            {isSignup ? t.signUpHeading : t.signInHeading + "."}
           </h1>
-          <p style={{ fontSize: 13, color: "#888", lineHeight: 1.7, textAlign: "center", marginBottom: 32 }}>
-            {t.subtitle}
-          </p>
 
-          <form onSubmit={onSubmit} style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+          <form onSubmit={onSubmit} style={{ display: "flex", flexDirection: "column", gap: 32 }}>
             <label style={{ display: "block" }}>
-              <span style={{ display: "block", fontSize: 10, fontWeight: 800, color: "#aaa", textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 8 }}>
-                {t.email}
-              </span>
+              <span style={{ display: "block", fontSize: 13, color: "#888", marginBottom: 4 }}>{t.email} *</span>
               <input
                 type="email"
                 required
                 autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                style={{ width: "100%", border: "1.5px solid #e0dbd4", borderRadius: 12, padding: "12px 16px", fontSize: 14, color: DARK, background: "#fff", outline: "none", boxSizing: "border-box", transition: "border-color 0.2s" }}
-                onFocus={e => { e.currentTarget.style.borderColor = GREEN_MID; }}
-                onBlur={e => { e.currentTarget.style.borderColor = "#e0dbd4"; }}
+                onFocus={() => setFocusedField("email")}
+                onBlur={() => setFocusedField(null)}
+                style={inputStyle("email")}
               />
             </label>
 
             <label style={{ display: "block" }}>
-              <span style={{ display: "block", fontSize: 10, fontWeight: 800, color: "#aaa", textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 8 }}>
-                {t.password}
-              </span>
+              <span style={{ display: "block", fontSize: 13, color: "#888", marginBottom: 4 }}>{t.password} *</span>
               <input
                 type="password"
                 required
@@ -106,44 +108,143 @@ export default function LoginClient({ dict, lang }) {
                 autoComplete={isSignup ? "new-password" : "current-password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                style={{ width: "100%", border: "1.5px solid #e0dbd4", borderRadius: 12, padding: "12px 16px", fontSize: 14, color: DARK, background: "#fff", outline: "none", boxSizing: "border-box", transition: "border-color 0.2s" }}
-                onFocus={e => { e.currentTarget.style.borderColor = GREEN_MID; }}
-                onBlur={e => { e.currentTarget.style.borderColor = "#e0dbd4"; }}
+                onFocus={() => setFocusedField("password")}
+                onBlur={() => setFocusedField(null)}
+                style={inputStyle("password")}
               />
             </label>
 
             {error && (
-              <p style={{ fontSize: 13, color: RED, background: "#fdf0ee", borderRadius: 8, padding: "10px 14px", margin: 0 }}>{error}</p>
+              <p style={{ fontSize: 13, color: RED, margin: 0 }}>{error}</p>
             )}
             {info && (
-              <p style={{ fontSize: 13, color: GREEN_DARK, background: GREEN_LIGHT, borderRadius: 8, padding: "10px 14px", margin: 0 }}>{info}</p>
+              <p style={{ fontSize: 13, color: GREEN_DARK, margin: 0 }}>{info}</p>
             )}
 
-            <button
-              type="submit"
-              disabled={busy}
-              style={{ background: busy ? "#ccc" : GREEN_DARK, color: "#fff", border: "none", borderRadius: 12, padding: "14px", fontSize: 15, fontWeight: 800, cursor: busy ? "default" : "pointer", transition: "background 0.2s", marginTop: 4 }}
-              onMouseEnter={e => { if (!busy) e.currentTarget.style.background = "#163d21"; }}
-              onMouseLeave={e => { if (!busy) e.currentTarget.style.background = GREEN_DARK; }}
-            >
-              {busy ? t.working : isSignup ? t.signUpAction : t.signInAction}
-            </button>
+            <div>
+              <button
+                type="submit"
+                disabled={busy}
+                style={{
+                  background: busy ? "#ccc" : DARK,
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: 999,
+                  padding: "16px 48px",
+                  fontSize: 15,
+                  fontWeight: 800,
+                  cursor: busy ? "default" : "pointer",
+                  transition: "background 0.2s",
+                  display: "inline-block",
+                }}
+                onMouseEnter={e => { if (!busy) e.currentTarget.style.background = GREEN_DARK; }}
+                onMouseLeave={e => { if (!busy) e.currentTarget.style.background = DARK; }}
+              >
+                {busy ? t.working : isSignup ? t.signUpAction : t.signInAction}
+              </button>
+            </div>
+
+            <div>
+              <p style={{ fontSize: 14, color: "#888", marginBottom: 6 }}>
+                {isSignup ? t.toSignIn?.split("?")[0] + "?" : "Don't have an account?"}
+              </p>
+              <button
+                type="button"
+                onClick={switchMode}
+                style={{ background: "none", border: "none", fontSize: 14, color: DARK, fontWeight: 700, cursor: "pointer", padding: 0, textDecoration: "underline", textUnderlineOffset: 3 }}
+              >
+                {isSignup ? "Sign in" : "Create One Now"}
+              </button>
+            </div>
           </form>
-
-          <div style={{ borderTop: "1px solid #ede8e0", marginTop: 28, paddingTop: 22, textAlign: "center" }}>
-            <button
-              type="button"
-              onClick={() => { setMode(isSignup ? "signin" : "signup"); setError(""); setInfo(""); }}
-              style={{ background: "none", border: "none", fontSize: 13, color: GREEN_MID, fontWeight: 700, cursor: "pointer", padding: 0 }}
-              onMouseEnter={e => { e.currentTarget.style.color = GREEN_DARK; }}
-              onMouseLeave={e => { e.currentTarget.style.color = GREEN_MID; }}
-            >
-              {isSignup ? t.toSignIn : t.toSignUp}
-            </button>
-          </div>
-
         </div>
+
+        {/* ── RIGHT: Dark card ── */}
+        <div style={{ background: DARK, borderRadius: 20, padding: "52px 44px", display: "flex", flexDirection: "column", justifyContent: "space-between", minHeight: 340 }}>
+          <div>
+            <h2 style={{ fontSize: 28, fontWeight: 900, color: "#fff", letterSpacing: "-0.5px", lineHeight: 1.2, marginBottom: 16 }}>
+              {isSignup
+                ? (lang === "fr" ? "Déjà membre ?" : "Already a member?")
+                : (lang === "fr" ? "Nouveau sur MTLVerde ?" : "New to MTLVerde?")}
+            </h2>
+            <p style={{ fontSize: 14, color: "rgba(255,255,255,0.55)", lineHeight: 1.8, marginBottom: 36 }}>
+              {isSignup
+                ? (lang === "fr"
+                    ? "Connectez-vous pour accéder à vos événements sauvegardés et vos préférences."
+                    : "Sign in to access your saved events and personalized recommendations.")
+                : (lang === "fr"
+                    ? "Créez un compte gratuit pour sauvegarder vos événements préférés et y accéder depuis n'importe quel appareil."
+                    : "Create a free account to save your favourite events and find them on any device.")}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={switchMode}
+            style={{
+              background: "transparent",
+              color: "#fff",
+              border: "2px solid rgba(255,255,255,0.3)",
+              borderRadius: 999,
+              padding: "14px 36px",
+              fontSize: 14,
+              fontWeight: 800,
+              cursor: "pointer",
+              transition: "all 0.2s",
+              alignSelf: "flex-start",
+            }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = "#fff"; e.currentTarget.style.background = "rgba(255,255,255,0.08)"; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.3)"; e.currentTarget.style.background = "transparent"; }}
+          >
+            {isSignup
+              ? (lang === "fr" ? "Se connecter" : "Sign in")
+              : (lang === "fr" ? "Créer un compte" : "Create an account")}
+          </button>
+        </div>
+
       </main>
+      </div>
+
+      {/* ── FOOTER ── */}
+      <footer style={{ background: GREEN_DARK, color: "#fff", padding: "72px 48px 32px" }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "2.5fr 1fr 1fr 1fr", gap: 48, marginBottom: 56 }}>
+            <div>
+              <img
+                src="/MTLVerde_Logo.png"
+                alt="MTLVerde"
+                style={{ height: 72, marginBottom: 20, filter: "brightness(10)" }}
+                onError={e => { e.currentTarget.style.display = "none"; }}
+              />
+              <p style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", lineHeight: 1.8, maxWidth: 280 }}>
+                {lang === "fr"
+                  ? "Découvrir la vie communautaire à Montréal — gratuit, bilingue, et conçu pour les nouveaux arrivants."
+                  : "Discover community life in Montreal — free, bilingual, and built for newcomers."}
+              </p>
+            </div>
+            {[
+              { heading: lang === "fr" ? "Compagnie" : "Company", links: [lang === "fr" ? "À propos" : "About", "Press", "Careers"] },
+              { heading: "Contact",                                 links: ["Help/FAQ", lang === "fr" ? "Équipe" : "Team", "mtlverde@gmail.com"] },
+              { heading: lang === "fr" ? "Plus" : "More",          links: [lang === "fr" ? "Données ouvertes" : "Open Data", lang === "fr" ? "Accessibilité" : "Accessibility", lang === "fr" ? "Confidentialité" : "Privacy"] },
+            ].map(col => (
+              <div key={col.heading}>
+                <h4 style={{ fontSize: 11, fontWeight: 800, marginBottom: 20, color: "rgba(255,255,255,0.9)", letterSpacing: "1px", textTransform: "uppercase" }}>{col.heading}</h4>
+                {col.links.map(l => (
+                  <p key={l} style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginBottom: 12, cursor: "pointer", transition: "color 0.2s" }}
+                    onMouseEnter={e => { e.currentTarget.style.color = "#fff"; }}
+                    onMouseLeave={e => { e.currentTarget.style.color = "rgba(255,255,255,0.4)"; }}>
+                    {l}
+                  </p>
+                ))}
+              </div>
+            ))}
+          </div>
+          <div style={{ borderTop: "1px solid rgba(255,255,255,0.1)", paddingTop: 28, display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+            <p style={{ fontSize: 12, color: "rgba(255,255,255,0.3)" }}>© 2026 MTLVerde — Events. Montreal. Together.</p>
+            <p style={{ fontSize: 12, color: "rgba(255,255,255,0.3)" }}>mtlverde@gmail.com</p>
+          </div>
+        </div>
+      </footer>
+
     </div>
   );
 }
