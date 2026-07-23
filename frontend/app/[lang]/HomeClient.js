@@ -146,6 +146,7 @@ export default function HomeClient({ dict, lang }) {
         .footer-grid { display: grid; grid-template-columns: 2.5fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 56px; }
         .event-list-card { display: flex; border: 1px solid ${GREEN_LIGHT}; border-radius: 16px; overflow: hidden; transition: all 0.2s; background: #fff; }
         .event-list-card:hover { border-color: ${GREEN_MID}; box-shadow: 0 4px 20px rgba(30,77,43,0.10); }
+        .event-list-card.selected { border: 2px solid ${GREEN_DARK}; background: #eef7eb; box-shadow: 0 10px 30px rgba(30,77,43,0.18);}
         .event-list-card .thumb { width: 100px; min-width: 100px; overflow: hidden; flex-shrink: 0; }
         .event-list-card .thumb img { width: 100%; height: 100%; object-fit: cover; min-height: 100px; }
         .event-list-card .body { padding: 16px 20px; flex: 1; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
