@@ -13,7 +13,6 @@ export default function Header({ dict, lang }) {
   const pathname = usePathname();
   const { ids } = useBookmarks();
   const { user, signOut } = useAuth();
-  const otherLocale = lang === "fr" ? "en" : "fr";
   const [liveCount, setLiveCount] = useState(0);
   const [scrolled, setScrolled] = useState(false);
 
@@ -37,20 +36,32 @@ export default function Header({ dict, lang }) {
     return () => { cancelled = true; };
   }, [ids]);
 
+  function handleNavClick(e, href) {
+    const hashIndex = href.indexOf("#");
+    if (hashIndex === -1) return;
+    const hash = href.slice(hashIndex + 1);
+    const target = document.getElementById(hash);
+    if (target) {
+      e.preventDefault();
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+      window.history.pushState(null, "", href);
+    }
+  }
+
   const count = ids.length === 0 ? 0 : liveCount;
   const rest = pathname.replace(/^\/(fr|en)(?=\/|$)/, "");
   const linkColor = scrolled ? "#333" : "rgba(255,255,255,0.92)";
 
   const navItems = [
-    { label: lang === "fr" ? "Mission" : "Our Purpose",      href: `/${lang}#purpose` },
-    { label: lang === "fr" ? "Notre mission" : "Our Mission", href: `/${lang}/mission` },
-    { label: lang === "fr" ? "Durabilité" : "Sustainability", href: `/${lang}/sustainability` },
-    { label: lang === "fr" ? "Événements" : "Events",         href: `/${lang}` },
-    { label: lang === "fr" ? "L'équipe" : "About the Team",   href: `/${lang}#team` },
-    { label: lang === "fr" ? "Sauvegardés" : "Saved",         href: `/${lang}/saved`, badge: count },
-    { label: lang === "fr" ? "Infolettre" : "Newsletter",     href: `/${lang}#newsletter` },
-    { label: "Ask MTLVerde",                                   href: `/${lang}/ask` },
-    { label: lang === "fr" ? "Nous joindre" : "Contact Us",   href: "mailto:mtlverde@gmail.com" },
+    { label: lang === "fr" ? "Mission"       : "Our Purpose",     href: `/${lang}#purpose`         },
+    { label: lang === "fr" ? "Notre mission"  : "Our Mission",     href: `/${lang}/mission`          },
+    { label: lang === "fr" ? "Durabilité"     : "Sustainability",  href: `/${lang}/sustainability`   },
+    { label: lang === "fr" ? "Événements"     : "Events",          href: `/${lang}#events`           },
+    { label: lang === "fr" ? "L'équipe"       : "About the Team",  href: `/${lang}#team`             },
+    { label: lang === "fr" ? "Sauvegardés"    : "Saved",           href: `/${lang}/saved`, badge: count },
+    { label: lang === "fr" ? "Infolettre"     : "Newsletter",      href: `/${lang}#newsletter`       },
+    { label: "Ask MTLVerde",                                        href: `/${lang}/recommendations`  },
+    { label: lang === "fr" ? "Nous joindre"   : "Contact Us",      href: "mailto:mtlverde@gmail.com" },
   ];
 
   return (
@@ -69,7 +80,7 @@ export default function Header({ dict, lang }) {
       transition: "all 0.35s ease",
     }}>
 
-      {/* Logo — left */}
+      {/* Logo */}
       <Link href={`/${lang}`} style={{ flexShrink: 0 }}>
         <img
           src="/MTLVerde_Logo.png"
@@ -79,12 +90,13 @@ export default function Header({ dict, lang }) {
         />
       </Link>
 
-      {/* Nav links — center */}
+      {/* Nav links */}
       <nav style={{ display: "flex", alignItems: "center", gap: 28 }}>
         {navItems.map((item) => (
           <a
             key={item.label}
             href={item.href}
+            onClick={(e) => handleNavClick(e, item.href)}
             style={{
               fontSize: 14, fontWeight: 500,
               textDecoration: "none",
@@ -93,8 +105,8 @@ export default function Header({ dict, lang }) {
               whiteSpace: "nowrap",
               display: "flex", alignItems: "center", gap: 4,
             }}
-            onMouseEnter={e => e.currentTarget.style.color = scrolled ? GREEN_DARK : "#fff"}
-            onMouseLeave={e => e.currentTarget.style.color = linkColor}
+            onMouseEnter={(e) => { e.currentTarget.style.color = scrolled ? GREEN_DARK : "#fff"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = linkColor; }}
           >
             {item.label}
             {item.badge > 0 && (
@@ -106,7 +118,7 @@ export default function Header({ dict, lang }) {
         ))}
       </nav>
 
-      {/* Auth + EN / FR pill toggle — right */}
+      {/* Auth + EN / FR */}
       <div style={{ display: "flex", alignItems: "center", gap: 14, flexShrink: 0 }}>
         {user ? (
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -142,7 +154,6 @@ export default function Header({ dict, lang }) {
           </Link>
         )}
 
-        {/* EN / FR pill toggle */}
         <div style={{
           display: "flex",
           background: scrolled ? GREEN_LIGHT : "rgba(255,255,255,0.18)",
