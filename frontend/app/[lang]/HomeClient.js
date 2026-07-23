@@ -47,14 +47,14 @@ const getEventPhoto = (type) => EVENT_PHOTOS[type] || EVENT_PHOTOS["default"];
 const TEAM = [
   { name: "Yan-Ling Lu",  role: { en: "Data Pipeline",          fr: "Pipeline de données"    }, photo: "/Yan-Ling_Lu.jpeg" },
   { name: "Sarah Liu",    role: { en: "Backend Development",    fr: "Développement backend"  }, photo: "/Sarah_Liu.jpeg" },
-  { name: "Joohee Kim",   role: { en: "Sustainability Scoring", fr: "Score de durabilité"    }, photo: "/Joohee_Kim.jpg" },
-  { name: "Chloee Liew",  role: { en: "Frontend Development",   fr: "Développement frontend" }, photo: "/Chloee_Liew.jpeg" },
+  { name: "Joohee Kim",   role: { en: "Sustainability Scoring", fr: "Score de durabilité"    }, photo: "/Joohee_Kim.JPG" },
+  { name: "Chloee Liew",  role: { en: "Frontend Development",   fr: "Développement frontend" }, photo: "/Chloee_Liew.jpg" },
 ];
 
 const PURPOSE = [
   { img: "https://images.unsplash.com/photo-1445296608114-4b8fabe48256?w=800&q=85", title: { en: "Discover by Borough", fr: "Découvrir par quartier" }, desc: { en: "Find events across all 20 Montreal boroughs, right in your neighbourhood.", fr: "Trouvez des événements dans vos 20 arrondissements de Montréal." } },
   { img: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&q=85", title: { en: "Free & Accessible",   fr: "Gratuit et accessible"  }, desc: { en: "Most events are free, outdoors, and open to everyone.", fr: "La majorité de nos événements sont gratuits et ouverts à tous." } },
-  { img: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&q=85", title: { en: "Local Events",         fr: "Événements locaux"      }, desc: { en: "Workshops, festivals, and markets that make the city pulse with life.", fr: "Des ateliers, festivals et marchés qui font battre le cœur de la ville." } },
+  { img: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&q=85",    title: { en: "Local Events",         fr: "Événements locaux"      }, desc: { en: "Workshops, festivals, and markets that make the city pulse with life.", fr: "Des ateliers, festivals et marchés qui font battre le cœur de la ville." } },
   { img: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800&q=85", title: { en: "Built for You",       fr: "Personnalisé pour vous" }, desc: { en: "Filter by type, date, audience, and cost to find your perfect fit.", fr: "Filtrez par type, date, public et coût pour trouver votre événement idéal." } },
 ];
 
@@ -125,6 +125,7 @@ export default function HomeClient({ dict, lang }) {
 
       <style>{`
         * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
         .section-pad { padding: 100px 48px; }
         .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 32px; }
         .events-preview { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 28px; margin-bottom: 48px; }
@@ -136,10 +137,10 @@ export default function HomeClient({ dict, lang }) {
         .event-list-card .thumb img { width: 100%; height: 100%; object-fit: cover; min-height: 100px; }
         .event-list-card .body { padding: 16px 20px; flex: 1; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
         .badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 999px; white-space: nowrap; }
-        .badge-green { background: ${GREEN_LIGHT}; color: ${GREEN_DARK}; }
-        .badge-red   { background: ${RED_LIGHT};   color: ${RED};        }
+        .badge-green  { background: ${GREEN_LIGHT}; color: ${GREEN_DARK}; }
+        .badge-red    { background: ${RED_LIGHT};   color: ${RED};        }
         .badge-purple { background: #f3e8ff; color: #6b21a8; }
-        .badge-pink  { background: #fce7f3; color: #9d174d; }
+        .badge-pink   { background: #fce7f3; color: #9d174d; }
         @media (max-width: 768px) {
           .section-pad { padding: 64px 24px; }
           .team-grid { grid-template-columns: repeat(2, 1fr); gap: 24px; }
@@ -165,7 +166,7 @@ export default function HomeClient({ dict, lang }) {
       <section style={{ position: "relative", height: "100vh", minHeight: 600, display: "flex", alignItems: "center", justifyContent: "center" }}>
         <img src="https://images.unsplash.com/photo-1445296608114-4b8fabe48256?w=1800&q=90" alt="Montreal"
           style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-        <div style={{ position: "absolute", inset: 0, background: `linear-gradient(135deg, rgba(30,77,43,0.85) 0%, rgba(0,0,0,0.45) 50%, rgba(181,40,28,0.38) 100%)` }} />
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(135deg, rgba(30,77,43,0.85) 0%, rgba(0,0,0,0.45) 50%, rgba(181,40,28,0.38) 100%)" }} />
         <div style={{ position: "relative", zIndex: 2, width: "100%", padding: "0 6vw", textAlign: "center" }}>
           <p style={{ fontSize: 12, fontWeight: 700, letterSpacing: "3px", color: "rgba(255,255,255,0.7)", textTransform: "uppercase", marginBottom: 24 }}>
             {t("GREENER, TOGETHER IN MONTREAL", "PLUS VERT, ENSEMBLE À MONTRÉAL")}
@@ -182,14 +183,14 @@ export default function HomeClient({ dict, lang }) {
           <div style={{ display: "flex", gap: 14, flexWrap: "wrap", justifyContent: "center" }}>
             <button onClick={() => { setShowEvents(true); setTimeout(() => scrollTo(eventsRef), 80); }}
               style={{ background: "#fff", color: GREEN_DARK, border: "none", borderRadius: 999, padding: "16px 40px", fontSize: 16, fontWeight: 800, cursor: "pointer", boxShadow: "0 4px 24px rgba(0,0,0,0.25)", transition: "all 0.2s" }}
-              onMouseEnter={e => e.currentTarget.style.transform = "translateY(-2px)"}
-              onMouseLeave={e => e.currentTarget.style.transform = "translateY(0)"}>
+              onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; }}
+              onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; }}>
               {t("Find events", "Trouver des événements")}
             </button>
             <button onClick={() => scrollTo(purposeRef)}
               style={{ background: "transparent", color: "#fff", border: "2px solid rgba(255,255,255,0.5)", borderRadius: 999, padding: "16px 40px", fontSize: 16, fontWeight: 600, cursor: "pointer", transition: "all 0.2s" }}
-              onMouseEnter={e => e.currentTarget.style.borderColor = "#fff"}
-              onMouseLeave={e => e.currentTarget.style.borderColor = "rgba(255,255,255,0.5)"}>
+              onMouseEnter={e => { e.currentTarget.style.borderColor = "#fff"; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.5)"; }}>
               {t("Learn more", "En savoir plus")}
             </button>
           </div>
@@ -201,7 +202,7 @@ export default function HomeClient({ dict, lang }) {
       </section>
 
       {/* ── OUR PURPOSE ── */}
-      <section ref={purposeRef} className="section-pad" style={{ background: CREAM }}>
+      <section id="purpose" ref={purposeRef} className="section-pad" style={{ background: CREAM }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 56, flexWrap: "wrap", gap: 24 }}>
             <div>
@@ -222,8 +223,8 @@ export default function HomeClient({ dict, lang }) {
                 <div style={{ height: 480, overflow: "hidden", marginBottom: 20 }}>
                   <img src={p.img} alt={p.title.en}
                     style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", transition: "transform 0.6s" }}
-                    onMouseEnter={e => e.currentTarget.style.transform = "scale(1.04)"}
-                    onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"} />
+                    onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.04)"; }}
+                    onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; }} />
                 </div>
                 <h3 style={{ fontSize: 28, fontWeight: 900, color: DARK, marginBottom: 10, letterSpacing: "-0.5px", lineHeight: 1.1 }}>{p.title[lang]}</h3>
                 <p style={{ fontSize: 14, color: "#666", lineHeight: 1.7 }}>{p.desc[lang]}</p>
@@ -300,8 +301,8 @@ export default function HomeClient({ dict, lang }) {
             </p>
             <a href={`/${lang}/sustainability`}
               style={{ display: "inline-flex", alignItems: "center", gap: 8, background: GREEN_DARK, color: "#fff", borderRadius: 999, padding: "13px 32px", fontSize: 14, fontWeight: 800, textDecoration: "none", transition: "background 0.2s" }}
-              onMouseEnter={e => e.currentTarget.style.background = "#163d21"}
-              onMouseLeave={e => e.currentTarget.style.background = GREEN_DARK}>
+              onMouseEnter={e => { e.currentTarget.style.background = "#163d21"; }}
+              onMouseLeave={e => { e.currentTarget.style.background = GREEN_DARK; }}>
               {t("Learn more →", "En savoir plus →")}
             </a>
           </div>
@@ -309,7 +310,7 @@ export default function HomeClient({ dict, lang }) {
       </section>
 
       {/* ── TEAM ── */}
-      <section ref={teamRef} className="section-pad" style={{ background: CREAM }}>
+      <section id="team" ref={teamRef} className="section-pad" style={{ background: CREAM }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "3px", color: RED, textTransform: "uppercase", marginBottom: 14 }}>
             {t("THE PEOPLE BEHIND IT", "L'ÉQUIPE DERRIÈRE LE PROJET")}
@@ -337,7 +338,7 @@ export default function HomeClient({ dict, lang }) {
       </section>
 
       {/* ── EVENTS ── */}
-      <section ref={eventsRef} className="section-pad" style={{ background: "#fff" }}>
+      <section id="events" ref={eventsRef} className="section-pad" style={{ background: "#fff" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "3px", color: RED, textTransform: "uppercase", marginBottom: 14 }}>
             {t("WHAT'S ON", "À L'AFFICHE")}
@@ -424,8 +425,8 @@ export default function HomeClient({ dict, lang }) {
                         {event.url_fiche && (
                           <a href={event.url_fiche} target="_blank" rel="noopener noreferrer"
                             style={{ fontSize: 12, fontWeight: 700, color: GREEN_DARK, textDecoration: "none" }}
-                            onMouseEnter={e => e.currentTarget.style.textDecoration = "underline"}
-                            onMouseLeave={e => e.currentTarget.style.textDecoration = "none"}>
+                            onMouseEnter={e => { e.currentTarget.style.textDecoration = "underline"; }}
+                            onMouseLeave={e => { e.currentTarget.style.textDecoration = "none"; }}>
                             {(dict || DICT[lang]).event?.readMore || "Read more"} →
                           </a>
                         )}
@@ -447,7 +448,7 @@ export default function HomeClient({ dict, lang }) {
       </section>
 
       {/* ── NEWSLETTER ── */}
-      <section ref={newsletterRef} className="section-pad" style={{ background: CREAM }}>
+      <section id="newsletter" ref={newsletterRef} className="section-pad" style={{ background: CREAM }}>
         <div style={{ maxWidth: 560, margin: "0 auto", textAlign: "center" }}>
           <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "3px", color: GREEN_DARK, textTransform: "uppercase", marginBottom: 20 }}>
             {t("STAY CONNECTED", "RESTEZ CONNECTÉ")}
@@ -463,11 +464,11 @@ export default function HomeClient({ dict, lang }) {
           ) : (
             <div className="newsletter-row" style={{ display: "flex", gap: 10, maxWidth: 460, margin: "0 auto" }}>
               <input type="email" placeholder={t("Your email address", "Votre adresse courriel")} value={email} onChange={(e) => setEmail(e.target.value)}
-                style={{ flex: 1, border: `1.5px solid #d8d8d8`, borderRadius: 12, padding: "14px 18px", fontSize: 14, outline: "none", color: DARK, background: "#fff" }} />
+                style={{ flex: 1, border: "1.5px solid #d8d8d8", borderRadius: 12, padding: "14px 18px", fontSize: 14, outline: "none", color: DARK, background: "#fff" }} />
               <button onClick={() => { if (email) setSubscribed(true); }}
                 style={{ background: RED, color: "#fff", border: "none", borderRadius: 12, padding: "14px 26px", fontSize: 14, fontWeight: 800, cursor: "pointer", whiteSpace: "nowrap", transition: "background 0.2s" }}
-                onMouseEnter={e => e.currentTarget.style.background = "#9a1f15"}
-                onMouseLeave={e => e.currentTarget.style.background = RED}>
+                onMouseEnter={e => { e.currentTarget.style.background = "#9a1f15"; }}
+                onMouseLeave={e => { e.currentTarget.style.background = RED; }}>
                 {t("Subscribe", "S'abonner")}
               </button>
             </div>
@@ -495,8 +496,8 @@ export default function HomeClient({ dict, lang }) {
                 <h4 style={{ fontSize: 11, fontWeight: 800, marginBottom: 20, color: "rgba(255,255,255,0.9)", letterSpacing: "1px", textTransform: "uppercase" }}>{col.heading}</h4>
                 {col.links.map((l) => (
                   <p key={l} style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginBottom: 12, cursor: "pointer", transition: "color 0.2s" }}
-                    onMouseEnter={e => e.currentTarget.style.color = "#fff"}
-                    onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.4)"}>{l}</p>
+                    onMouseEnter={e => { e.currentTarget.style.color = "#fff"; }}
+                    onMouseLeave={e => { e.currentTarget.style.color = "rgba(255,255,255,0.4)"; }}>{l}</p>
                 ))}
               </div>
             ))}
@@ -507,6 +508,7 @@ export default function HomeClient({ dict, lang }) {
           </div>
         </div>
       </footer>
+
     </div>
   );
 }
