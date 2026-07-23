@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import Header from "./Header";
 import { tField, eventDescription } from "./eventData";
 import { useBookmarks } from "@/lib/bookmarks";
+import MultiSelect from "./MultiSelect";
 
 const Map = dynamic(() => import("./Map"), { ssr: false });
 
@@ -74,11 +75,13 @@ const DICT = {
 
 export default function HomeClient({ dict, lang }) {
   const [events, setEvents]         = useState([]);
-  const [typeFilter, setTypeFilter] = useState(ALL);
-  const [arrFilter, setArrFilter]   = useState(ALL);
+  // Multi-value filters hold an array of chosen values ([] = no filter);
+  // single-value filters keep the ALL sentinel.
+  const [typeFilter, setTypeFilter] = useState([]);
+  const [arrFilter, setArrFilter]   = useState([]);
+  const [audFilter, setAudFilter]   = useState([]);
   const [coutFilter, setCoutFilter] = useState(ALL);
   const [empFilter, setEmpFilter]   = useState(ALL);
-  const [audFilter, setAudFilter]   = useState(ALL);
   const [inscFilter, setInscFilter] = useState(ALL);
   const [startDate, setStartDate]   = useState("");
   const [endDate, setEndDate]       = useState("");
@@ -104,16 +107,23 @@ export default function HomeClient({ dict, lang }) {
     [ALL, ...[...new Set(events.map((e) => e[field]).filter(Boolean))].sort()];
 
   const selectFilters = [
-    { label: (dict || DICT[lang]).filters?.type           || "Type",           field: "type_evenement", value: typeFilter,  set: setTypeFilter  },
-    { label: (dict || DICT[lang]).filters?.arrondissement || "Arrondissement", field: "arrondissement",  value: arrFilter,   set: setArrFilter   },
+    { label: (dict || DICT[lang]).filters?.type           || "Type",           field: "type_evenement", value: typeFilter,  set: setTypeFilter, multi: true },
+    { label: (dict || DICT[lang]).filters?.arrondissement || "Arrondissement", field: "arrondissement",  value: arrFilter,   set: setArrFilter,  multi: true },
     { label: (dict || DICT[lang]).filters?.cout           || "Cost",           field: "cout",            value: coutFilter,  set: setCoutFilter  },
     { label: (dict || DICT[lang]).filters?.lieu           || "Location",       field: "emplacement",     value: empFilter,   set: setEmpFilter   },
-    { label: (dict || DICT[lang]).filters?.public         || "Audience",       field: "public_cible",    value: audFilter,   set: setAudFilter   },
+    { label: (dict || DICT[lang]).filters?.public         || "Audience",       field: "public_cible",    value: audFilter,   set: setAudFilter,  multi: true },
     { label: (dict || DICT[lang]).filters?.inscription    || "Registration",   field: "inscription",     value: inscFilter,  set: setInscFilter  },
   ];
 
   const filtered = events.filter((e) => {
-    const selectMatch = selectFilters.every((f) => f.value === ALL || e[f.field] === f.value);
+    // Multi filters: match if the event's value is among the chosen ones (OR
+    // within a filter; empty = no filter). Single filters use the ALL sentinel.
+    // Filters still combine with AND across fields.
+    const selectMatch = selectFilters.every((f) =>
+      f.multi
+        ? (f.value.length === 0 || f.value.includes(e[f.field]))
+        : (f.value === ALL || e[f.field] === f.value)
+    );
     const startMatch  = !startDate || (e.date_debut && e.date_debut >= startDate);
     const endMatch    = !endDate   || (e.date_fin   && e.date_fin   <= endDate);
     return selectMatch && startMatch && endMatch;
@@ -389,17 +399,30 @@ export default function HomeClient({ dict, lang }) {
               </div>
 
               <div className="filters-wrap" style={{ background: CREAM, borderRadius: 16, padding: "24px 28px", marginBottom: 28 }}>
-                {selectFilters.map((f) => (
-                  <div key={f.field}>
-                    <label style={{ display: "block", fontSize: 10, fontWeight: 800, color: "#999", textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 7 }}>{f.label}</label>
-                    <select style={{ border: `1.5px solid ${GREEN_LIGHT}`, borderRadius: 10, padding: "9px 14px", fontSize: 13, background: "#fff", cursor: "pointer", color: DARK }}
-                      value={f.value} onChange={(e) => f.set(e.target.value)}>
-                      {optionsFor(f.field).map((o) => (
-                        <option key={o} value={o}>{o === ALL ? ((dict || DICT[lang]).filters?.all || "All") : tField(f.field, o, lang)}</option>
-                      ))}
-                    </select>
-                  </div>
-                ))}
+                {selectFilters.map((f) =>
+                  f.multi ? (
+                    <MultiSelect
+                      key={f.field}
+                      label={f.label}
+                      field={f.field}
+                      options={optionsFor(f.field).filter((o) => o !== ALL)}
+                      selected={f.value}
+                      onChange={f.set}
+                      dict={dict || DICT[lang]}
+                      lang={lang}
+                    />
+                  ) : (
+                    <div key={f.field}>
+                      <label style={{ display: "block", fontSize: 10, fontWeight: 800, color: "#999", textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 7 }}>{f.label}</label>
+                      <select style={{ border: `1.5px solid ${GREEN_LIGHT}`, borderRadius: 10, padding: "9px 14px", fontSize: 13, background: "#fff", cursor: "pointer", color: DARK }}
+                        value={f.value} onChange={(e) => f.set(e.target.value)}>
+                        {optionsFor(f.field).map((o) => (
+                          <option key={o} value={o}>{o === ALL ? ((dict || DICT[lang]).filters?.all || "All") : tField(f.field, o, lang)}</option>
+                        ))}
+                      </select>
+                    </div>
+                  )
+                )}
                 <div>
                   <label style={{ display: "block", fontSize: 10, fontWeight: 800, color: "#999", textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 7 }}>{(dict || DICT[lang]).filters?.startDate || "Start date"}</label>
                   <input type="date" style={{ border: `1.5px solid ${GREEN_LIGHT}`, borderRadius: 10, padding: "9px 14px", fontSize: 13, color: DARK }} value={startDate} onChange={(e) => setStartDate(e.target.value)} />

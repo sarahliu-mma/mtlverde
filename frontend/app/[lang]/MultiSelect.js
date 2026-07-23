@@ -2,26 +2,24 @@
 import { useEffect, useRef, useState } from "react";
 import { tField } from "./eventData";
 
-// A checkbox dropdown used for the multi-value filters (type, borough,
-// audience). `selected` is an array of raw (French) field values; an empty
-// array means "no filter" -- i.e. show everything, matching the single-select
-// "All" default. `onChange` receives the next array.
-//
-// The button mirrors the single <select> styling so it sits inline with the
-// other filters; a small count pill appears once anything is selected. The
-// panel closes on outside-click or Escape.
+// A checkbox dropdown for the multi-value filters (type, borough, audience).
+// `selected` is an array of raw (French) field values; an empty array means
+// "no filter" -- show everything, matching the single-select "All" default.
+// `onChange` receives the next array. Styled inline to match the redesigned
+// filter row. The panel closes on outside-click or Escape.
+const GREEN_LIGHT = "#e8f0e4";
+const GREEN_DARK  = "#1e4d2b";
+const GREEN_MID   = "#6a9e5a";
+const DARK        = "#111";
+
 export default function MultiSelect({ label, field, options, selected, onChange, dict, lang }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
   useEffect(() => {
     if (!open) return;
-    const onPointer = (e) => {
-      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
-    };
-    const onKey = (e) => {
-      if (e.key === "Escape") setOpen(false);
-    };
+    const onPointer = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    const onKey = (e) => { if (e.key === "Escape") setOpen(false); };
     document.addEventListener("mousedown", onPointer);
     document.addEventListener("keydown", onKey);
     return () => {
@@ -33,74 +31,55 @@ export default function MultiSelect({ label, field, options, selected, onChange,
   const count = selected.length;
   const active = count > 0;
 
-  const toggle = (value) => {
-    onChange(
-      selected.includes(value)
-        ? selected.filter((v) => v !== value)
-        : [...selected, value]
-    );
+  const toggleValue = (value) => {
+    onChange(selected.includes(value) ? selected.filter((v) => v !== value) : [...selected, value]);
   };
 
   return (
-    <div ref={ref} className="relative">
-      <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">{label}</label>
+    <div ref={ref} style={{ position: "relative" }}>
+      <label style={{ display: "block", fontSize: 10, fontWeight: 800, color: "#999", textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 7 }}>
+        {label}
+      </label>
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-haspopup="listbox"
         aria-expanded={open}
-        className={`flex items-center gap-2 border rounded-lg px-4 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-green-400 ${
-          active || open ? "border-green-400" : "border-gray-200"
-        } ${active ? "text-gray-800" : "text-gray-500"}`}
+        style={{
+          display: "flex", alignItems: "center", gap: 8,
+          border: `1.5px solid ${active || open ? GREEN_MID : GREEN_LIGHT}`,
+          borderRadius: 10, padding: "9px 14px", fontSize: 13,
+          background: "#fff", cursor: "pointer", color: active ? DARK : "#666",
+        }}
       >
         {active && (
-          <span className="inline-flex items-center justify-center rounded-full bg-green-100 text-green-700 text-xs font-semibold px-2 leading-5">
+          <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", borderRadius: 999, background: GREEN_LIGHT, color: GREEN_DARK, fontSize: 11, fontWeight: 800, padding: "0 7px", height: 18 }}>
             {count}
           </span>
         )}
         <span>{label}</span>
-        <svg
-          className={`w-4 h-4 text-gray-400 transition-transform ${open ? "rotate-180" : ""}`}
-          fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" aria-hidden="true"
-        >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2" style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .2s" }} aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" d="M6 9l6 6 6-6" />
         </svg>
       </button>
 
       {open && (
-        <div
-          role="listbox"
-          className="absolute left-0 top-full mt-1.5 w-56 max-h-72 overflow-y-auto bg-white border border-gray-200 rounded-xl shadow-lg p-1.5 z-20"
-        >
-          <div className="flex items-center justify-between px-2 py-1.5">
-            <span className="text-xs text-gray-400">
-              {dict.filters.selectedCount.replace("{count}", count)}
+        <div role="listbox" style={{ position: "absolute", left: 0, top: "100%", marginTop: 6, width: 230, maxHeight: 288, overflowY: "auto", background: "#fff", border: `1px solid ${GREEN_LIGHT}`, borderRadius: 12, boxShadow: "0 8px 28px rgba(0,0,0,0.12)", padding: 6, zIndex: 30 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "6px 8px" }}>
+            <span style={{ fontSize: 11, color: "#aaa" }}>
+              {(dict?.filters?.selectedCount || "{count} selected").replace("{count}", count)}
             </span>
             {active && (
-              <button
-                type="button"
-                onClick={() => onChange([])}
-                className="text-xs font-medium text-green-700 hover:text-green-800"
-              >
-                {dict.filters.clear}
+              <button type="button" onClick={() => onChange([])} style={{ fontSize: 11, fontWeight: 700, color: GREEN_DARK, background: "none", border: "none", cursor: "pointer" }}>
+                {dict?.filters?.clear || "Clear"}
               </button>
             )}
           </div>
           {options.map((o) => {
             const checked = selected.includes(o);
             return (
-              <label
-                key={o}
-                className={`flex items-center gap-2.5 px-2 py-1.5 rounded-md text-sm cursor-pointer ${
-                  checked ? "bg-green-50" : "hover:bg-gray-50"
-                }`}
-              >
-                <input
-                  type="checkbox"
-                  checked={checked}
-                  onChange={() => toggle(o)}
-                  className="w-4 h-4 rounded accent-green-600"
-                />
+              <label key={o} style={{ display: "flex", alignItems: "center", gap: 10, padding: "7px 8px", borderRadius: 8, fontSize: 13, cursor: "pointer", background: checked ? GREEN_LIGHT : "transparent", color: DARK }}>
+                <input type="checkbox" checked={checked} onChange={() => toggleValue(o)} style={{ width: 15, height: 15, accentColor: GREEN_DARK }} />
                 <span>{tField(field, o, lang)}</span>
               </label>
             );
