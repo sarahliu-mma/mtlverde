@@ -1,9 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
 import Header from "../Header";
-import EventCard from "../EventCard";
 import { useBookmarks } from "@/lib/bookmarks";
+import { useAuth } from "../AuthProvider";
 import { API_BASE } from "@/lib/api";
+import { tField, eventDescription } from "../eventData";
+import { getEventPhoto } from "@/lib/eventPhotos";
 
 const PINE  = "#1a2e1a";
 const MOSS  = "#3d5a3e";
@@ -13,6 +15,16 @@ const CREAM = "#f5f0e8";
 const RUST  = "#a0522d";
 const DARK  = "#0f1a0f";
 const WHITE = "#ffffff";
+
+// Matches the event card's exact palette on the home page (HomeClient.js), so
+// the card looks identical wherever it's rendered -- kept separate from this
+// page's PINE/MOSS/RUST hero and footer palette.
+const CARD_GREEN_DARK  = "#1e4d2b";
+const CARD_GREEN_MID   = "#6a9e5a";
+const CARD_GREEN_LIGHT = "#e8f0e4";
+const CARD_RED         = "#b5281c";
+const CARD_RED_LIGHT   = "#fdf0ee";
+const CARD_DARK        = "#111";
 
 function HeartIcon({ filled = false, size = 24, color = RUST }) {
   return (
@@ -36,6 +48,7 @@ export default function SavedClient({ dict, lang }) {
   const [events, setEvents] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const { isSaved, toggle, count } = useBookmarks();
+  const { user } = useAuth();
 
   useEffect(() => {
     fetch(`${API_BASE}/events/all`)
@@ -56,10 +69,19 @@ export default function SavedClient({ dict, lang }) {
 
       <style>{`
         * { box-sizing: border-box; }
-        .sv-card-wrap { background: ${WHITE}; border-radius: 18px; border: 1px solid rgba(0,0,0,0.06); overflow: hidden; transition: box-shadow .2s, transform .2s; }
-        .sv-card-wrap:hover { box-shadow: 0 10px 32px rgba(26,46,26,0.10); transform: translateY(-2px); }
-        .sv-unsave-btn { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: ${RUST}; background: none; border: 1.5px solid ${RUST}22; border-radius: 999px; padding: 6px 14px; cursor: pointer; transition: all .2s; }
-        .sv-unsave-btn:hover { background: ${RUST}11; border-color: ${RUST}; }
+        .event-list-card { display: flex; border: 1px solid ${CARD_GREEN_LIGHT}; border-radius: 16px; overflow: hidden; transition: all 0.2s; background: #fff; }
+        .event-list-card:hover { border-color: ${CARD_GREEN_MID}; box-shadow: 0 4px 20px rgba(30,77,43,0.10); }
+        .event-list-card .thumb { width: 100px; min-width: 100px; overflow: hidden; flex-shrink: 0; }
+        .event-list-card .thumb img { width: 100%; height: 100%; object-fit: cover; min-height: 100px; }
+        .event-list-card .body { padding: 16px 20px; flex: 1; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+        .badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 999px; white-space: nowrap; }
+        .badge-green  { background: ${CARD_GREEN_LIGHT}; color: ${CARD_GREEN_DARK}; }
+        .badge-red    { background: ${CARD_RED_LIGHT};   color: ${CARD_RED};        }
+        .badge-pink   { background: #fce7f3; color: #9d174d; }
+        @media (max-width: 768px) {
+          .event-list-card { flex-direction: column; }
+          .event-list-card .thumb { width: 100%; min-width: unset; height: 140px; }
+        }
         .fl { display: block; font-size: 13px; color: rgba(255,255,255,.4); margin-bottom: 12px; text-decoration: none; transition: color .2s; }
         .fl:hover { color: rgba(255,255,255,.85); }
         .ft-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
@@ -164,27 +186,50 @@ export default function SavedClient({ dict, lang }) {
 
             <div style={{ display: "grid", gap: 12 }}>
               {saved.map(event => (
-                <div key={event.id} className="sv-card-wrap">
-                  {/* Un-save button row */}
-                  <div style={{ display: "flex", justifyContent: "flex-end", padding: "14px 20px 0" }}>
-                    <button className="sv-unsave-btn" onClick={() => toggle(event.id)}>
-                      <HeartIcon filled size={13} color={RUST} />
-                      {fr ? "Retirer" : "Unsave"}
-                    </button>
+                <div key={event.id} className="event-list-card">
+                  <div className="thumb">
+                    <img src={getEventPhoto(event.type_evenement)} alt={event.type_evenement} />
                   </div>
-                  <EventCard
-                    event={event}
-                    lang={lang}
-                    dict={dict}
-                    saved
-                    onToggleSave={() => toggle(event.id)}
-                  />
+                  <div className="body">
+                    <div style={{ flex: 1 }}>
+                      <p style={{ fontSize: 10, color: CARD_GREEN_MID, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 5 }}>{tField("type_evenement", event.type_evenement, lang)}</p>
+                      <h2 style={{ fontSize: 15, fontWeight: 800, color: CARD_DARK, marginBottom: 4, lineHeight: 1.3 }}>{lang === "fr" ? event.titre : (event.titre_en || event.titre)}</h2>
+                      <p style={{ fontSize: 12, color: "#888", marginBottom: 3 }}>{event.arrondissement}</p>
+                      <p style={{ fontSize: 11, color: "#ccc", marginBottom: 8 }}>{event.date_debut} → {event.date_fin}</p>
+                      <p style={{ fontSize: 12, color: "#666", lineHeight: 1.6, marginBottom: 10 }}>{eventDescription(event, lang)}</p>
+                      {event.url_fiche && (
+                        <a href={event.url_fiche} target="_blank" rel="noopener noreferrer"
+                          style={{ fontSize: 12, fontWeight: 700, color: CARD_GREEN_DARK, textDecoration: "none" }}
+                          onMouseEnter={e => { e.currentTarget.style.textDecoration = "underline"; }}
+                          onMouseLeave={e => { e.currentTarget.style.textDecoration = "none"; }}>
+                          {dict.event?.readMore || "Read more"} →
+                        </a>
+                      )}
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 6, flexShrink: 0, alignItems: "flex-end", alignSelf: "stretch" }}>
+                      {event.public_cible   && <span className="badge badge-pink">{tField("public_cible", event.public_cible, lang)}</span>}
+                      <span className={`badge ${event.cout === "Gratuit" ? "badge-green" : "badge-red"}`}>
+                        {tField("cout", event.cout, lang)}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); toggle(event.id); }}
+                        aria-label={isSaved(event.id) ? (dict.event?.unsave || "Remove from saved") : (dict.event?.save || "Save event")}
+                        aria-pressed={isSaved(event.id)}
+                        style={{ background: "none", border: "none", padding: 0, cursor: "pointer", color: CARD_RED, display: "flex", marginTop: "auto" }}
+                      >
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill={isSaved(event.id) ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
 
             <p style={{ fontSize: 11, color: "#bbb", textAlign: "center", marginTop: 48, lineHeight: 1.8 }}>
-              {dict.saved.note}
+              {user ? dict.saved.noteAccount : dict.saved.note}
             </p>
           </>
         )}
