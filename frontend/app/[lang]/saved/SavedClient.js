@@ -85,12 +85,12 @@ export default function SavedClient({ dict, lang }) {
           {/* Heading + subtitle side by side */}
           <div className="hero-inner">
             <h1 style={{ fontSize: "clamp(48px, 7vw, 96px)", fontWeight: 900, lineHeight: 0.92, letterSpacing: "-3px", color: WHITE, margin: 0 }}>
-              {fr ? "Événements\nsauvegardés." : "Saved\nevents."}
+              {fr ? "Événements\nsauvegardés" : "Saved\nevents"}
             </h1>
-            <p style={{ fontSize: "clamp(15px, 1.5vw, 18px)", color: "rgba(255,255,255,0.5)", lineHeight: 1.75, maxWidth: 300, margin: 0, paddingBottom: 8, borderLeft: "2px solid rgba(255,255,255,0.15)", paddingLeft: 28 }}>
+            <p style={{ fontSize: "clamp(18px, 2vw, 26px)", fontStyle: "italic", fontWeight: 300, color: "rgba(255,255,255,0.65)", lineHeight: 1.55, maxWidth: 300, margin: 0, paddingBottom: 8, borderLeft: "2px solid rgba(255,255,255,0.2)", paddingLeft: 32, letterSpacing: "-0.3px" }}>
               {fr
-                ? "Vos événements favoris —\ntout en un seul endroit."
-                : "Your favourite events —\nall in one place."}
+                ? "Vos événements favoris — tout en un seul endroit."
+                : "Your favourite events — all in one place."}
             </p>
           </div>
         </div>
