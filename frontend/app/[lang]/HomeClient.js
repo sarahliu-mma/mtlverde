@@ -457,7 +457,6 @@ export default function HomeClient({ dict, lang }) {
                         )}
                       </div>
                       <div style={{ display: "flex", flexDirection: "column", gap: 6, flexShrink: 0, alignItems: "flex-end" }}>
-                        {event.type_evenement && <span className="badge badge-purple">{tField("type_evenement", event.type_evenement, lang)}</span>}
                         {event.public_cible   && <span className="badge badge-pink">{tField("public_cible", event.public_cible, lang)}</span>}
                         <span className={`badge ${event.cout === "Gratuit" ? "badge-green" : "badge-red"}`}>
                           {tField("cout", event.cout, lang)}
