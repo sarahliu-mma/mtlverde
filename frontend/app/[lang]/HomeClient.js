@@ -438,7 +438,7 @@ export default function HomeClient({ dict, lang }) {
 
               <div style={{ display: "grid", gap: 12 }}>
                 {filtered.map((event, i) => (
-                  <div key={event.id} className={`event-list-card ${ selectedId === event.id ? "selected" : ""}`} onClick={() => setSelectedId(event.id)}>
+                  <div key={event.id} className={`event-list-card ${ selectedId === event.id ? "selected" : ""}`} onClick={() => setSelectedId(prev => (prev === event.id ? null : event.id))}>
                     <div className="thumb">
                       <img src={getEventPhoto(event.type_evenement)} alt={event.type_evenement} />
                     </div>
