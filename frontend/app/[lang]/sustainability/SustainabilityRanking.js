@@ -7,7 +7,6 @@ import { eventTitle, tField } from "../eventData";
 const PINE  = "#1a2e1a";
 const MOSS  = "#3d5a3e";
 const SAGE  = "#7a9e7e";
-const STONE = "#c8b89a";
 const CREAM = "#f5f0e8";
 const WHITE = "#ffffff";
 
@@ -18,9 +17,9 @@ const BADGE_KEY = {
 };
 
 const BADGE_STYLE = {
-  "Green Leader": { bg: "#d4e8d4", color: MOSS  },
-  "Eco-Friendly": { bg: "#e8f0e4", color: "#4a7a4a" },
-  "Getting There": { bg: "#f0e8dc", color: "#7a5a2a" },
+  "Green Leader":  { bg: "#d4e8d4", color: MOSS        },
+  "Eco-Friendly":  { bg: "#e8f0e4", color: "#4a7a4a"   },
+  "Getting There": { bg: "#f0e8dc", color: "#7a5a2a"   },
 };
 
 const COMPONENTS = [
@@ -30,6 +29,21 @@ const COMPONENTS = [
 ];
 
 const PAGE_SIZE = 50;
+
+function rowEnter(e) {
+  e.currentTarget.style.background = CREAM;
+}
+function rowLeave(e) {
+  e.currentTarget.style.background = "none";
+}
+function btnEnter(e) {
+  e.currentTarget.style.background = MOSS;
+  e.currentTarget.style.color = WHITE;
+}
+function btnLeave(e) {
+  e.currentTarget.style.background = "transparent";
+  e.currentTarget.style.color = MOSS;
+}
 
 export default function SustainabilityRanking({ dict, lang }) {
   const [events, setEvents]   = useState([]);
@@ -41,21 +55,26 @@ export default function SustainabilityRanking({ dict, lang }) {
   useEffect(() => {
     let cancelled = false;
     fetch(`${API_BASE}/events/all`)
-      .then(res => res.json())
-      .then(data => {
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
         if (cancelled) return;
         const scored = (Array.isArray(data) ? data : []).filter(
-          e => typeof e.sustainability_score === "number"
+          function(e) { return typeof e.sustainability_score === "number"; }
         );
-        scored.sort((a, b) => b.sustainability_score - a.sustainability_score);
+        scored.sort(function(a, b) { return b.sustainability_score - a.sustainability_score; });
         setEvents(scored);
         setLoading(false);
       })
-      .catch(() => { if (!cancelled) { setError(true); setLoading(false); } });
-    return () => { cancelled = true; };
+      .catch(function() {
+        if (!cancelled) {
+          setError(true);
+          setLoading(false);
+        }
+      });
+    return function() { cancelled = true; };
   }, []);
 
-  const shown = useMemo(() => events.slice(0, visible), [events, visible]);
+  const shown = useMemo(function() { return events.slice(0, visible); }, [events, visible]);
   const b = dict.badge ?? {};
   const s = dict.sustainability ?? {};
 
@@ -66,7 +85,7 @@ export default function SustainabilityRanking({ dict, lang }) {
   return (
     <div style={{ marginTop: 8 }}>
       <ol style={{ display: "grid", gap: 10, listStyle: "none", padding: 0, margin: 0 }}>
-        {shown.map((event, i) => {
+        {shown.map(function(event, i) {
           const open       = openId === event.id;
           const badgeName  = b[BADGE_KEY[event.badge]] ?? event.badge;
           const badgeStyle = BADGE_STYLE[event.badge] ?? { bg: "#eee", color: "#666" };
@@ -76,16 +95,14 @@ export default function SustainabilityRanking({ dict, lang }) {
             <li key={event.id} style={{ background: WHITE, borderRadius: 18, overflow: "hidden", border: "1px solid rgba(0,0,0,0.06)" }}>
               <button
                 type="button"
-                onClick={() => setOpenId(open ? null : event.id)}
+                onClick={function() { setOpenId(open ? null : event.id); }}
                 aria-expanded={open}
+                onMouseEnter={rowEnter}
+                onMouseLeave={rowLeave}
                 style={{ width: "100%", textAlign: "left", padding: "18px 22px", display: "flex", alignItems: "center", gap: 16, background: "none", border: "none", cursor: "pointer", transition: "background 0.15s" }}
-                onMouseEnter={e => { e.currentTarget.style.background = CREAM; }}
-                onMouseLeave={e => { e.currentTarget.style.background = "none"; }}
               >
-                {/* Rank */}
                 <span style={{ fontSize: 12, fontFamily: "monospace", color: "#ccc", width: 28, flexShrink: 0, textAlign: "right" }}>{i + 1}</span>
 
-                {/* Title + badges */}
                 <span style={{ flex: 1, minWidth: 0 }}>
                   <span style={{ display: "block", fontWeight: 700, fontSize: 14, color: PINE, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                     {eventTitle(event, lang)}
@@ -112,7 +129,6 @@ export default function SustainabilityRanking({ dict, lang }) {
                   </span>
                 </span>
 
-                {/* Badge + score */}
                 <span style={{ flexShrink: 0, textAlign: "right" }}>
                   <span style={{ display: "block", fontSize: 11, fontWeight: 800, padding: "4px 12px", borderRadius: 999, background: badgeStyle.bg, color: badgeStyle.color, marginBottom: 5, whiteSpace: "nowrap" }}>
                     {badgeName}
@@ -123,23 +139,22 @@ export default function SustainabilityRanking({ dict, lang }) {
                   </span>
                 </span>
 
-                {/* Chevron */}
                 <span style={{ flexShrink: 0, color: "#ccc", fontSize: 10, transition: "transform 0.2s", transform: open ? "rotate(180deg)" : "none" }} aria-hidden="true">
                   {"▼"}
                 </span>
               </button>
 
               {open && (
-                <div style={{ padding: "12px 22px 22px", borderTop: `1px solid ${CREAM}` }}>
+                <div style={{ padding: "12px 22px 22px", borderTop: "1px solid " + CREAM }}>
                   <div style={{ display: "grid", gap: 12, paddingTop: 12 }}>
-                    {COMPONENTS.map(c => {
+                    {COMPONENTS.map(function(c) {
                       const pts = breakdown[c.key] ?? 0;
                       const pct = Math.max(0, Math.min(100, (pts / c.max) * 100));
                       return (
                         <div key={c.key} style={{ display: "grid", gridTemplateColumns: "130px 1fr 56px", alignItems: "center", gap: 12 }}>
                           <span style={{ fontSize: 12, color: "#777" }}>{s[c.labelKey] ?? c.fallback}</span>
                           <span style={{ height: 6, borderRadius: 999, background: "#e4dfd5", overflow: "hidden", display: "block" }}>
-                            <span style={{ display: "block", height: "100%", borderRadius: 999, background: MOSS, width: `${pct}%` }} />
+                            <span style={{ display: "block", height: "100%", borderRadius: 999, background: MOSS, width: pct + "%" }} />
                           </span>
                           <span style={{ fontSize: 11, fontFamily: "monospace", color: "#bbb", textAlign: "right" }}>{pts} / {c.max}</span>
                         </div>
@@ -160,12 +175,12 @@ export default function SustainabilityRanking({ dict, lang }) {
         <div style={{ marginTop: 28, textAlign: "center" }}>
           <button
             type="button"
-            onClick={() => setVisible(v => v + PAGE_SIZE)}
-            style={{ fontSize: 13, fontWeight: 800, color: MOSS, border: `1.5px solid ${MOSS}`, borderRadius: 999, padding: "11px 28px", background: "transparent", cursor: "pointer", transition: "all 0.2s" }}
-            onMouseEnter={e => { e.currentTarget.style.background = MOSS; e.currentTarget.style.color = WHITE; }}
-            onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = MOSS; }}
+            onClick={function() { setVisible(function(v) { return v + PAGE_SIZE; }); }}
+            onMouseEnter={btnEnter}
+            onMouseLeave={btnLeave}
+            style={{ fontSize: 13, fontWeight: 800, color: MOSS, border: "1.5px solid " + MOSS, borderRadius: 999, padding: "11px 28px", background: "transparent", cursor: "pointer", transition: "all 0.2s" }}
           >
-            {(s.rankingLoadMore ?? "Show {count} more").replace("{count}", events.length - visible)}
+            {(s.rankingLoadMore ?? "Show {count} more").replace("{count}", String(events.length - visible))}
           </button>
         </div>
       )}
