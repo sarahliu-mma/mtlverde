@@ -88,6 +88,7 @@ export default function HomeClient({ dict, lang }) {
   const [showEvents, setShowEvents] = useState(false);
   const [email, setEmail]           = useState("");
   const [subscribed, setSubscribed] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
   const { isSaved, toggle } = useBookmarks();
 
   const eventsRef     = useRef(null);
@@ -395,7 +396,7 @@ export default function HomeClient({ dict, lang }) {
           ) : (
             <>
               <div style={{ borderRadius: 20, overflow: "hidden", boxShadow: "0 4px 24px rgba(0,0,0,0.10)", marginBottom: 32, border: `1px solid ${GREEN_LIGHT}` }}>
-                <Map events={filtered} lang={lang} readMoreLabel={(dict || DICT[lang]).event?.readMore || "Read more"} />
+                <Map events={filtered} lang={lang} readMoreLabel={(dict || DICT[lang]).event?.readMore || "Read more"} selectedId={selectedId} />
               </div>
 
               <div className="filters-wrap" style={{ background: CREAM, borderRadius: 16, padding: "24px 28px", marginBottom: 28 }}>
@@ -436,7 +437,7 @@ export default function HomeClient({ dict, lang }) {
 
               <div style={{ display: "grid", gap: 12 }}>
                 {filtered.map((event, i) => (
-                  <div key={i} className="event-list-card">
+                  <div key={event.id} className={`event-list-card ${ selectedId === event.id ? "selected" : ""}`} onClick={() => setSelectedId(event.id)}>
                     <div className="thumb">
                       <img src={getEventPhoto(event.type_evenement)} alt={event.type_evenement} />
                     </div>
