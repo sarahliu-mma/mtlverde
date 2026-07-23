@@ -1,5 +1,8 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
+import EventCard from "./EventCard";
+import { useBookmarks } from "@/lib/bookmarks";
+import { useEventChat, parseMessageSegments, parseBoldFragments } from "@/hooks/useEventChat";
 
 const PINE  = "#1a2e1a";
 const MOSS  = "#3d5a3e";
@@ -25,53 +28,41 @@ function LeafIcon() {
   );
 }
 
+// Renders one bubble of assistant text, respecting the widget's pine/cream
+// theme (matches the styling Chloee set up for user bubbles below).
+function AssistantTextBubble({ text }) {
+  const fragments = parseBoldFragments(text);
+  return (
+    <div style={{
+      maxWidth: "80%",
+      padding: "10px 14px",
+      borderRadius: "18px 18px 18px 4px",
+      background: WHITE,
+      color: DARK,
+      fontSize: 13,
+      lineHeight: 1.6,
+      boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
+      border: "1px solid rgba(0,0,0,0.05)",
+      whiteSpace: "pre-wrap",
+    }}>
+      {fragments.map((f, i) => (f.bold ? <strong key={i}>{f.text}</strong> : <span key={i}>{f.text}</span>))}
+    </div>
+  );
+}
+
 export default function ChatWidget({ lang, dict }) {
-  const [open, setOpen]       = useState(false);
-  const [messages, setMessages] = useState([]);
-  const [input, setInput]     = useState("");
-  const [loading, setLoading] = useState(false);
-  const bottomRef = useRef(null);
+  const c = dict.chatWidget;
+  const { isSaved, toggle } = useBookmarks();
+  const [open, setOpen] = useState(false);
 
-  useEffect(() => {
-    if (bottomRef.current) {
-      bottomRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [messages, loading]);
-
-  async function sendMessage() {
-    if (!input.trim()) return;
-    const userMsg = input;
-    setMessages(function(prev) { return [...prev, { role: "user", text: userMsg }]; });
-    setInput("");
-    setLoading(true);
-    try {
-      const res = await fetch("https://mtlverde-production.up.railway.app/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: userMsg, lang }),
-      });
-      const data = await res.json();
-      setMessages(function(prev) { return [...prev, { role: "assistant", text: data.reply }]; });
-    } catch (err) {
-      setMessages(function(prev) {
-        return [...prev, { role: "assistant", text: dict.chatWidget.error }];
-      });
-    }
-    setLoading(false);
-  }
-
-  function handleKeyDown(e) {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
-  }
+  const { messages, input, setInput, loading, sendMessage, bottomRef } =
+    useEventChat({ lang, errorText: c.error });
 
   return (
     <div style={{ position: "fixed", bottom: 24, right: 24, zIndex: 9999, fontFamily: "'DM Sans','Inter',sans-serif" }}>
 
       {open ? (
-        <div style={{ width: 360, height: 520, background: WHITE, borderRadius: 24, display: "flex", flexDirection: "column", overflow: "hidden", boxShadow: "0 24px 64px rgba(10,20,10,0.22), 0 4px 16px rgba(10,20,10,0.12)", border: "1px solid rgba(61,90,62,0.15)" }}>
+        <div style={{ width: 380, height: 560, background: WHITE, borderRadius: 24, display: "flex", flexDirection: "column", overflow: "hidden", boxShadow: "0 24px 64px rgba(10,20,10,0.22), 0 4px 16px rgba(10,20,10,0.12)", border: "1px solid rgba(61,90,62,0.15)" }}>
 
           {/* Header */}
           <div style={{ background: PINE, padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
@@ -80,14 +71,14 @@ export default function ChatWidget({ lang, dict }) {
                 <LeafIcon />
               </div>
               <div>
-                <p style={{ fontSize: 14, fontWeight: 700, color: WHITE, margin: 0 }}>{dict.chatWidget.title}</p>
+                <p style={{ fontSize: 14, fontWeight: 700, color: WHITE, margin: 0 }}>{c.title}</p>
                 <p style={{ fontSize: 11, color: SAGE, margin: 0, marginTop: 1 }}>
                   {lang === "fr" ? "Assistant communautaire" : "Community assistant"}
                 </p>
               </div>
             </div>
             <button
-              onClick={function() { setOpen(false); }}
+              onClick={() => setOpen(false)}
               aria-label="Close chat"
               style={{ background: "rgba(255,255,255,0.1)", border: "none", borderRadius: "50%", width: 28, height: 28, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "rgba(255,255,255,0.7)", fontSize: 16, lineHeight: 1 }}
             >
@@ -98,35 +89,75 @@ export default function ChatWidget({ lang, dict }) {
           {/* Messages */}
           <div style={{ flex: 1, overflowY: "auto", padding: "16px 16px 8px", display: "flex", flexDirection: "column", gap: 10, background: CREAM }}>
             {messages.length === 0 && (
-              <div style={{ textAlign: "center", padding: "32px 16px" }}>
+              <div style={{ textAlign: "center", padding: "24px 16px" }}>
                 <div style={{ width: 48, height: 48, borderRadius: "50%", background: "rgba(61,90,62,0.1)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 14px" }}>
                   <LeafIcon />
                 </div>
-                <p style={{ fontSize: 13, color: "#999", lineHeight: 1.7, margin: 0 }}>
-                  {lang === "fr"
-                    ? "Bonjour ! Posez-moi une question sur les événements de Montréal."
-                    : "Hi! Ask me anything about Montreal community events."}
+                <p style={{ fontSize: 13, color: "#999", lineHeight: 1.7, margin: "0 0 16px" }}>
+                  {c.chatEmptyHint}
                 </p>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 6, justifyContent: "center" }}>
+                  {c.suggestedQuestions.slice(0, 3).map((q, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => sendMessage(q)}
+                      style={{
+                        fontSize: 12,
+                        padding: "6px 12px",
+                        borderRadius: 999,
+                        border: `1px solid ${MOSS}`,
+                        color: MOSS,
+                        background: WHITE,
+                        cursor: "pointer",
+                      }}
+                    >
+                      {q}
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
 
-            {messages.map(function(m, i) {
-              const isUser = m.role === "user";
-              return (
-                <div key={i} style={{ display: "flex", justifyContent: isUser ? "flex-end" : "flex-start" }}>
-                  <div style={{
-                    maxWidth: "80%",
-                    padding: "10px 14px",
-                    borderRadius: isUser ? "18px 18px 4px 18px" : "18px 18px 18px 4px",
-                    background: isUser ? PINE : WHITE,
-                    color: isUser ? WHITE : DARK,
-                    fontSize: 13,
-                    lineHeight: 1.6,
-                    boxShadow: isUser ? "none" : "0 1px 4px rgba(0,0,0,0.06)",
-                    border: isUser ? "none" : "1px solid rgba(0,0,0,0.05)",
-                  }}>
-                    {m.text}
+            {messages.map((m, i) => {
+              if (m.role === "user") {
+                return (
+                  <div key={i} style={{ display: "flex", justifyContent: "flex-end" }}>
+                    <div style={{
+                      maxWidth: "80%",
+                      padding: "10px 14px",
+                      borderRadius: "18px 18px 4px 18px",
+                      background: PINE,
+                      color: WHITE,
+                      fontSize: 13,
+                      lineHeight: 1.6,
+                    }}>
+                      {m.text}
+                    </div>
                   </div>
+                );
+              }
+
+              // Assistant message: split into text bubbles + real EventCards
+              // wherever a [id: EVENT_ID] tag was found.
+              const segments = parseMessageSegments(m);
+              return (
+                <div key={i} style={{ display: "flex", flexDirection: "column", gap: 8, alignItems: "flex-start" }}>
+                  {segments.map((seg, j) =>
+                    seg.type === "event" ? (
+                      <div key={j} style={{ width: "100%" }}>
+                        <EventCard
+                          event={seg.event}
+                          lang={lang}
+                          dict={dict}
+                          saved={isSaved(seg.event.id)}
+                          onToggleSave={() => toggle(seg.event.id)}
+                        />
+                      </div>
+                    ) : (
+                      <AssistantTextBubble key={j} text={seg.text} />
+                    )
+                  )}
                 </div>
               );
             })}
@@ -134,11 +165,9 @@ export default function ChatWidget({ lang, dict }) {
             {loading && (
               <div style={{ display: "flex", justifyContent: "flex-start" }}>
                 <div style={{ padding: "10px 16px", borderRadius: "18px 18px 18px 4px", background: WHITE, border: "1px solid rgba(0,0,0,0.05)", display: "flex", gap: 5, alignItems: "center" }}>
-                  {[0, 1, 2].map(function(i) {
-                    return (
-                      <span key={i} style={{ width: 6, height: 6, borderRadius: "50%", background: SAGE, display: "block", animation: "pulse 1.2s ease-in-out " + (i * 0.2) + "s infinite" }} />
-                    );
-                  })}
+                  {[0, 1, 2].map((i) => (
+                    <span key={i} style={{ width: 6, height: 6, borderRadius: "50%", background: SAGE, display: "block", animation: `pulse 1.2s ease-in-out ${i * 0.2}s infinite` }} />
+                  ))}
                 </div>
               </div>
             )}
@@ -149,16 +178,16 @@ export default function ChatWidget({ lang, dict }) {
           <div style={{ padding: "12px 14px", background: WHITE, borderTop: "1px solid rgba(0,0,0,0.06)", display: "flex", gap: 8, alignItems: "center", flexShrink: 0 }}>
             <input
               value={input}
-              onChange={function(e) { setInput(e.target.value); }}
-              onKeyDown={handleKeyDown}
-              placeholder={dict.chatWidget.placeholder}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
+              placeholder={c.placeholder}
               style={{ flex: 1, border: "1.5px solid rgba(0,0,0,0.1)", borderRadius: 999, padding: "9px 16px", fontSize: 13, outline: "none", background: CREAM, color: DARK, fontFamily: "inherit" }}
             />
             <button
-              onClick={sendMessage}
+              onClick={() => sendMessage()}
               disabled={!input.trim() || loading}
               style={{ background: input.trim() && !loading ? PINE : "#ccc", color: WHITE, border: "none", borderRadius: "50%", width: 36, height: 36, cursor: input.trim() && !loading ? "pointer" : "default", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "background 0.2s" }}
-              aria-label={dict.chatWidget.send}
+              aria-label={c.send}
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={WHITE} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <line x1="22" y1="2" x2="11" y2="13" />
@@ -170,11 +199,11 @@ export default function ChatWidget({ lang, dict }) {
         </div>
       ) : (
         <button
-          onClick={function() { setOpen(true); }}
+          onClick={() => setOpen(true)}
           aria-label="Open MTLVerde chat"
           style={{ width: 56, height: 56, borderRadius: "50%", background: PINE, border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 8px 24px rgba(10,20,10,0.3), 0 2px 8px rgba(10,20,10,0.2)", transition: "transform 0.2s, box-shadow 0.2s" }}
-          onMouseEnter={function(e) { e.currentTarget.style.transform = "scale(1.08)"; e.currentTarget.style.boxShadow = "0 12px 32px rgba(10,20,10,0.35)"; }}
-          onMouseLeave={function(e) { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = "0 8px 24px rgba(10,20,10,0.3), 0 2px 8px rgba(10,20,10,0.2)"; }}
+          onMouseEnter={(e) => { e.currentTarget.style.transform = "scale(1.08)"; e.currentTarget.style.boxShadow = "0 12px 32px rgba(10,20,10,0.35)"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = "0 8px 24px rgba(10,20,10,0.3), 0 2px 8px rgba(10,20,10,0.2)"; }}
         >
           <ChatIcon size={22} />
         </button>
