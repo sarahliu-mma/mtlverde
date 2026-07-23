@@ -70,12 +70,17 @@ const BookmarksContext = createContext({
   count: 0,
   toggle: () => {},
   isSaved: () => false,
+  mergedCount: 0,
+  clearMerged: () => {},
 });
 
 export function BookmarksProvider({ children }) {
   const { user } = useAuth();
   const guestIds = useSyncExternalStore(guestSubscribe, guestSnapshot, guestServerSnapshot);
   const [accountIds, setAccountIds] = useState(EMPTY);
+  // How many guest bookmarks were just merged into the account on this sign-in,
+  // so the UI can show a one-time confirmation. Cleared once acknowledged.
+  const [mergedCount, setMergedCount] = useState(0);
 
   // On sign-in: merge any guest (localStorage) bookmarks into the account, then
   // load this user's bookmarks from Supabase. RLS scopes the query to their own
@@ -96,7 +101,10 @@ export function BookmarksProvider({ children }) {
             guest.map((event_id) => ({ user_id: user.id, event_id })),
             { onConflict: "user_id,event_id", ignoreDuplicates: true },
           );
-        if (!error) clearGuestIds();
+        if (!error) {
+          clearGuestIds();
+          if (!cancelled) setMergedCount(guest.length);
+        }
       }
       const { data } = await supabase.from("bookmarks").select("event_id");
       if (!cancelled) setAccountIds((data ?? []).map((row) => row.event_id));
@@ -134,9 +142,10 @@ export function BookmarksProvider({ children }) {
   );
 
   const isSaved = useCallback((id) => ids.includes(String(id)), [ids]);
+  const clearMerged = useCallback(() => setMergedCount(0), []);
 
   return (
-    <BookmarksContext.Provider value={{ ids, count: ids.length, toggle, isSaved }}>
+    <BookmarksContext.Provider value={{ ids, count: ids.length, toggle, isSaved, mergedCount, clearMerged }}>
       {children}
     </BookmarksContext.Provider>
   );

@@ -47,7 +47,7 @@ function HeartIcon({ filled = false, size = 24, color = RUST }) {
 export default function SavedClient({ dict, lang }) {
   const [events, setEvents] = useState([]);
   const [loaded, setLoaded] = useState(false);
-  const { isSaved, toggle, count } = useBookmarks();
+  const { isSaved, toggle, count, mergedCount, clearMerged } = useBookmarks();
   const { user } = useAuth();
 
   useEffect(() => {
@@ -57,6 +57,14 @@ export default function SavedClient({ dict, lang }) {
       .catch(() => setEvents([]))
       .finally(() => setLoaded(true));
   }, []);
+
+  // Auto-dismiss the "merged your guest saves" confirmation after a few seconds.
+  useEffect(() => {
+    if (mergedCount > 0) {
+      const t = setTimeout(clearMerged, 6000);
+      return () => clearTimeout(t);
+    }
+  }, [mergedCount, clearMerged]);
 
   const saved      = events.filter(e => isSaved(e.id));
   const showEmpty  = count === 0 || (loaded && saved.length === 0);
@@ -95,6 +103,21 @@ export default function SavedClient({ dict, lang }) {
 
       <Header dict={dict} lang={lang} />
 
+      {/* Merge confirmation toast (shown once after guest saves are merged on sign-in) */}
+      {mergedCount > 0 && (
+        <div role="status" style={{ position: "fixed", top: 84, left: "50%", transform: "translateX(-50%)", zIndex: 2000, background: PINE, color: WHITE, borderRadius: 999, padding: "12px 22px", fontSize: 14, fontWeight: 700, boxShadow: "0 8px 28px rgba(0,0,0,0.28)", display: "flex", alignItems: "center", gap: 14, maxWidth: "92vw" }}>
+          <span>
+            ✓ {fr
+              ? `${mergedCount} événement${mergedCount > 1 ? "s" : ""} ajouté${mergedCount > 1 ? "s" : ""} à votre compte`
+              : `${mergedCount} saved event${mergedCount > 1 ? "s" : ""} added to your account`}
+          </span>
+          <button onClick={clearMerged} aria-label={fr ? "Fermer" : "Dismiss"}
+            style={{ background: "none", border: "none", color: "rgba(255,255,255,0.7)", cursor: "pointer", fontSize: 20, lineHeight: 1, padding: 0 }}>
+            ×
+          </button>
+        </div>
+      )}
+
       {/* ── HERO ── */}
       <section style={{ position: "relative", height: "52vh", minHeight: 340, display: "flex", alignItems: "flex-end" }}>
         <img
@@ -123,6 +146,26 @@ export default function SavedClient({ dict, lang }) {
 
       {/* ── MAIN CONTENT ── */}
       <main style={{ maxWidth: 1100, margin: "0 auto", padding: "72px 48px 100px" }}>
+
+        {/* Guest call-to-action: create an account to keep saves across devices */}
+        {!user && (
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 20, flexWrap: "wrap", background: WHITE, border: "1px solid rgba(61,90,62,0.22)", borderRadius: 16, padding: "18px 24px", marginBottom: 36 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+              <HeartIcon filled size={22} color={RUST} />
+              <span style={{ fontSize: 14, color: DARK, fontWeight: 600, lineHeight: 1.5 }}>
+                {fr
+                  ? "Créez un compte gratuit pour conserver vos événements sur tous vos appareils."
+                  : "Create a free account to keep your saved events on any device."}
+              </span>
+            </div>
+            <a href={`/${lang}/login`}
+              style={{ background: PINE, color: WHITE, borderRadius: 999, padding: "12px 26px", fontSize: 13, fontWeight: 800, textDecoration: "none", whiteSpace: "nowrap", transition: "background 0.2s" }}
+              onMouseEnter={e => { e.currentTarget.style.background = MOSS; }}
+              onMouseLeave={e => { e.currentTarget.style.background = PINE; }}>
+              {fr ? "Se connecter ou s'inscrire" : "Log in or sign up"}
+            </a>
+          </div>
+        )}
 
         {/* Loading */}
         {showLoading && (
