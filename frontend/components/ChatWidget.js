@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import EventCard from "./EventCard";
+import EventCard from "@/app/[lang]/EventCard";
 import { useBookmarks } from "@/lib/bookmarks";
 import { useEventChat, parseMessageSegments, parseBoldFragments } from "@/hooks/useEventChat";
 
