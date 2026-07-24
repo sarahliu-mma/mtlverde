@@ -76,24 +76,48 @@ export default async function Sustainability({ params }) {
             {fr ? "Durabilité" : "Sustainability"}
           </h1>
           {/* Italic quote */}
-          <p style={{ fontSize: "clamp(16px, 1.8vw, 22px)", fontStyle: "italic", fontWeight: 300, color: "rgba(255,255,255,0.55)", lineHeight: 1.6, maxWidth: 560, marginBottom: 36, letterSpacing: "-0.2px" }}>
+          <p style={{ fontSize: "clamp(16px, 1.8vw, 22px)", fontStyle: "italic", fontWeight: 300, color: "rgba(255,255,255,0.55)", lineHeight: 1.6, maxWidth: 560, letterSpacing: "-0.2px" }}>
             {fr
               ? "\"La durabilité est notre objectif ultime — chaque événement, chaque trajet, chaque choix compte.\""
               : "\"Sustainability is our ultimate goal — every event, every journey, every choice adds up.\""}
           </p>
-          {/* How we score subheading + intro */}
-          <div style={{ borderTop: "1px solid rgba(255,255,255,0.15)", paddingTop: 28, maxWidth: 560 }}>
-            <p style={{ fontSize: 11, fontWeight: 800, letterSpacing: "3px", color: SAGE, textTransform: "uppercase", marginBottom: 10 }}>
-              {fr ? "COMMENT NOUS ÉVALUONS" : "HOW WE SCORE"}
-            </p>
-            <p style={{ fontSize: "clamp(14px, 1.5vw, 17px)", color: "rgba(255,255,255,0.6)", lineHeight: 1.8 }}>
-              {s.intro}
-            </p>
-          </div>
         </div>
         <div style={{ position: "absolute", bottom: 28, left: "50%", transform: "translateX(-50%)", display: "flex", flexDirection: "column", alignItems: "center", gap: 8, opacity: 0.35 }}>
           <div style={{ width: 1, height: 44, background: WHITE }} />
           <span style={{ fontSize: 8, fontWeight: 700, letterSpacing: "3px", color: WHITE, textTransform: "uppercase" }}>scroll</span>
+        </div>
+      </section>
+
+      {/* HOW WE SCORE — editorial section */}
+      <section style={{ background: WHITE, padding: "96px 48px", borderBottom: "1px solid #eee" }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto", display: "flex", flexWrap: "wrap", gap: 64, alignItems: "flex-start" }}>
+          <div style={{ flex: "1 1 340px" }}>
+            <p style={{ fontSize: 10, fontWeight: 800, letterSpacing: "4px", color: RUST, textTransform: "uppercase", marginBottom: 20 }}>
+              {fr ? "COMMENT NOUS ÉVALUONS" : "HOW WE SCORE"}
+            </p>
+            <h2 style={{ fontSize: "clamp(36px, 5vw, 68px)", fontWeight: 900, letterSpacing: "-2.5px", lineHeight: 0.95, color: DARK, margin: 0 }}>
+              {fr ? "Chaque événement\na son score." : "Every event\nhas a score."}
+            </h2>
+          </div>
+          <div style={{ flex: "1 1 340px", paddingTop: 8 }}>
+            <p style={{ fontSize: "clamp(15px, 1.6vw, 18px)", color: "#555", lineHeight: 1.85, marginBottom: 24 }}>
+              {s.intro}
+            </p>
+            <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+              {[
+                { n: "45", label: fr ? "pts transport" : "pts transit" },
+                { n: "35", label: fr ? "pts piéton"    : "pts walk-in" },
+                { n: "20", label: fr ? "pts extérieur"  : "pts outdoor" },
+              ].map(function(stat) {
+                return (
+                  <div key={stat.n} style={{ background: CREAM, borderRadius: 14, padding: "18px 22px", minWidth: 100 }}>
+                    <p style={{ fontSize: 28, fontWeight: 900, color: DARK, letterSpacing: "-1px", margin: 0 }}>{stat.n}</p>
+                    <p style={{ fontSize: 11, fontWeight: 700, color: "#999", textTransform: "uppercase", letterSpacing: "1px", margin: "4px 0 0" }}>{stat.label}</p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </section>
 
