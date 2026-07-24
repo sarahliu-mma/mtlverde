@@ -75,7 +75,9 @@ export default function FestivalsClient({ dict, lang }) {
     // public-data feed -- so this page stays a small, marquee list.
     fetch(`${API_BASE}/events`)
       .then((res) => res.json())
-      .then((data) => setFestivals(data.filter(isUpcoming)))
+      .then((data) => setFestivals(
+        data.filter(isUpcoming).sort((a, b) => (a.date_debut || "").localeCompare(b.date_debut || ""))
+      ))
       .catch(() => setFestivals([]))
       .finally(() => setLoaded(true));
   }, []);

@@ -55,9 +55,9 @@ export default function Header({ dict, lang }) {
   const navItems = [
     { label: lang === "fr" ? "Mission"       : "Our Purpose",     href: `/${lang}#purpose`         },
     { label: lang === "fr" ? "Notre mission"  : "Our Mission",     href: `/${lang}/mission`          },
-    { label: lang === "fr" ? "Durabilité"     : "Sustainability",  href: `/${lang}/sustainability`   },
     { label: lang === "fr" ? "Événements"     : "Events",          href: `/${lang}#events`           },
-    { label: lang === "fr" ? "Festivals en vedette" : "Featured Festivals", href: `/${lang}/festivals` },
+    { label: lang === "fr" ? "En vedette"     : "Featured",        href: `/${lang}/festivals`        },
+    { label: lang === "fr" ? "Durabilité"     : "Sustainability",  href: `/${lang}/sustainability`   },
     { label: lang === "fr" ? "L'équipe"       : "About the Team",  href: `/${lang}#team`             },
     { label: lang === "fr" ? "Sauvegardés"    : "Saved",           href: `/${lang}/saved`, badge: count },
     { label: lang === "fr" ? "Infolettre"     : "Newsletter",      href: `/${lang}#newsletter`       },
