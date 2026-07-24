@@ -1,9 +1,10 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
+import { useState, useRef } from "react";
 import dynamic from "next/dynamic";
 import Header from "./Header";
 import { tField, eventDescription } from "./eventData";
 import { useBookmarks } from "@/lib/bookmarks";
+import { useEventsFeed } from "@/lib/useEventsFeed";
 import MultiSelect from "./MultiSelect";
 
 const Map = dynamic(() => import("./Map"), { ssr: false });
@@ -73,8 +74,8 @@ const DICT = {
   },
 };
 
-export default function HomeClient({ dict, lang }) {
-  const [events, setEvents]         = useState([]);
+export default function HomeClient({ dict, lang, initialEvents = [] }) {
+  const { events } = useEventsFeed({ initialData: initialEvents });
   // Multi-value filters hold an array of chosen values ([] = no filter);
   // single-value filters keep the ALL sentinel.
   const [typeFilter, setTypeFilter] = useState([]);
@@ -95,12 +96,6 @@ export default function HomeClient({ dict, lang }) {
   const purposeRef    = useRef(null);
   const teamRef       = useRef(null);
   const newsletterRef = useRef(null);
-
-  useEffect(() => {
-    fetch("https://mtlverde-production.up.railway.app/events/all")
-      .then((res) => res.json())
-      .then((data) => setEvents(data));
-  }, []);
 
   const scrollTo = (ref) => { ref.current?.scrollIntoView({ behavior: "smooth" }); };
 

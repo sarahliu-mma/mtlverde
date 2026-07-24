@@ -1,9 +1,9 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Header from "../Header";
 import { useBookmarks } from "@/lib/bookmarks";
 import { useAuth } from "../AuthProvider";
-import { API_BASE } from "@/lib/api";
+import { useEventsFeed } from "@/lib/useEventsFeed";
 import { tField, eventDescription } from "../eventData";
 import { getEventPhoto } from "@/lib/eventPhotos";
 
@@ -45,18 +45,10 @@ function HeartIcon({ filled = false, size = 24, color = RUST }) {
 }
 
 export default function SavedClient({ dict, lang }) {
-  const [events, setEvents] = useState([]);
-  const [loaded, setLoaded] = useState(false);
+  const { events, loading } = useEventsFeed();
+  const loaded = !loading;
   const { isSaved, toggle, count, mergedCount, clearMerged } = useBookmarks();
   const { user } = useAuth();
-
-  useEffect(() => {
-    fetch(`${API_BASE}/events/all`)
-      .then(res => res.json())
-      .then(data => setEvents(data))
-      .catch(() => setEvents([]))
-      .finally(() => setLoaded(true));
-  }, []);
 
   // Auto-dismiss the "merged your guest saves" confirmation after a few seconds.
   useEffect(() => {

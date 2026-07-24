@@ -1,7 +1,7 @@
 "use client";
 // frontend/app/[lang]/sustainability/SustainabilityRanking.js
-import { useEffect, useMemo, useState } from "react";
-import { API_BASE } from "@/lib/api";
+import { useMemo, useState } from "react";
+import { useEventsFeed } from "@/lib/useEventsFeed";
 import { eventTitle, tField } from "../eventData";
 
 const PINE  = "#1a2e1a";
@@ -46,33 +46,17 @@ function btnLeave(e) {
 }
 
 export default function SustainabilityRanking({ dict, lang }) {
-  const [events, setEvents]   = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError]     = useState(false);
+  const { events: rawEvents, loading, error } = useEventsFeed();
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [openId, setOpenId]   = useState(null);
 
-  useEffect(() => {
-    let cancelled = false;
-    fetch(`${API_BASE}/events/all`)
-      .then(function(res) { return res.json(); })
-      .then(function(data) {
-        if (cancelled) return;
-        const scored = (Array.isArray(data) ? data : []).filter(
-          function(e) { return typeof e.sustainability_score === "number"; }
-        );
-        scored.sort(function(a, b) { return b.sustainability_score - a.sustainability_score; });
-        setEvents(scored);
-        setLoading(false);
-      })
-      .catch(function() {
-        if (!cancelled) {
-          setError(true);
-          setLoading(false);
-        }
-      });
-    return function() { cancelled = true; };
-  }, []);
+  const events = useMemo(function() {
+    const scored = rawEvents.filter(
+      function(e) { return typeof e.sustainability_score === "number"; }
+    );
+    scored.sort(function(a, b) { return b.sustainability_score - a.sustainability_score; });
+    return scored;
+  }, [rawEvents]);
 
   const shown = useMemo(function() { return events.slice(0, visible); }, [events, visible]);
   const b = dict.badge ?? {};
