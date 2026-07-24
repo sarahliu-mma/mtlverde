@@ -12,7 +12,17 @@
     "mission": "Our Mission",
     "sustainability": "Sustainability",
     "saved": "Saved",
-"recommendations": "Ask MTLVerde"  },
+"recommendations": "Ask MTLVerde",
+    "festivals": "Featured Festivals"  },
+  "festivals": {
+    "title": "Featured Festivals — MTLVerde",
+    "heading": "Featured Festivals",
+    "intro": "A curated list of Montréal's iconic annual festivals — free to browse, and scored for how easy they are to reach without a car.",
+    "loading": "Loading featured festivals…",
+    "empty": "No featured festivals right now",
+    "emptyHint": "Check back soon — we're always adding more of Montréal's iconic events.",
+    "count": "{count} featured festival(s)"
+  },
   "saved": {
     "title": "Saved events — MTLVerde",
     "heading": "Saved events",

@@ -12,7 +12,17 @@
     "mission": "Notre mission",
     "sustainability": "Durabilité",
     "saved": "Enregistrés",
-"recommendations": "Demandez à MTLVerde"  },
+"recommendations": "Demandez à MTLVerde",
+    "festivals": "Festivals en vedette"  },
+  "festivals": {
+    "title": "Festivals en vedette — MTLVerde",
+    "heading": "Festivals en vedette",
+    "intro": "Une sélection des festivals annuels emblématiques de Montréal — gratuits à parcourir, et évalués selon leur accessibilité sans voiture.",
+    "loading": "Chargement des festivals en vedette…",
+    "empty": "Aucun festival en vedette pour le moment",
+    "emptyHint": "Revenez bientôt — nous ajoutons régulièrement des événements emblématiques de Montréal.",
+    "count": "{count} festival(s) en vedette"
+  },
   "saved": {
     "title": "Événements enregistrés — MTLVerde",
     "heading": "Événements enregistrés",
