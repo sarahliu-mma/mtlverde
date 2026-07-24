@@ -2,6 +2,7 @@
 // frontend/app/[lang]/sustainability/SustainabilityRanking.js
 import { useMemo, useState } from "react";
 import { useEventsFeed } from "@/lib/useEventsFeed";
+import { API_BASE } from "@/lib/api";
 import { eventTitle, tField } from "../eventData";
 
 const PINE  = "#1a2e1a";
@@ -49,6 +50,21 @@ export default function SustainabilityRanking({ dict, lang }) {
   const { events: rawEvents, loading, error } = useEventsFeed();
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [openId, setOpenId]   = useState(null);
+  // Score breakdown / wheelchair note are heavy fields left out of the list
+  // feed (see backend LIST_FIELDS) -- fetched one event at a time, only when
+  // its row is expanded, and cached here so re-opening a row is instant.
+  const [details, setDetails] = useState({});
+
+  function toggleOpen(event) {
+    const opening = openId !== event.id;
+    setOpenId(opening ? event.id : null);
+    if (opening && !details[event.id]) {
+      fetch(`${API_BASE}/events/${event.id}/detail`)
+        .then((res) => res.json())
+        .then((data) => setDetails((prev) => ({ ...prev, [event.id]: data })))
+        .catch(() => setDetails((prev) => ({ ...prev, [event.id]: {} })));
+    }
+  }
 
   const events = useMemo(function() {
     const scored = rawEvents.filter(
@@ -73,13 +89,14 @@ export default function SustainabilityRanking({ dict, lang }) {
           const open       = openId === event.id;
           const badgeName  = b[BADGE_KEY[event.badge]] ?? event.badge;
           const badgeStyle = BADGE_STYLE[event.badge] ?? { bg: "#eee", color: "#666" };
-          const breakdown  = event.score_breakdown || {};
+          const detail     = details[event.id];
+          const breakdown  = detail?.score_breakdown || {};
 
           return (
             <li key={event.id} style={{ background: WHITE, borderRadius: 18, overflow: "hidden", border: "1px solid rgba(0,0,0,0.06)" }}>
               <button
                 type="button"
-                onClick={function() { setOpenId(open ? null : event.id); }}
+                onClick={function() { toggleOpen(event); }}
                 aria-expanded={open}
                 onMouseEnter={rowEnter}
                 onMouseLeave={rowLeave}
@@ -128,7 +145,13 @@ export default function SustainabilityRanking({ dict, lang }) {
                 </span>
               </button>
 
-              {open && (
+              {open && !detail && (
+                <div style={{ padding: "12px 22px 22px", borderTop: "1px solid " + CREAM }}>
+                  <p style={{ fontSize: 12, color: "#bbb" }}>{s.detailLoading ?? "Loading breakdown…"}</p>
+                </div>
+              )}
+
+              {open && detail && (
                 <div style={{ padding: "12px 22px 22px", borderTop: "1px solid " + CREAM }}>
                   <div style={{ display: "grid", gap: 12, paddingTop: 12 }}>
                     {COMPONENTS.map(function(c) {
@@ -145,8 +168,8 @@ export default function SustainabilityRanking({ dict, lang }) {
                       );
                     })}
                   </div>
-                  {event.wheelchair_note && (
-                    <p style={{ fontSize: 12, color: "#aaa", marginTop: 12 }}>(A) {event.wheelchair_note}</p>
+                  {detail.wheelchair_note && (
+                    <p style={{ fontSize: 12, color: "#aaa", marginTop: 12 }}>(A) {detail.wheelchair_note}</p>
                   )}
                 </div>
               )}

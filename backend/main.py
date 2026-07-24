@@ -117,6 +117,31 @@ def query_public_events(db, today, horizon):
     return [e for e in events if in_window(e, today, horizon)]
 
 
+# Fields the list feeds actually need: card/row display, filters, map markers,
+# and the sustainability badge. Excludes the heavier scoring-detail fields
+# (score_breakdown, score_reasons, wheelchair_note) plus fields unused anywhere
+# in the frontend (adresse_principale, eco_flag, eco_flag_terms, free_flag,
+# wheelchair_metro_m, wheelchair_metro_gap_m) -- those are ~30% of payload
+# bytes and only ever needed one event at a time, via /events/{id}/detail.
+LIST_FIELDS = [
+    "id", "titre", "titre_en", "url_fiche", "description", "description_en",
+    "date_debut", "date_fin", "type_evenement", "public_cible", "emplacement",
+    "inscription", "cout", "arrondissement", "lat", "long",
+    "sustainability_score", "badge", "badge_icon", "wheelchair_metro_accessible",
+]
+
+DETAIL_FIELDS = ["score_breakdown", "score_reasons", "wheelchair_note"]
+
+
+def _field(event, key):
+    """Field accessor for both ORM rows and the JSON-fallback dicts."""
+    return event.get(key) if isinstance(event, dict) else getattr(event, key)
+
+
+def _slim(event):
+    return {key: _field(event, key) for key in LIST_FIELDS}
+
+
 def _order_key(today_s):
     """Build a sort key that surfaces the soonest-relevant events first.
 
@@ -144,17 +169,19 @@ def _order_key(today_s):
 def get_events(response: Response, db: Session = Depends(get_db)):
     response.headers["Cache-Control"] = FEED_CACHE_CONTROL
     today = date.today()
-    return sorted(query_festivals(db, today), key=_order_key(today.isoformat()))
+    events = sorted(query_festivals(db, today), key=_order_key(today.isoformat()))
+    return [_slim(e) for e in events]
 
 
 @app.get("/events/public")
 def get_public_events(response: Response, db: Session = Depends(get_db)):
     response.headers["Cache-Control"] = FEED_CACHE_CONTROL
     today = date.today()
-    return sorted(
+    events = sorted(
         query_public_events(db, today, add_months(today, HORIZON_MONTHS)),
         key=_order_key(today.isoformat()),
     )
+    return [_slim(e) for e in events]
 
 
 @app.get("/events/all")
@@ -167,7 +194,23 @@ def get_all_events(response: Response, db: Session = Depends(get_db)):
     horizon = add_months(today, HORIZON_MONTHS)
     festivals = query_festivals(db, today)
     publics = query_public_events(db, today, horizon)
-    return sorted(list(festivals) + list(publics), key=_order_key(today.isoformat()))
+    events = sorted(list(festivals) + list(publics), key=_order_key(today.isoformat()))
+    return [_slim(e) for e in events]
+
+
+@app.get("/events/{event_id}/detail")
+def get_event_detail(event_id: str, response: Response, db: Session = Depends(get_db)):
+    """The heavier scoring-detail fields for one event, fetched lazily by the
+    sustainability ranking's per-row expand instead of shipping them for every
+    event in the list feeds (see LIST_FIELDS / DETAIL_FIELDS above)."""
+    response.headers["Cache-Control"] = FEED_CACHE_CONTROL
+    event = (
+        db.query(Festival).filter(Festival.id == event_id).first()
+        or db.query(PublicEvent).filter(PublicEvent.id == event_id).first()
+    )
+    if event is None:
+        raise HTTPException(status_code=404, detail="Event not found")
+    return {key: _field(event, key) for key in DETAIL_FIELDS}
 
 
 class LiveCountRequest(BaseModel):
