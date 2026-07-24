@@ -38,9 +38,9 @@ export default async function Sustainability({ params }) {
   ];
 
   const tiers = [
-    { label: fr ? "CHEF DE FILE VERT" : "GREEN LEADER", range: "90–100", body: s.tier3, color: MOSS  },
-    { label: fr ? "ÉCO-RESPONSABLE"   : "ECO-FRIENDLY",  range: "65–89",  body: s.tier2, color: SAGE  },
-    { label: fr ? "EN CHEMIN"          : "GETTING THERE", range: "0–64",   body: s.tier1, color: STONE },
+    { label: fr ? "CHEF DE FILE VERT" : "GREEN LEADER", range: "90–100", body: s.tier3, color: MOSS,  leaves: 3 },
+    { label: fr ? "ÉCO-RESPONSABLE"   : "ECO-FRIENDLY",  range: "65–89",  body: s.tier2, color: SAGE,  leaves: 2 },
+    { label: fr ? "EN CHEMIN"          : "GETTING THERE", range: "0–64",   body: s.tier1, color: STONE, leaves: 1 },
   ];
 
   const footerCompany = fr
@@ -71,12 +71,25 @@ export default async function Sustainability({ params }) {
           <p style={{ fontSize: 10, fontWeight: 800, letterSpacing: "4px", color: SAGE, textTransform: "uppercase", marginBottom: 20 }}>
             {fr ? "MTLVERDE · DURABILITÉ" : "MTLVERDE · SUSTAINABILITY"}
           </p>
-          <h1 style={{ fontSize: "clamp(44px, 8vw, 108px)", fontWeight: 900, lineHeight: 0.9, letterSpacing: "-4px", color: WHITE, marginBottom: 28, maxWidth: 820 }}>
-            {s.heading}
+          {/* Big word */}
+          <h1 style={{ fontSize: "clamp(64px, 11vw, 140px)", fontWeight: 900, lineHeight: 0.88, letterSpacing: "-5px", color: WHITE, marginBottom: 24 }}>
+            {fr ? "Durabilité" : "Sustainability"}
           </h1>
-          <p style={{ fontSize: "clamp(15px, 1.6vw, 19px)", color: "rgba(255,255,255,0.65)", lineHeight: 1.8, maxWidth: 520 }}>
-            {s.intro}
+          {/* Italic quote */}
+          <p style={{ fontSize: "clamp(16px, 1.8vw, 22px)", fontStyle: "italic", fontWeight: 300, color: "rgba(255,255,255,0.55)", lineHeight: 1.6, maxWidth: 560, marginBottom: 36, letterSpacing: "-0.2px" }}>
+            {fr
+              ? "\"La durabilité est notre objectif ultime — chaque événement, chaque trajet, chaque choix compte.\""
+              : "\"Sustainability is our ultimate goal — every event, every journey, every choice adds up.\""}
           </p>
+          {/* How we score subheading + intro */}
+          <div style={{ borderTop: "1px solid rgba(255,255,255,0.15)", paddingTop: 28, maxWidth: 560 }}>
+            <p style={{ fontSize: 11, fontWeight: 800, letterSpacing: "3px", color: SAGE, textTransform: "uppercase", marginBottom: 10 }}>
+              {fr ? "COMMENT NOUS ÉVALUONS" : "HOW WE SCORE"}
+            </p>
+            <p style={{ fontSize: "clamp(14px, 1.5vw, 17px)", color: "rgba(255,255,255,0.6)", lineHeight: 1.8 }}>
+              {s.intro}
+            </p>
+          </div>
         </div>
         <div style={{ position: "absolute", bottom: 28, left: "50%", transform: "translateX(-50%)", display: "flex", flexDirection: "column", alignItems: "center", gap: 8, opacity: 0.35 }}>
           <div style={{ width: 1, height: 44, background: WHITE }} />
@@ -97,6 +110,23 @@ export default async function Sustainability({ params }) {
             {tiers.map(function(tier) {
               return (
                 <div key={tier.label} style={{ flex: "1 1 280px", background: CREAM, borderRadius: 20, padding: "36px 28px", borderTop: "4px solid " + tier.color }}>
+                  {/* Leaf icons: filled for earned, faded outline for unearned */}
+                  <div style={{ display: "flex", gap: 4, marginBottom: 14 }}>
+                    {Array.from({ length: tier.leaves }).map(function(_, i) {
+                      return (
+                        <svg key={i} width="20" height="20" viewBox="0 0 24 24" fill={tier.color} stroke="none" aria-hidden="true">
+                          <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" />
+                        </svg>
+                      );
+                    })}
+                    {Array.from({ length: 3 - tier.leaves }).map(function(_, i) {
+                      return (
+                        <svg key={"e" + i} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={tier.color} strokeWidth="1.5" opacity="0.25" aria-hidden="true">
+                          <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" />
+                        </svg>
+                      );
+                    })}
+                  </div>
                   <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: "2px", color: tier.color, textTransform: "uppercase", display: "block", marginBottom: 12 }}>
                     {tier.label}
                   </span>
@@ -157,7 +187,7 @@ export default async function Sustainability({ params }) {
         <div style={{ position: "absolute", inset: 0, background: "rgba(10,20,10,0.6)", display: "flex", alignItems: "center", justifyContent: "center" }}>
           <blockquote style={{ fontSize: "clamp(20px, 3vw, 36px)", fontWeight: 800, color: WHITE, textAlign: "center", maxWidth: 700, lineHeight: 1.3, letterSpacing: "-1px", padding: "0 48px" }}>
             {fr
-              ? "\"L’événement le plus durable est celui que vous pouvez rejoindre à pied.\""
+              ? "\"L'événement le plus durable est celui que vous pouvez rejoindre à pied.\""
               : "\"The most sustainable event is one you can walk to.\""}
           </blockquote>
         </div>
@@ -182,8 +212,8 @@ export default async function Sustainability({ params }) {
               </p>
               <p style={{ fontSize: 15, color: "#444", lineHeight: 1.85 }}>
                 {fr
-                  ? "Seulement 25 des 68 stations de métro de Montréal sont accessibles. Un score élevé ne garantit pas l’accessibilité en fauteuil roulant."
-                  : "Only 25 of Montréal’s 68 metro stations are wheelchair-accessible. A high eco-badge does not guarantee wheelchair access."}
+                  ? "Seulement 25 des 68 stations de métro de Montréal sont accessibles. Un score élevé ne garantit pas l'accessibilité en fauteuil roulant."
+                  : "Only 25 of Montréal's 68 metro stations are wheelchair-accessible. A high eco-badge does not guarantee wheelchair access."}
               </p>
             </div>
           </div>
