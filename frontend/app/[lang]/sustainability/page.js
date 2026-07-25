@@ -139,19 +139,28 @@ export default async function Sustainability({ params }) {
         </div>
       </section>
 
-      {/* ── HOW WE SCORE — editorial ── */}
-      <section style={{ background: WHITE, padding: "96px 48px 72px", borderBottom: "1px solid #eee" }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto", display: "flex", flexWrap: "wrap", gap: 64, alignItems: "flex-start" }}>
+      {/* ── HOW WE SCORE — full-bleed snow/forest photo with content overlaid ── */}
+      <section style={{ position: "relative", minHeight: "80vh", overflow: "hidden", display: "flex", alignItems: "center" }}>
+        <img
+          src="https://images.unsplash.com/photo-1491002052546-bf38f186af56?w=1800&q=85"
+          alt=""
+          aria-hidden="true"
+          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 55%" }}
+        />
+        {/* Dark overlay so content stays readable */}
+        <div style={{ position: "absolute", inset: 0, background: "rgba(5,12,5,0.72)" }} />
+
+        <div style={{ position: "relative", zIndex: 1, maxWidth: 1100, margin: "0 auto", padding: "100px 48px", width: "100%", display: "flex", flexWrap: "wrap", gap: 64, alignItems: "flex-start" }}>
           <div style={{ flex: "1 1 340px" }}>
-            <p style={{ fontSize: 10, fontWeight: 800, letterSpacing: "4px", color: RUST, textTransform: "uppercase", marginBottom: 20 }}>
+            <p style={{ fontSize: 10, fontWeight: 800, letterSpacing: "4px", color: SAGE, textTransform: "uppercase", marginBottom: 20 }}>
               {fr ? "COMMENT NOUS ÉVALUONS" : "HOW WE SCORE"}
             </p>
-            <h2 style={{ fontSize: "clamp(36px, 5vw, 68px)", fontWeight: 900, letterSpacing: "-2.5px", lineHeight: 0.95, color: DARK, margin: 0 }}>
+            <h2 style={{ fontSize: "clamp(36px, 5vw, 68px)", fontWeight: 900, letterSpacing: "-2.5px", lineHeight: 0.95, color: WHITE, margin: 0 }}>
               {fr ? "Chaque événement\na son score." : "Every event\nhas a score."}
             </h2>
           </div>
           <div style={{ flex: "1 1 340px", paddingTop: 8 }}>
-            <p style={{ fontSize: "clamp(15px, 1.6vw, 18px)", color: "#555", lineHeight: 1.85, marginBottom: 28 }}>
+            <p style={{ fontSize: "clamp(15px, 1.6vw, 18px)", color: "rgba(255,255,255,0.6)", lineHeight: 1.85, marginBottom: 28 }}>
               {s.intro}
             </p>
             <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
@@ -159,11 +168,11 @@ export default async function Sustainability({ params }) {
                 {
                   n: "45", label: fr ? "pts transport" : "pts transit",
                   icon: (
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={MOSS} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={SAGE} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <rect x="3" y="4" width="18" height="13" rx="2" />
                       <path d="M3 9h18" />
-                      <circle cx="8" cy="14" r="1" fill={MOSS} stroke="none" />
-                      <circle cx="16" cy="14" r="1" fill={MOSS} stroke="none" />
+                      <circle cx="8" cy="14" r="1" fill={SAGE} stroke="none" />
+                      <circle cx="16" cy="14" r="1" fill={SAGE} stroke="none" />
                       <path d="M7 17l-1 3M17 17l1 3" />
                     </svg>
                   ),
@@ -171,7 +180,7 @@ export default async function Sustainability({ params }) {
                 {
                   n: "35", label: fr ? "pts piéton" : "pts walk-in",
                   icon: (
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={MOSS} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={SAGE} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <circle cx="12" cy="4" r="1.5" />
                       <path d="M9 20l1.5-4.5 2.5 2 2-4.5" />
                       <path d="M11.5 7.5l1.5 4 3.5 1.5-2.5 1" />
@@ -182,16 +191,16 @@ export default async function Sustainability({ params }) {
                 {
                   n: "20", label: fr ? "pts extérieur" : "pts outdoor",
                   icon: (
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill={MOSS} stroke="none" aria-hidden="true">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill={SAGE} stroke="none" aria-hidden="true">
                       <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" />
                     </svg>
                   ),
                 },
               ].map(function(stat) {
                 return (
-                  <div key={stat.n} style={{ background: CREAM, borderRadius: 16, padding: "20px 24px 18px", minWidth: 110, display: "flex", flexDirection: "column", gap: 4, alignItems: "flex-start" }}>
-                    <p style={{ fontSize: 30, fontWeight: 900, color: DARK, letterSpacing: "-1px", margin: 0 }}>{stat.n}</p>
-                    <p style={{ fontSize: 10, fontWeight: 700, color: "#999", textTransform: "uppercase", letterSpacing: "1px", margin: 0 }}>{stat.label}</p>
+                  <div key={stat.n} style={{ background: "rgba(255,255,255,0.08)", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 16, padding: "20px 24px 18px", minWidth: 110, display: "flex", flexDirection: "column", gap: 4, alignItems: "flex-start" }}>
+                    <p style={{ fontSize: 30, fontWeight: 900, color: WHITE, letterSpacing: "-1px", margin: 0 }}>{stat.n}</p>
+                    <p style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.45)", textTransform: "uppercase", letterSpacing: "1px", margin: 0 }}>{stat.label}</p>
                     <div style={{ marginTop: 10 }}>{stat.icon}</div>
                   </div>
                 );
@@ -200,17 +209,6 @@ export default async function Sustainability({ params }) {
           </div>
         </div>
       </section>
-
-      {/* ── SNOW / EARTH PHOTO STRIP ── */}
-      <div style={{ height: "38vh", minHeight: 220, overflow: "hidden", position: "relative" }}>
-        <img
-          src="https://images.unsplash.com/photo-1491002052546-bf38f186af56?w=1600&q=85"
-          alt=""
-          aria-hidden="true"
-          style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 60%" }}
-        />
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(255,255,255,0.12) 0%, rgba(10,20,10,0.18) 100%)" }} />
-      </div>
 
       {/* ── NATURE BRIDGE — family photo ── */}
       <section style={{ position: "relative", height: "68vh", minHeight: 400, overflow: "hidden" }}>
