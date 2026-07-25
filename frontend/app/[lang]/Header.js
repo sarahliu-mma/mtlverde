@@ -15,6 +15,7 @@ export default function Header({ dict, lang }) {
   const { user, signOut } = useAuth();
   const [liveCount, setLiveCount] = useState(0);
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 60);
@@ -37,6 +38,7 @@ export default function Header({ dict, lang }) {
   }, [ids]);
 
   function handleNavClick(e, href) {
+    setMenuOpen(false); 
     const hashIndex = href.indexOf("#");
     if (hashIndex === -1) return;
     const hash = href.slice(hashIndex + 1);
@@ -80,6 +82,16 @@ export default function Header({ dict, lang }) {
       borderBottom: scrolled ? `1px solid ${GREEN_LIGHT}` : "none",
       transition: "all 0.35s ease",
     }}>
+    <style jsx>{`
+      .desktop-nav { display: flex; }
+      .mobile-menu-btn { display: none; }
+      .mobile-menu-panel { display: none; }
+      @media (max-width: 900px) {
+        .desktop-nav { display: none; }
+        .mobile-menu-btn { display: flex; }
+        .mobile-menu-panel.open { display: flex; }
+      }
+    `}</style>
 
       {/* Logo */}
       <Link href={`/${lang}`} style={{ flexShrink: 0 }}>
@@ -92,7 +104,7 @@ export default function Header({ dict, lang }) {
       </Link>
 
       {/* Nav links */}
-      <nav style={{ display: "flex", alignItems: "center", gap: 28 }}>
+      <nav className="desktop-nav" style={{ alignItems: "center", gap: 28 }}>
         {navItems.map((item) => (
           <a
             key={item.label}
@@ -118,6 +130,66 @@ export default function Header({ dict, lang }) {
           </a>
         ))}
       </nav>
+
+    {/* Hamburger (mobile) */}
+      <button
+        type="button"
+        className="mobile-menu-btn"
+        aria-label={menuOpen ? "Close menu" : "Open menu"}
+        aria-expanded={menuOpen}
+        onClick={() => setMenuOpen((v) => !v)}
+        style={{
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: 5,
+          width: 36, height: 36,
+          background: "transparent",
+          border: "none",
+          cursor: "pointer",
+          padding: 0,
+        }}
+      >
+        <span style={{ display: "block", width: 22, height: 2, background: linkColor, transition: "all 0.2s" }} />
+        <span style={{ display: "block", width: 22, height: 2, background: linkColor, transition: "all 0.2s" }} />
+        <span style={{ display: "block", width: 22, height: 2, background: linkColor, transition: "all 0.2s" }} />
+      </button>
+      
+      {/* Mobile dropdown panel */}
+      <div className={`mobile-menu-panel${menuOpen ? " open" : ""}`} style={{
+        flexDirection: "column",
+        position: "fixed",
+        top: 68, left: 0, right: 0,
+        maxHeight: "calc(100vh - 68px)",
+        overflowY: "auto",
+        background: "#fff",
+        borderTop: `1px solid ${GREEN_LIGHT}`,
+        boxShadow: "0 12px 24px rgba(0,0,0,0.12)",
+        padding: "8px 24px 24px",
+      }}>
+        {navItems.map((item) => (
+          <a
+            key={item.label}
+            href={item.href}
+            onClick={(e) => handleNavClick(e, item.href)}
+            style={{
+              fontSize: 16, fontWeight: 600,
+              textDecoration: "none",
+              color: "#333",
+              padding: "14px 0",
+              borderBottom: `1px solid ${GREEN_LIGHT}`,
+              display: "flex", alignItems: "center", gap: 8,
+            }}
+          >
+            {item.label}
+            {item.badge > 0 && (
+              <span style={{ background: GREEN_LIGHT, color: GREEN_DARK, fontSize: 11, fontWeight: 700, borderRadius: 999, padding: "2px 8px" }}>
+                {item.badge}
+              </span>
+            )}
+          </a>
+        ))}
+      </div>
 
       {/* Auth + EN / FR */}
       <div style={{ display: "flex", alignItems: "center", gap: 14, flexShrink: 0 }}>
