@@ -444,33 +444,34 @@ export default async function Sustainability({ params }) {
         </div>
       </section>
 
-      {/* ── DISCLAIMER — custom leaf icon + emoji replacement ── */}
-      <section style={{ background: "#fffbf0", padding: "28px 48px", borderTop: "1px solid #f0e6c0", borderBottom: "1px solid #f0e6c0" }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto", display: "flex", gap: 18, alignItems: "flex-start" }}>
-          {/* Custom leaf icon instead of warning triangle */}
-          <div style={{ flexShrink: 0, marginTop: 3 }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="#c4921a" stroke="none" aria-hidden="true">
-              <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" />
-            </svg>
-          </div>
-          <div>
-            <p style={{ fontSize: 11, fontWeight: 800, color: "#c4921a", textTransform: "uppercase", letterSpacing: "2px", marginBottom: 6 }}>
-              {s.honestTitle}
-            </p>
-            <p style={{ fontSize: 14, color: "#7a6535", lineHeight: 1.85, maxWidth: 820 }}>
-              {honestParts.map(function(part, i) {
-                return (
-                  <span key={i}>
-                    {part}
-                    {i < honestParts.length - 1 && (
-                      <svg style={{ display: "inline", verticalAlign: "middle", margin: "0 2px" }} width="14" height="14" viewBox="0 0 24 24" fill={MOSS} stroke="none" aria-hidden="true">
-                        <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" />
-                      </svg>
-                    )}
-                  </span>
-                );
-              })}
-            </p>
+      {/* ── DISCLAIMER — rounded box with thick green border ── */}
+      <section style={{ background: CREAM, padding: "0 48px 64px" }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+          <div style={{ border: "3px solid " + MOSS, borderRadius: 20, padding: "28px 32px", display: "flex", gap: 18, alignItems: "flex-start", background: "#fffbf0" }}>
+            <div style={{ flexShrink: 0, marginTop: 3 }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="#c4921a" stroke="none" aria-hidden="true">
+                <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" />
+              </svg>
+            </div>
+            <div>
+              <p style={{ fontSize: 11, fontWeight: 800, color: "#c4921a", textTransform: "uppercase", letterSpacing: "2px", marginBottom: 6 }}>
+                {s.honestTitle}
+              </p>
+              <p style={{ fontSize: 14, color: "#7a6535", lineHeight: 1.85, maxWidth: 820 }}>
+                {honestParts.map(function(part, i) {
+                  return (
+                    <span key={i}>
+                      {part}
+                      {i < honestParts.length - 1 && (
+                        <svg style={{ display: "inline", verticalAlign: "middle", margin: "0 2px" }} width="14" height="14" viewBox="0 0 24 24" fill={MOSS} stroke="none" aria-hidden="true">
+                          <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" />
+                        </svg>
+                      )}
+                    </span>
+                  );
+                })}
+              </p>
+            </div>
           </div>
         </div>
       </section>
