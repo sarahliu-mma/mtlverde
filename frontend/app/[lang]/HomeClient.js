@@ -168,10 +168,14 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
           .mission-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
           .sustain-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
           .feat-grid { grid-template-columns: 1fr !important; }
+          .purpose-grid { grid-template-columns: 1fr 1fr; gap: 24px; }
+          .purpose-img { height: 260px; }
         }
         @media (max-width: 480px) {
           .team-grid { grid-template-columns: repeat(2, 1fr); }
           .footer-grid { grid-template-columns: 1fr; }
+          .purpose-grid { grid-template-columns: 1fr; }
+          .purpose-img { height: 220px; }
         }
       `}</style>
 
@@ -233,10 +237,10 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
               {t("Montréal produces thousands of free events every year. We make them easy to find.", "Montréal organise des milliers d'événements gratuits chaque année. Nous les rendons faciles à trouver.")}
             </p>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
+          <div className="purpose-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
             {PURPOSE.map((p, i) => (
               <div key={i}>
-                <div style={{ height: 480, overflow: "hidden", marginBottom: 20 }}>
+                <div className="purpose-img" style={{ height: 480, overflow: "hidden", marginBottom: 20 }}>
                   <img src={p.img} alt={p.title.en}
                     style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", transition: "transform 0.6s" }}
                     onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.04)"; }}
