@@ -28,6 +28,18 @@ const BADGE_LEAVES = {
   "Getting There": 1,
 };
 
+// Pool of 8 nature photos cycling by card index
+const CARD_PHOTOS = [
+  "https://images.unsplash.com/photo-1448375240586-882707db888b?w=600&q=80",
+  "https://images.unsplash.com/photo-1511497584788-876760111969?w=600&q=80",
+  "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=600&q=80",
+  "https://images.unsplash.com/photo-1440342359743-84fcb8c21f21?w=600&q=80",
+  "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=600&q=80",
+  "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80",
+  "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=600&q=80",
+  "https://images.unsplash.com/photo-1491002052546-bf38f186af56?w=600&q=80",
+];
+
 const COMPONENTS = [
   { key: "transit_access", max: 45, labelKey: "transitLabel", fallback: "Transit access" },
   { key: "walkin_access",  max: 35, labelKey: "walkinLabel",  fallback: "Walk-in access" },
@@ -95,117 +107,133 @@ export default function SustainabilityRanking({ dict, lang }) {
         .sr-scroll::-webkit-scrollbar { height: 5px; }
         .sr-scroll::-webkit-scrollbar-track { background: transparent; }
         .sr-scroll::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 3px; }
-        .sr-card { transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s; }
-        .sr-card:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(0,0,0,0.10); }
-        .sr-card-active { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(26,46,26,0.18) !important; }
+        .sr-card { transition: transform 0.2s, box-shadow 0.2s; border: none; background: none; padding: 0; text-align: left; cursor: pointer; }
+        .sr-card:hover { transform: translateY(-4px); }
+        .sr-card:hover .sr-card-img { transform: scale(1.06); }
+        .sr-card-img { transition: transform 0.5s ease; width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
       `}</style>
 
       {/* ── Horizontal scroll track ── */}
-      <div className="sr-scroll" style={{ overflowX: "auto", paddingBottom: 12 }}>
-        <div style={{ display: "flex", gap: 12, paddingBottom: 4, width: "max-content", alignItems: "stretch" }}>
+      <div className="sr-scroll" style={{ overflowX: "auto", paddingBottom: 16 }}>
+        <div style={{ display: "flex", gap: 14, paddingBottom: 4, width: "max-content", alignItems: "stretch" }}>
           {shown.map(function(event, i) {
-            const isOpen       = openId === event.id;
-            const badgeName    = b[BADGE_KEY[event.badge]] ?? event.badge;
-            const badgeStyle   = BADGE_STYLE[event.badge] ?? { bg: "#eee", color: "#666" };
-
-            const leafCount = BADGE_LEAVES[event.badge] || 1;
+            const isOpen     = openId === event.id;
+            const badgeName  = b[BADGE_KEY[event.badge]] ?? event.badge;
+            const badgeStyle = BADGE_STYLE[event.badge] ?? { bg: "#eee", color: "#666" };
+            const leafCount  = BADGE_LEAVES[event.badge] || 1;
+            const photo      = CARD_PHOTOS[i % CARD_PHOTOS.length];
 
             return (
               <button
                 key={event.id}
                 type="button"
-                className={"sr-card" + (isOpen ? " sr-card-active" : "")}
+                className="sr-card"
                 onClick={function() { setOpenId(isOpen ? null : event.id); }}
                 aria-expanded={isOpen}
                 style={{
-                  width: 200,
+                  width: 220,
+                  height: 300,
                   flexShrink: 0,
-                  background: isOpen ? PINE : WHITE,
                   borderRadius: 18,
-                  border: isOpen ? "2px solid " + PINE : "1.5px solid rgba(0,0,0,0.07)",
-                  padding: "18px 16px",
-                  cursor: "pointer",
-                  textAlign: "left",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 0,
+                  position: "relative",
+                  overflow: "hidden",
+                  outline: isOpen ? "2.5px solid " + SAGE : "none",
+                  outlineOffset: 2,
                 }}
               >
-                {/* Rank + badge */}
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
-                  <span style={{ fontSize: 11, fontFamily: "monospace", color: isOpen ? "rgba(255,255,255,0.22)" : "#ddd" }}>
-                    #{i + 1}
-                  </span>
-                  <span style={{
-                    fontSize: 9, fontWeight: 800, padding: "3px 9px", borderRadius: 999,
-                    background: isOpen ? "rgba(255,255,255,0.12)" : badgeStyle.bg,
-                    color: isOpen ? "rgba(255,255,255,0.75)" : badgeStyle.color,
-                    letterSpacing: "0.5px",
-                  }}>
-                    {badgeName}
-                  </span>
-                </div>
+                {/* Background photo */}
+                <img
+                  className="sr-card-img"
+                  src={photo}
+                  alt=""
+                  aria-hidden="true"
+                />
 
-                {/* Leaf icons */}
-                <div style={{ display: "flex", gap: 3, marginBottom: 12 }}>
-                  {Array.from({ length: leafCount }).map(function(_, li) {
-                    return (
-                      <svg key={li} width="13" height="13" viewBox="0 0 24 24" fill={isOpen ? SAGE : badgeStyle.color} stroke="none" aria-hidden="true">
-                        <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" />
-                      </svg>
-                    );
-                  })}
-                  {Array.from({ length: 3 - leafCount }).map(function(_, li) {
-                    return (
-                      <svg key={"e" + li} width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={isOpen ? "rgba(255,255,255,0.18)" : "#ddd"} strokeWidth="1.5" aria-hidden="true">
-                        <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" />
-                      </svg>
-                    );
-                  })}
-                </div>
+                {/* Dark gradient overlay */}
+                <div style={{
+                  position: "absolute",
+                  inset: 0,
+                  background: "linear-gradient(to bottom, rgba(5,12,5,0.38) 0%, rgba(5,12,5,0.55) 45%, rgba(5,12,5,0.92) 100%)",
+                }} />
 
-                {/* Title */}
-                <span style={{
-                  display: "block", fontWeight: 700, fontSize: 13,
-                  color: isOpen ? WHITE : PINE,
-                  lineHeight: 1.35, marginBottom: 5,
-                  overflow: "hidden", display: "-webkit-box",
-                  WebkitLineClamp: 2, WebkitBoxOrient: "vertical",
-                  minHeight: "2.7em",
+                {/* Content */}
+                <div style={{
+                  position: "absolute",
+                  inset: 0,
+                  padding: "16px 16px 18px",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
                 }}>
-                  {eventTitle(event, lang)}
-                </span>
-
-                {/* Borough */}
-                <span style={{ display: "block", fontSize: 11, color: isOpen ? "rgba(255,255,255,0.38)" : "#bbb", marginBottom: 18 }}>
-                  {event.arrondissement}
-                </span>
-
-                {/* Tags */}
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 16 }}>
-                  {event.type_evenement && (
-                    <span style={{ fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 999, background: isOpen ? "rgba(255,255,255,0.1)" : "#f3e8ff", color: isOpen ? "rgba(255,255,255,0.6)" : "#6b21a8" }}>
-                      {tField("type_evenement", event.type_evenement, lang)}
+                  {/* Top row: rank + badge */}
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <span style={{ fontSize: 11, fontFamily: "monospace", color: "rgba(255,255,255,0.45)", fontWeight: 700 }}>
+                      #{i + 1}
                     </span>
-                  )}
-                  {event.cout && (
-                    <span style={{ fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 999, background: isOpen ? "rgba(255,255,255,0.1)" : "#e8f0e4", color: isOpen ? "rgba(255,255,255,0.6)" : MOSS }}>
-                      {tField("cout", event.cout, lang)}
+                    <span style={{
+                      fontSize: 9, fontWeight: 800, padding: "3px 9px", borderRadius: 999,
+                      background: "rgba(255,255,255,0.18)",
+                      color: WHITE,
+                      letterSpacing: "0.5px",
+                      backdropFilter: "blur(4px)",
+                    }}>
+                      {badgeName}
                     </span>
-                  )}
-                </div>
+                  </div>
 
-                {/* Score */}
-                <div style={{ marginTop: "auto", borderTop: "1px solid " + (isOpen ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.05)"), paddingTop: 12 }}>
-                  <span style={{ fontSize: 24, fontWeight: 900, letterSpacing: "-1px", color: isOpen ? WHITE : PINE }}>
-                    {event.sustainability_score}
-                    <span style={{ fontSize: 12, fontWeight: 400, color: isOpen ? "rgba(255,255,255,0.3)" : "#ccc" }}>/100</span>
-                  </span>
-                  {event.wheelchair_metro_accessible && (
-                    <span style={{ display: "block", fontSize: 9, fontWeight: 700, color: isOpen ? SAGE : MOSS, marginTop: 2, letterSpacing: "0.5px" }}>
-                      {fr ? "ACCÈS FAUTEUIL" : "WHEELCHAIR OK"}
+                  {/* Bottom info block */}
+                  <div>
+                    {/* Leaf icons */}
+                    <div style={{ display: "flex", gap: 3, marginBottom: 10 }}>
+                      {Array.from({ length: leafCount }).map(function(_, li) {
+                        return (
+                          <svg key={li} width="13" height="13" viewBox="0 0 24 24" fill={SAGE} stroke="none" aria-hidden="true">
+                            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" />
+                          </svg>
+                        );
+                      })}
+                      {Array.from({ length: 3 - leafCount }).map(function(_, li) {
+                        return (
+                          <svg key={"e" + li} width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.28)" strokeWidth="1.5" aria-hidden="true">
+                            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" />
+                          </svg>
+                        );
+                      })}
+                    </div>
+
+                    {/* Event title */}
+                    <span style={{
+                      display: "-webkit-box",
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: "vertical",
+                      overflow: "hidden",
+                      fontWeight: 800,
+                      fontSize: 13,
+                      color: WHITE,
+                      lineHeight: 1.35,
+                      marginBottom: 4,
+                    }}>
+                      {eventTitle(event, lang)}
                     </span>
-                  )}
+
+                    {/* Borough */}
+                    <span style={{ display: "block", fontSize: 10, color: "rgba(255,255,255,0.5)", marginBottom: 12 }}>
+                      {event.arrondissement}
+                    </span>
+
+                    {/* Score */}
+                    <div style={{ display: "flex", alignItems: "baseline", gap: 4, borderTop: "1px solid rgba(255,255,255,0.15)", paddingTop: 10 }}>
+                      <span style={{ fontSize: 26, fontWeight: 900, letterSpacing: "-1px", color: WHITE, lineHeight: 1 }}>
+                        {event.sustainability_score}
+                      </span>
+                      <span style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", fontWeight: 400 }}>/100</span>
+                      {event.wheelchair_metro_accessible && (
+                        <span style={{ marginLeft: "auto", fontSize: 9, fontWeight: 800, color: SAGE, letterSpacing: "0.5px" }}>
+                          {fr ? "ACCÈS" : "A11Y"}
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </button>
             );
