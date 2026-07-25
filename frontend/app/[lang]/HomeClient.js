@@ -48,6 +48,11 @@ const BADGE_COLORS = {
   "Eco-Friendly":  { bg: "#e4f0dc", color: "#2e6e30" },
   "Getting There": { bg: "#f0ead8", color: "#7a5a1a" },
 };
+const COMPONENTS = [
+  { key: "transit_access", max: 45, label: { en: "Transit access", fr: "Accès au transport" } },
+  { key: "walkin_access",  max: 35, label: { en: "Walk-in access", fr: "Accès libre" } },
+  { key: "outdoor_green",  max: 20, label: { en: "Outdoor venue",  fr: "Lieu extérieur" } },
+];
 function LeafIcons({ badge, size = 12 }) {
   const count = BADGE_LEAVES[badge] || 0;
   if (!count) return null;
@@ -99,6 +104,7 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
   const [email, setEmail]           = useState("");
   const [subscribed, setSubscribed] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
+  const [openBreakdownId, setOpenBreakdownId] = useState(null);
   const { isSaved, toggle } = useBookmarks();
   const eventsRef     = useRef(null);
   const purposeRef    = useRef(null);
@@ -477,6 +483,42 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
                             onMouseLeave={e => { e.currentTarget.style.textDecoration = "none"; }}>
                             {(dict || DICT[lang]).event?.readMore || "Read more"} →
                           </a>
+                        )}
+
+                        {/* Sustainability score breakdown — collapsible */}
+                        {event.score_breakdown && (
+                          <div style={{ marginTop: 10 }}>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setOpenBreakdownId(prev => (prev === event.id ? null : event.id));
+                              }}
+                              style={{ background: "none", border: "none", padding: 0, cursor: "pointer", fontSize: 11, fontWeight: 700, color: GREEN_MID, display: "flex", alignItems: "center", gap: 4 }}
+                              aria-expanded={openBreakdownId === event.id}
+                            >
+                              {event.sustainability_score} / 100
+                              <span style={{ fontSize: 9, transform: openBreakdownId === event.id ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}>▼</span>
+                            </button>
+
+                            {openBreakdownId === event.id && (
+                              <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 8 }} onClick={(e) => e.stopPropagation()}>
+                                {COMPONENTS.map((c) => {
+                                  const pts = (event.score_breakdown || {})[c.key] ?? 0;
+                                  const pct = Math.max(0, Math.min(100, (pts / c.max) * 100));
+                                  return (
+                                    <div key={c.key} style={{ display: "grid", gridTemplateColumns: "110px 1fr 46px", alignItems: "center", gap: 10 }}>
+                                      <span style={{ fontSize: 11, color: "#666" }}>{c.label[lang] || c.label.en}</span>
+                                      <span style={{ height: 5, borderRadius: 999, background: GREEN_LIGHT, overflow: "hidden", display: "block" }}>
+                                        <span style={{ display: "block", height: "100%", borderRadius: 999, background: GREEN_MID, width: pct + "%" }} />
+                                      </span>
+                                      <span style={{ fontSize: 10, fontFamily: "monospace", color: "#aaa", textAlign: "right" }}>{pts}/{c.max}</span>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            )}
+                          </div>
                         )}
                       </div>
                       <div style={{ display: "flex", flexDirection: "column", gap: 6, flexShrink: 0, alignItems: "flex-end", alignSelf: "stretch" }}>
