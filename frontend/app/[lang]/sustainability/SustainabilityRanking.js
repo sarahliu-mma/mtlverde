@@ -1,7 +1,6 @@
 "use client";
 // frontend/app/[lang]/sustainability/SustainabilityRanking.js
-import { useMemo, useState } from "react";
-import { useEventsFeed } from "@/lib/useEventsFeed";
+import { useEffect, useMemo, useState } from "react";
 import { API_BASE } from "@/lib/api";
 import { eventTitle, tField } from "../eventData";
 
@@ -31,12 +30,6 @@ const COMPONENTS = [
 
 const PAGE_SIZE = 50;
 
-function rowEnter(e) {
-  e.currentTarget.style.background = CREAM;
-}
-function rowLeave(e) {
-  e.currentTarget.style.background = "none";
-}
 function btnEnter(e) {
   e.currentTarget.style.background = MOSS;
   e.currentTarget.style.color = WHITE;
@@ -47,36 +40,44 @@ function btnLeave(e) {
 }
 
 export default function SustainabilityRanking({ dict, lang }) {
-  const { events: rawEvents, loading, error } = useEventsFeed();
+  const [events, setEvents]   = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError]     = useState(false);
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [openId, setOpenId]   = useState(null);
-  // Score breakdown / wheelchair note are heavy fields left out of the list
-  // feed (see backend LIST_FIELDS) -- fetched one event at a time, only when
-  // its row is expanded, and cached here so re-opening a row is instant.
-  const [details, setDetails] = useState({});
 
-  function toggleOpen(event) {
-    const opening = openId !== event.id;
-    setOpenId(opening ? event.id : null);
-    if (opening && !details[event.id]) {
-      fetch(`${API_BASE}/events/${event.id}/detail`)
-        .then((res) => res.json())
-        .then((data) => setDetails((prev) => ({ ...prev, [event.id]: data })))
-        .catch(() => setDetails((prev) => ({ ...prev, [event.id]: {} })));
-    }
-  }
-
-  const events = useMemo(function() {
-    const scored = rawEvents.filter(
-      function(e) { return typeof e.sustainability_score === "number"; }
-    );
-    scored.sort(function(a, b) { return b.sustainability_score - a.sustainability_score; });
-    return scored;
-  }, [rawEvents]);
+  useEffect(function() {
+    let cancelled = false;
+    fetch(`${API_BASE}/events/all`)
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (cancelled) return;
+        const scored = (Array.isArray(data) ? data : []).filter(
+          function(e) { return typeof e.sustainability_score === "number"; }
+        );
+        scored.sort(function(a, b) { return b.sustainability_score - a.sustainability_score; });
+        setEvents(scored);
+        setLoading(false);
+      })
+      .catch(function() {
+        if (!cancelled) {
+          setError(true);
+          setLoading(false);
+        }
+      });
+    return function() { cancelled = true; };
+  }, []);
 
   const shown = useMemo(function() { return events.slice(0, visible); }, [events, visible]);
+
+  const openEvent = useMemo(function() {
+    if (!openId) return null;
+    return events.find(function(e) { return e.id === openId; }) || null;
+  }, [openId, events]);
+
   const b = dict.badge ?? {};
   const s = dict.sustainability ?? {};
+  const fr = lang === "fr";
 
   if (loading) return <p style={{ color: "#bbb", marginTop: 24, fontSize: 14 }}>{s.rankingLoading ?? "Loading ranking…"}</p>;
   if (error)   return <p style={{ color: "#bbb", marginTop: 24, fontSize: 14 }}>{s.rankingError ?? "Couldn't load events right now."}</p>;
@@ -84,102 +85,178 @@ export default function SustainabilityRanking({ dict, lang }) {
 
   return (
     <div style={{ marginTop: 8 }}>
-      <ol style={{ display: "grid", gap: 10, listStyle: "none", padding: 0, margin: 0 }}>
-        {shown.map(function(event, i) {
-          const open       = openId === event.id;
-          const badgeName  = b[BADGE_KEY[event.badge]] ?? event.badge;
-          const badgeStyle = BADGE_STYLE[event.badge] ?? { bg: "#eee", color: "#666" };
-          const detail     = details[event.id];
-          const breakdown  = detail?.score_breakdown || {};
+      <style>{`
+        .sr-scroll::-webkit-scrollbar { height: 5px; }
+        .sr-scroll::-webkit-scrollbar-track { background: transparent; }
+        .sr-scroll::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 3px; }
+        .sr-card { transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s; }
+        .sr-card:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(0,0,0,0.10); }
+        .sr-card-active { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(26,46,26,0.18) !important; }
+      `}</style>
 
-          return (
-            <li key={event.id} style={{ background: WHITE, borderRadius: 18, overflow: "hidden", border: "1px solid rgba(0,0,0,0.06)" }}>
+      {/* ── Horizontal scroll track ── */}
+      <div className="sr-scroll" style={{ overflowX: "auto", paddingBottom: 12 }}>
+        <div style={{ display: "flex", gap: 12, paddingBottom: 4, width: "max-content", alignItems: "stretch" }}>
+          {shown.map(function(event, i) {
+            const isOpen       = openId === event.id;
+            const badgeName    = b[BADGE_KEY[event.badge]] ?? event.badge;
+            const badgeStyle   = BADGE_STYLE[event.badge] ?? { bg: "#eee", color: "#666" };
+
+            return (
               <button
+                key={event.id}
                 type="button"
-                onClick={function() { toggleOpen(event); }}
-                aria-expanded={open}
-                onMouseEnter={rowEnter}
-                onMouseLeave={rowLeave}
-                style={{ width: "100%", textAlign: "left", padding: "18px 22px", display: "flex", alignItems: "center", gap: 16, background: "none", border: "none", cursor: "pointer", transition: "background 0.15s" }}
+                className={"sr-card" + (isOpen ? " sr-card-active" : "")}
+                onClick={function() { setOpenId(isOpen ? null : event.id); }}
+                aria-expanded={isOpen}
+                style={{
+                  width: 200,
+                  flexShrink: 0,
+                  background: isOpen ? PINE : WHITE,
+                  borderRadius: 18,
+                  border: isOpen ? "2px solid " + PINE : "1.5px solid rgba(0,0,0,0.07)",
+                  padding: "18px 16px",
+                  cursor: "pointer",
+                  textAlign: "left",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 0,
+                }}
               >
-                <span style={{ fontSize: 12, fontFamily: "monospace", color: "#ccc", width: 28, flexShrink: 0, textAlign: "right" }}>{i + 1}</span>
-
-                <span style={{ flex: 1, minWidth: 0 }}>
-                  <span style={{ display: "block", fontWeight: 700, fontSize: 14, color: PINE, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                    {eventTitle(event, lang)}
+                {/* Rank + badge */}
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+                  <span style={{ fontSize: 11, fontFamily: "monospace", color: isOpen ? "rgba(255,255,255,0.22)" : "#ddd" }}>
+                    #{i + 1}
                   </span>
-                  <span style={{ display: "block", fontSize: 12, color: "#aaa", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginTop: 2 }}>
-                    {event.arrondissement}
-                  </span>
-                  <span style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 8 }}>
-                    {event.type_evenement && (
-                      <span style={{ fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 999, background: "#f3e8ff", color: "#6b21a8" }}>
-                        {tField("type_evenement", event.type_evenement, lang)}
-                      </span>
-                    )}
-                    {event.public_cible && (
-                      <span style={{ fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 999, background: "#fce7f3", color: "#9d174d" }}>
-                        {tField("public_cible", event.public_cible, lang)}
-                      </span>
-                    )}
-                    {event.cout && (
-                      <span style={{ fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 999, background: "#e8f0e4", color: MOSS }}>
-                        {tField("cout", event.cout, lang)}
-                      </span>
-                    )}
-                  </span>
-                </span>
-
-                <span style={{ flexShrink: 0, textAlign: "right" }}>
-                  <span style={{ display: "block", fontSize: 11, fontWeight: 800, padding: "4px 12px", borderRadius: 999, background: badgeStyle.bg, color: badgeStyle.color, marginBottom: 5, whiteSpace: "nowrap" }}>
+                  <span style={{
+                    fontSize: 9, fontWeight: 800, padding: "3px 9px", borderRadius: 999,
+                    background: isOpen ? "rgba(255,255,255,0.12)" : badgeStyle.bg,
+                    color: isOpen ? "rgba(255,255,255,0.75)" : badgeStyle.color,
+                    letterSpacing: "0.5px",
+                  }}>
                     {badgeName}
                   </span>
-                  <span style={{ display: "block", fontSize: 11, fontFamily: "monospace", color: "#bbb" }}>
-                    {event.sustainability_score} / 100
-                    {event.wheelchair_metro_accessible ? " (A)" : ""}
-                  </span>
-                </span>
-
-                <span style={{ flexShrink: 0, color: "#ccc", fontSize: 10, transition: "transform 0.2s", transform: open ? "rotate(180deg)" : "none" }} aria-hidden="true">
-                  {"▼"}
-                </span>
-              </button>
-
-              {open && !detail && (
-                <div style={{ padding: "12px 22px 22px", borderTop: "1px solid " + CREAM }}>
-                  <p style={{ fontSize: 12, color: "#bbb" }}>{s.detailLoading ?? "Loading breakdown…"}</p>
                 </div>
-              )}
 
-              {open && detail && (
-                <div style={{ padding: "12px 22px 22px", borderTop: "1px solid " + CREAM }}>
-                  <div style={{ display: "grid", gap: 12, paddingTop: 12 }}>
-                    {COMPONENTS.map(function(c) {
-                      const pts = breakdown[c.key] ?? 0;
-                      const pct = Math.max(0, Math.min(100, (pts / c.max) * 100));
-                      return (
-                        <div key={c.key} style={{ display: "grid", gridTemplateColumns: "130px 1fr 56px", alignItems: "center", gap: 12 }}>
-                          <span style={{ fontSize: 12, color: "#777" }}>{s[c.labelKey] ?? c.fallback}</span>
-                          <span style={{ height: 6, borderRadius: 999, background: "#e4dfd5", overflow: "hidden", display: "block" }}>
-                            <span style={{ display: "block", height: "100%", borderRadius: 999, background: MOSS, width: pct + "%" }} />
-                          </span>
-                          <span style={{ fontSize: 11, fontFamily: "monospace", color: "#bbb", textAlign: "right" }}>{pts} / {c.max}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  {detail.wheelchair_note && (
-                    <p style={{ fontSize: 12, color: "#aaa", marginTop: 12 }}>(A) {detail.wheelchair_note}</p>
+                {/* Title */}
+                <span style={{
+                  display: "block", fontWeight: 700, fontSize: 13,
+                  color: isOpen ? WHITE : PINE,
+                  lineHeight: 1.35, marginBottom: 5,
+                  overflow: "hidden", display: "-webkit-box",
+                  WebkitLineClamp: 2, WebkitBoxOrient: "vertical",
+                  minHeight: "2.7em",
+                }}>
+                  {eventTitle(event, lang)}
+                </span>
+
+                {/* Borough */}
+                <span style={{ display: "block", fontSize: 11, color: isOpen ? "rgba(255,255,255,0.38)" : "#bbb", marginBottom: 18 }}>
+                  {event.arrondissement}
+                </span>
+
+                {/* Tags */}
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 16 }}>
+                  {event.type_evenement && (
+                    <span style={{ fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 999, background: isOpen ? "rgba(255,255,255,0.1)" : "#f3e8ff", color: isOpen ? "rgba(255,255,255,0.6)" : "#6b21a8" }}>
+                      {tField("type_evenement", event.type_evenement, lang)}
+                    </span>
+                  )}
+                  {event.cout && (
+                    <span style={{ fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 999, background: isOpen ? "rgba(255,255,255,0.1)" : "#e8f0e4", color: isOpen ? "rgba(255,255,255,0.6)" : MOSS }}>
+                      {tField("cout", event.cout, lang)}
+                    </span>
                   )}
                 </div>
-              )}
-            </li>
-          );
-        })}
-      </ol>
 
+                {/* Score */}
+                <div style={{ marginTop: "auto", borderTop: "1px solid " + (isOpen ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.05)"), paddingTop: 12 }}>
+                  <span style={{ fontSize: 24, fontWeight: 900, letterSpacing: "-1px", color: isOpen ? WHITE : PINE }}>
+                    {event.sustainability_score}
+                    <span style={{ fontSize: 12, fontWeight: 400, color: isOpen ? "rgba(255,255,255,0.3)" : "#ccc" }}>/100</span>
+                  </span>
+                  {event.wheelchair_metro_accessible && (
+                    <span style={{ display: "block", fontSize: 9, fontWeight: 700, color: isOpen ? SAGE : MOSS, marginTop: 2, letterSpacing: "0.5px" }}>
+                      {fr ? "ACCÈS FAUTEUIL" : "WHEELCHAIR OK"}
+                    </span>
+                  )}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ── Expanded detail panel ── */}
+      {openEvent && (
+        <div style={{ background: WHITE, borderRadius: 18, padding: "26px 28px", marginTop: 12, marginBottom: 8, border: "1.5px solid rgba(0,0,0,0.07)", position: "relative" }}>
+          {/* Close button */}
+          <button
+            type="button"
+            onClick={function() { setOpenId(null); }}
+            style={{ position: "absolute", top: 18, right: 18, background: "none", border: "none", cursor: "pointer", fontSize: 20, color: "#ccc", lineHeight: 1, padding: 4 }}
+            aria-label="Close"
+          >
+            ×
+          </button>
+
+          {/* Header */}
+          <div style={{ marginBottom: 20, paddingRight: 32 }}>
+            <p style={{ fontSize: 10, fontWeight: 800, color: "#bbb", letterSpacing: "2px", textTransform: "uppercase", marginBottom: 4 }}>
+              {fr ? "Détail du score" : "Score breakdown"}
+            </p>
+            <h3 style={{ fontSize: 16, fontWeight: 800, color: PINE, margin: 0, lineHeight: 1.3 }}>
+              {eventTitle(openEvent, lang)}
+            </h3>
+            <p style={{ fontSize: 12, color: "#bbb", marginTop: 3 }}>{openEvent.arrondissement}</p>
+          </div>
+
+          {/* Score bars */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 16 }}>
+            {COMPONENTS.map(function(c) {
+              const breakdown = openEvent.score_breakdown || {};
+              const pts = breakdown[c.key] ?? 0;
+              const pct = Math.max(0, Math.min(100, (pts / c.max) * 100));
+              return (
+                <div key={c.key} style={{ display: "grid", gridTemplateColumns: "140px 1fr 60px", alignItems: "center", gap: 14 }}>
+                  <span style={{ fontSize: 12, color: "#666" }}>{s[c.labelKey] ?? c.fallback}</span>
+                  <span style={{ height: 6, borderRadius: 999, background: "#e4dfd5", overflow: "hidden", display: "block" }}>
+                    <span style={{ display: "block", height: "100%", borderRadius: 999, background: MOSS, width: pct + "%" }} />
+                  </span>
+                  <span style={{ fontSize: 11, fontFamily: "monospace", color: "#bbb", textAlign: "right" }}>{pts} / {c.max}</span>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Extra tags */}
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 12 }}>
+            {openEvent.type_evenement && (
+              <span style={{ fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 999, background: "#f3e8ff", color: "#6b21a8" }}>
+                {tField("type_evenement", openEvent.type_evenement, lang)}
+              </span>
+            )}
+            {openEvent.public_cible && (
+              <span style={{ fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 999, background: "#fce7f3", color: "#9d174d" }}>
+                {tField("public_cible", openEvent.public_cible, lang)}
+              </span>
+            )}
+            {openEvent.cout && (
+              <span style={{ fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 999, background: "#e8f0e4", color: MOSS }}>
+                {tField("cout", openEvent.cout, lang)}
+              </span>
+            )}
+          </div>
+
+          {openEvent.wheelchair_note && (
+            <p style={{ fontSize: 12, color: "#aaa", marginTop: 12 }}>(A) {openEvent.wheelchair_note}</p>
+          )}
+        </div>
+      )}
+
+      {/* ── Load more ── */}
       {visible < events.length && (
-        <div style={{ marginTop: 28, textAlign: "center" }}>
+        <div style={{ marginTop: 20, textAlign: "center" }}>
           <button
             type="button"
             onClick={function() { setVisible(function(v) { return v + PAGE_SIZE; }); }}
