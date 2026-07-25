@@ -499,7 +499,7 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
                               style={{ background: "none", border: "none", padding: 0, cursor: "pointer", fontSize: 11, fontWeight: 700, color: GREEN_MID, display: "inline-flex", alignItems: "center", gap: 4 }}
                               aria-expanded={openBreakdownId === event.id}
                             >
-                              {lang === "fr" ? "Durabilité" : "Sustainability"} {event.sustainability_score} / 100
+                              🌿 {event.sustainability_score} / 100
                               <span style={{ fontSize: 9, transform: openBreakdownId === event.id ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}>▼</span>
                             </button>
 
