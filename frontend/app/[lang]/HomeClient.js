@@ -42,6 +42,25 @@ const EVENT_PHOTOS = {
   "default":                        "https://images.unsplash.com/photo-1519098635131-4c8f806d1e82?w=120&q=80",
 };
 const getEventPhoto = (type) => EVENT_PHOTOS[type] || EVENT_PHOTOS["default"];
+const BADGE_LEAVES = { "Green Leader": 3, "Eco-Friendly": 2, "Getting There": 1 };
+const BADGE_COLORS = {
+  "Green Leader":  { bg: "#d4ead4", color: "#1e4d2b" },
+  "Eco-Friendly":  { bg: "#e4f0dc", color: "#2e6e30" },
+  "Getting There": { bg: "#f0ead8", color: "#7a5a1a" },
+};
+function LeafIcons({ badge, size = 12 }) {
+  const count = BADGE_LEAVES[badge] || 0;
+  if (!count) return null;
+  return (
+    <div style={{ display: "flex", gap: 2, alignItems: "center" }}>
+      {Array.from({ length: 3 }).map((_, i) => (
+        <svg key={i} width={size} height={size} viewBox="0 0 24 24" fill={i < count ? GREEN_MID : "#d8e8d4"} stroke="none" aria-hidden="true">
+          <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" />
+        </svg>
+      ))}
+    </div>
+  );
+}
 const TEAM = [
   { name: "Yan-Ling Lu",  role: { en: "Data Pipeline",          fr: "Pipeline de données"    }, photo: "/Yan-Ling_Lu.jpeg" },
   { name: "Sarah Liu",    role: { en: "Backend Development",    fr: "Développement backend"  }, photo: "/Sarah_Liu.jpeg" },
@@ -232,8 +251,17 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
       </section>
 
       {/* ── 3. OUR MISSION TEASER ── */}
-      <section style={{ background: GREEN_DARK, padding: "80px 48px" }}>
-        <div className="mission-grid" style={{ maxWidth: 1200, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "center" }}>
+      <section style={{ position: "relative", overflow: "hidden", padding: "80px 48px" }}>
+        {/* Aerial rainforest photo — full bleed */}
+        <img
+          src="https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=1800&q=90"
+          alt="Rainforest from above"
+          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
+        />
+        {/* Dark green overlay so text is legible */}
+        <div style={{ position: "absolute", inset: 0, background: "rgba(10,30,12,0.72)" }} />
+
+        <div className="mission-grid" style={{ position: "relative", zIndex: 1, maxWidth: 1200, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "center" }}>
           <div>
             <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "3px", color: GREEN_MID, textTransform: "uppercase", marginBottom: 16 }}>
               {t("OUR MISSION", "NOTRE MISSION")}
@@ -258,7 +286,7 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
               { num: "50k",    label: t("Newcomers/year",    "Nouveaux arrivants/an")  },
               { num: "Free",   label: t("Always",            "Toujours")               },
             ].map((s) => (
-              <div key={s.num} style={{ background: "rgba(255,255,255,0.08)", borderRadius: 16, padding: "28px 20px", textAlign: "center" }}>
+              <div key={s.num} style={{ background: "rgba(255,255,255,0.08)", backdropFilter: "blur(6px)", borderRadius: 16, padding: "28px 20px", textAlign: "center", border: "1px solid rgba(255,255,255,0.1)" }}>
                 <p style={{ fontSize: "clamp(24px, 2.5vw, 36px)", fontWeight: 900, color: "#fff", marginBottom: 8 }}>{s.num}</p>
                 <p style={{ fontSize: 12, color: "rgba(255,255,255,0.55)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "1px" }}>{s.label}</p>
               </div>
@@ -360,7 +388,15 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
                     <p style={{ fontSize: 11, color: GREEN_MID, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 8 }}>{tField("type_evenement", event.type_evenement, lang)}</p>
                     <h3 style={{ fontSize: 15, fontWeight: 800, marginBottom: 6, color: DARK, lineHeight: 1.3 }}>{lang === "fr" ? event.titre : (event.titre_en || event.titre)}</h3>
                     <p style={{ fontSize: 12, color: "#888", marginBottom: 4 }}>{event.arrondissement}</p>
-                    <p style={{ fontSize: 11, color: "#ccc" }}>{event.date_debut} → {event.date_fin}</p>
+                    <p style={{ fontSize: 11, color: "#ccc", marginBottom: 10 }}>{event.date_debut} → {event.date_fin}</p>
+                    {event.badge && (
+                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <LeafIcons badge={event.badge} size={13} />
+                        <span style={{ fontSize: 10, fontWeight: 700, padding: "3px 9px", borderRadius: 999, background: (BADGE_COLORS[event.badge] || {}).bg || GREEN_LIGHT, color: (BADGE_COLORS[event.badge] || {}).color || GREEN_DARK }}>
+                          {event.badge}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
@@ -422,7 +458,17 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
                     </div>
                     <div className="body">
                       <div style={{ flex: 1 }}>
-                        <p style={{ fontSize: 10, color: GREEN_MID, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 5 }}>{tField("type_evenement", event.type_evenement, lang)}</p>
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
+                          <p style={{ fontSize: 10, color: GREEN_MID, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px" }}>{tField("type_evenement", event.type_evenement, lang)}</p>
+                          {event.badge && (
+                            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                              <LeafIcons badge={event.badge} size={12} />
+                              <span style={{ fontSize: 9, fontWeight: 700, padding: "2px 8px", borderRadius: 999, background: (BADGE_COLORS[event.badge] || {}).bg || GREEN_LIGHT, color: (BADGE_COLORS[event.badge] || {}).color || GREEN_DARK }}>
+                                {event.badge}
+                              </span>
+                            </div>
+                          )}
+                        </div>
                         <h2 style={{ fontSize: 15, fontWeight: 800, color: DARK, marginBottom: 4, lineHeight: 1.3 }}>{lang === "fr" ? event.titre : (event.titre_en || event.titre)}</h2>
                         <p style={{ fontSize: 12, color: "#888", marginBottom: 3 }}>{event.arrondissement}</p>
                         <p style={{ fontSize: 11, color: "#ccc", marginBottom: 8 }}>{event.date_debut} → {event.date_fin}</p>
@@ -462,42 +508,49 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
         </div>
       </section>
 
-      {/* ── 6. SUSTAINABILITY TEASER ── */}
-      <section style={{ background: "#fff", padding: "80px 48px" }}>
-        <div className="sustain-grid" style={{ maxWidth: 1200, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "center" }}>
-          <div style={{ position: "relative", borderRadius: 24, overflow: "hidden", height: 420 }}>
-            <img
-              src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=900&q=85"
-              alt="Forest"
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
-            />
-            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(30,77,43,0.75) 0%, transparent 55%)" }} />
-            <div style={{ position: "absolute", bottom: 24, left: 24, display: "flex", gap: 8, flexWrap: "wrap" }}>
-              {[t("Low emissions","Faibles émissions"), t("Walkable","Accessible à pied"), t("Zero waste","Zéro déchet"), t("Local","Local")].map(tag => (
-                <span key={tag} style={{ background: "rgba(255,255,255,0.15)", backdropFilter: "blur(8px)", color: "#fff", fontSize: 11, fontWeight: 700, padding: "5px 12px", borderRadius: 999, border: "1px solid rgba(255,255,255,0.3)" }}>{tag}</span>
-              ))}
-            </div>
-          </div>
-          <div>
-            <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "3px", color: GREEN_MID, textTransform: "uppercase", marginBottom: 16 }}>
-              {t("SUSTAINABILITY SCORING", "SCORE DE DURABILITÉ")}
-            </p>
-            <h2 style={{ fontSize: "clamp(28px, 3.5vw, 48px)", fontWeight: 900, letterSpacing: "-1.5px", color: DARK, marginBottom: 16, lineHeight: 1.1 }}>
-              {t("Sustainability is our goal.", "La durabilité, c'est notre objectif.")}
-            </h2>
-            <p style={{ fontSize: 16, color: "#555", lineHeight: 1.8, marginBottom: 32 }}>
-              {t(
-                "Every event gets an eco-score based on transit access, carbon footprint, and more. Choose experiences that are good for Montreal — and the planet.",
-                "Chaque événement reçoit un score écologique basé sur l'accès aux transports, l'empreinte carbone et plus encore."
-              )}
-            </p>
+      {/* ── 6. SUSTAINABILITY TEASER — full-bleed photo ── */}
+      <section style={{ position: "relative", height: "70vh", minHeight: 480, overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        {/* Full-bleed landscape photo */}
+        <img
+          src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1800&q=90"
+          alt="Mountain landscape"
+          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 40%" }}
+        />
+        {/* Dark overlay — heavier in centre to frame the text */}
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.52) 50%, rgba(0,0,0,0.30) 100%)" }} />
+
+        {/* Content — centred */}
+        <div style={{ position: "relative", zIndex: 2, textAlign: "center", padding: "0 24px", maxWidth: 760 }}>
+          <p style={{ fontSize: 10, fontWeight: 800, letterSpacing: "4px", color: "rgba(255,255,255,0.55)", textTransform: "uppercase", marginBottom: 28 }}>
+            {t("MTLVerde · Sustainability", "MTLVerde · Durabilité")}
+          </p>
+          <h2 style={{ fontSize: "clamp(28px, 4.5vw, 64px)", fontWeight: 900, color: "#fff", lineHeight: 1.1, letterSpacing: "-1.5px", marginBottom: 28 }}>
+            {t(
+              "The most sustainable event is one you can walk to.",
+              "L'événement le plus durable est celui dont on peut marcher jusqu'à."
+            )}
+          </h2>
+          <p style={{ fontSize: "clamp(13px, 1.4vw, 17px)", color: "rgba(255,255,255,0.65)", lineHeight: 1.75, marginBottom: 40, maxWidth: 560, margin: "0 auto 40px" }}>
+            {t(
+              "Every event on MTLVerde gets an eco-score based on transit access, carbon footprint, and more.",
+              "Chaque événement sur MTLVerde reçoit un score écologique basé sur l'accès aux transports et l'empreinte carbone."
+            )}
+          </p>
+          <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
             <a href={`/${lang}/sustainability`}
-              style={{ display: "inline-flex", alignItems: "center", gap: 8, background: GREEN_DARK, color: "#fff", borderRadius: 999, padding: "13px 32px", fontSize: 14, fontWeight: 800, textDecoration: "none", transition: "background 0.2s" }}
-              onMouseEnter={e => { e.currentTarget.style.background = "#163d21"; }}
-              onMouseLeave={e => { e.currentTarget.style.background = GREEN_DARK; }}>
+              style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "#fff", color: DARK, borderRadius: 999, padding: "14px 36px", fontSize: 14, fontWeight: 800, textDecoration: "none", transition: "opacity 0.2s" }}
+              onMouseEnter={e => { e.currentTarget.style.opacity = "0.85"; }}
+              onMouseLeave={e => { e.currentTarget.style.opacity = "1"; }}>
               {t("Learn more →", "En savoir plus →")}
             </a>
           </div>
+        </div>
+
+        {/* Frosted tag pills — bottom left */}
+        <div style={{ position: "absolute", bottom: 28, left: 48, display: "flex", gap: 8, flexWrap: "wrap" }}>
+          {[t("Low emissions","Faibles émissions"), t("Walkable","Accessible à pied"), t("Zero waste","Zéro déchet"), t("Local","Local")].map(tag => (
+            <span key={tag} style={{ background: "rgba(255,255,255,0.12)", backdropFilter: "blur(8px)", color: "#fff", fontSize: 11, fontWeight: 700, padding: "6px 14px", borderRadius: 999, border: "1px solid rgba(255,255,255,0.25)" }}>{tag}</span>
+          ))}
         </div>
       </section>
 
