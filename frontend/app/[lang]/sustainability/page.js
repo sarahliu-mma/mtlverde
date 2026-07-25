@@ -286,9 +286,17 @@ export default async function Sustainability({ params }) {
         </div>
       </section>
 
-      {/* ── OUR METHODOLOGY — plain dark background (no photo overlay) ── */}
-      <section style={{ background: PINE, padding: "100px 48px" }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+      {/* ── OUR METHODOLOGY — overlaid on mountain photo ── */}
+      <section style={{ position: "relative", minHeight: "80vh", overflow: "hidden", display: "flex", alignItems: "center" }}>
+        <img
+          src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1800&q=85"
+          alt=""
+          aria-hidden="true"
+          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 35%" }}
+        />
+        <div style={{ position: "absolute", inset: 0, background: "rgba(5,12,5,0.72)" }} />
+
+        <div style={{ position: "relative", zIndex: 1, maxWidth: 1100, margin: "0 auto", padding: "100px 48px", width: "100%" }}>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 72, alignItems: "flex-start" }}>
 
             <div style={{ flex: "1 1 300px" }}>
@@ -316,7 +324,7 @@ export default async function Sustainability({ params }) {
             <div style={{ flex: "1 1 300px", display: "flex", flexDirection: "column", gap: 10 }}>
               {signals.map(function(sig) {
                 return (
-                  <details key={sig.title} style={{ background: "rgba(255,255,255,0.07)", borderRadius: 16, overflow: "hidden" }}>
+                  <details key={sig.title} style={{ background: "rgba(255,255,255,0.07)", backdropFilter: "blur(6px)", borderRadius: 16, overflow: "hidden" }}>
                     <summary style={{ padding: "20px 22px", display: "flex", alignItems: "center", gap: 16, cursor: "pointer", userSelect: "none" }}>
                       <div style={{ flexShrink: 0 }}>
                         <span style={{ fontSize: 9, fontWeight: 800, letterSpacing: "2px", color: SAGE, textTransform: "uppercase", display: "block", marginBottom: 4 }}>{sig.tag}</span>
@@ -337,17 +345,6 @@ export default async function Sustainability({ params }) {
           </div>
         </div>
       </section>
-
-      {/* ── MOUNTAIN PHOTO STRIP — underneath methodology ── */}
-      <div style={{ height: "44vh", minHeight: 260, overflow: "hidden", position: "relative" }}>
-        <img
-          src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1800&q=85"
-          alt=""
-          aria-hidden="true"
-          style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 35%" }}
-        />
-        <div style={{ position: "absolute", inset: 0, background: "rgba(10,20,10,0.15)" }} />
-      </div>
 
       {/* ── FULL-BLEED QUOTE — mountain hiker ── */}
       <div style={{ position: "relative", height: "52vh", minHeight: 300, overflow: "hidden" }}>
