@@ -215,6 +215,10 @@ export default async function Sustainability({ params }) {
                     </div>
                   );
                 })}
+            </div>
+          </div>
+        </div>
+      </section>
    
       {/* ── NATURE BRIDGE — family photo ── */}
       <section style={{ position: "relative", height: "68vh", minHeight: 400, overflow: "hidden" }}>
