@@ -154,7 +154,9 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
         .fest-preview-card img { transition: transform 0.6s ease; width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
         .feat-scroll::-webkit-scrollbar { display: none; }
         .feat-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+        .feat-full-bleed { margin: 0 -48px; }
         @media (max-width: 768px) {
+          .feat-full-bleed { margin: 0 -24px; }
           .section-pad { padding: 64px 24px; }
           .team-grid { grid-template-columns: repeat(2, 1fr); gap: 24px; }
           .events-preview { grid-template-columns: 1fr; }
@@ -352,7 +354,7 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
             {t("Upcoming Events", "Événements à venir")}
           </h2>
           {events.length > 0 && (
-            <div style={{ position: "relative", margin: "0 -48px", marginBottom: 48 }}>
+            <div className="feat-full-bleed" style={{ position: "relative", marginBottom: 48 }}>
               <div className="feat-scroll" style={{ display: "flex", gap: 4, overflowX: "auto", paddingLeft: 48, paddingBottom: 8 }}>
                 {events.slice(0, 7).map((event, i) => (
                   <div key={i} className="fest-preview-card" style={{ flexShrink: 0 }}>
