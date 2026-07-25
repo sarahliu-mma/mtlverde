@@ -296,51 +296,40 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
       </section>
 
       {/* ── 4. FEATURED FESTIVALS TEASER ── */}
-      <section style={{ background: CREAM, padding: "80px 48px" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 48, flexWrap: "wrap", gap: 20 }}>
-            <div>
-              <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "3px", color: RED, textTransform: "uppercase", marginBottom: 14 }}>
-                {t("MTLVERDE · CURATED", "MTLVERDE · SÉLECTION")}
-              </p>
-              <h2 style={{ fontSize: "clamp(28px, 3.5vw, 48px)", fontWeight: 900, letterSpacing: "-1.5px", color: DARK, lineHeight: 1.1 }}>
-                {t("Featured Festivals", "Festivals à l'affiche")}
-              </h2>
-            </div>
-            <a href={`/${lang}/festivals`}
-              style={{ display: "inline-flex", alignItems: "center", gap: 8, border: `2px solid ${GREEN_DARK}`, color: GREEN_DARK, borderRadius: 999, padding: "11px 26px", fontSize: 13, fontWeight: 800, textDecoration: "none", transition: "all 0.2s", whiteSpace: "nowrap" }}
-              onMouseEnter={e => { e.currentTarget.style.background = GREEN_DARK; e.currentTarget.style.color = "#fff"; }}
-              onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = GREEN_DARK; }}>
-              {t("See all festivals →", "Voir tous les festivals →")}
-            </a>
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}>
+      <section style={{ background: "#fff", padding: "72px 48px" }}>
+        <div style={{ maxWidth: 1400, margin: "0 auto" }}>
+          <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "3px", color: "#aaa", textTransform: "uppercase", marginBottom: 32 }}>
+            {t("Featured Festivals", "Festivals à l'affiche")}
+          </p>
+          {/* 2-up full-bleed cards like Patagonia Stories */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
             {[
-              { photo: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=700&q=85", label: t("Music & Arts",  "Musique et arts"),    sub: t("Outdoor · Free",  "Plein air · Gratuit"),       tag: t("Festival", "Festival") },
-              { photo: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=700&q=85", label: t("Jazz Festival", "Festival de Jazz"),    sub: t("Downtown · Free", "Centre-ville · Gratuit"),    tag: t("Annual",   "Annuel")   },
-              { photo: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=700&q=85", label: t("Cinema",        "Cinéma"),              sub: t("Rialto · Curated","Rialto · Sélection"),        tag: t("Curated",  "Sélection") },
+              {
+                photo: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=1000&q=90",
+                label: t("Music & Arts", "Musique et arts"),
+                btn: t("View All", "Voir tout"),
+              },
+              {
+                photo: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1000&q=90",
+                label: t("Food & Markets", "Marchés et Saveurs"),
+                btn: t("View All", "Voir tout"),
+              },
             ].map((card, i) => (
-              <a key={i} href={`/${lang}/festivals`} style={{ textDecoration: "none", borderRadius: 20, overflow: "hidden", border: `1px solid ${GREEN_LIGHT}`, background: "#fff", display: "block", transition: "transform 0.2s, box-shadow 0.2s" }}
-                onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-5px)"; e.currentTarget.style.boxShadow = "0 16px 40px rgba(30,77,43,0.15)"; }}
-                onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}>
-                <div style={{ height: 200, overflow: "hidden", position: "relative" }}>
-                  <img src={card.photo} alt={card.label} style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.5s" }}
-                    onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.05)"; }}
-                    onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; }} />
-                  <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.15)" }} />
-                  <span style={{ position: "absolute", top: 14, left: 14, fontSize: 9, fontWeight: 800, padding: "4px 10px", borderRadius: 999, background: "rgba(255,255,255,0.2)", color: "#fff", backdropFilter: "blur(4px)" }}>
-                    {card.tag}
-                  </span>
-                </div>
-                <div style={{ padding: "18px 20px 22px" }}>
-                  <p style={{ fontSize: 11, color: GREEN_MID, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 8 }}>
-                    {t("Festival", "Festival")}
-                  </p>
-                  <h3 style={{ fontSize: 18, fontWeight: 900, color: DARK, marginBottom: 6, lineHeight: 1.2 }}>{card.label}</h3>
-                  <p style={{ fontSize: 12, color: "#888", marginBottom: 4 }}>Montréal</p>
-                  <p style={{ fontSize: 11, color: "#bbb", marginBottom: 14 }}>{card.sub}</p>
-                  <span style={{ fontSize: 12, fontWeight: 800, color: GREEN_DARK }}>
-                    {t("View Festival →", "Voir le festival →")}
+              <a key={i} href={`/${lang}/festivals`}
+                style={{ position: "relative", display: "block", height: 520, overflow: "hidden", textDecoration: "none", cursor: "pointer" }}
+                onMouseEnter={e => { e.currentTarget.querySelector("img").style.transform = "scale(1.04)"; }}
+                onMouseLeave={e => { e.currentTarget.querySelector("img").style.transform = "scale(1)"; }}>
+                <img src={card.photo} alt={card.label}
+                  style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.6s ease", display: "block" }} />
+                {/* Dark gradient — heavier at bottom */}
+                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.0) 100%)" }} />
+                {/* Bottom-left text */}
+                <div style={{ position: "absolute", bottom: 0, left: 0, padding: "0 32px 32px", display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 16 }}>
+                  <h3 style={{ fontSize: "clamp(24px, 2.5vw, 38px)", fontWeight: 900, color: "#fff", letterSpacing: "-0.5px", lineHeight: 1.1, margin: 0 }}>
+                    {card.label}
+                  </h3>
+                  <span style={{ fontSize: 13, fontWeight: 800, padding: "10px 22px", borderRadius: 999, background: "rgba(255,255,255,0.18)", color: "#fff", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.3)", letterSpacing: "0.2px" }}>
+                    {card.btn}
                   </span>
                 </div>
               </a>
