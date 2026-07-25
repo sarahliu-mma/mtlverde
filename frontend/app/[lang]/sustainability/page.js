@@ -89,7 +89,7 @@ export default async function Sustainability({ params }) {
   const dashOffset = (CIRC * (1 - 25 / 68)).toFixed(1);
 
   // Split s.honest on the 🌿 emoji to replace with custom SVG
-  const honestParts = s.honest ? s.honest.split("🌿") : [""];
+  const honestParts = s.honest ? s.honest.split(/🌿|🌱|🍃/) : [""];
 
   return (
     <div style={{ fontFamily: "'DM Sans','Inter',sans-serif", background: CREAM, color: DARK, margin: 0, padding: 0 }}>
