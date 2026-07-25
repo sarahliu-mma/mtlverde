@@ -376,6 +376,58 @@ export default function RecommendationsClient({ dict, lang }) {
           </div>
         </div>
       </main>
+
+      {/* ── FOOTER ── */}
+      <footer style={{ background: PINE, padding: "64px 8vw 32px" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 48, marginBottom: 48 }}>
+            <div style={{ flex: "2 1 240px" }}>
+              <img
+                src="/MTLVerde_Logo.png"
+                alt="MTLVerde"
+                style={{ height: 120, marginBottom: 24, filter: "brightness(10)" }}
+              />
+              <p style={{ fontSize: 13, color: "rgba(255,255,255,0.45)", lineHeight: 1.8, maxWidth: 280 }}>
+                {fr
+                  ? "Montréal événements communautaires — gratuits, bilingues."
+                  : "Sustainable community events in Montréal — free, bilingual, and planet-first."}
+              </p>
+            </div>
+            <div style={{ flex: "1 1 140px" }}>
+              <h4 style={{ fontSize: 10, fontWeight: 800, marginBottom: 20, color: "rgba(255,255,255,0.7)", letterSpacing: "2px", textTransform: "uppercase" }}>
+                {fr ? "Compagnie" : "Company"}
+              </h4>
+              {(fr
+                ? [["À propos", `/${lang}#about`], ["Presse", `/${lang}#press`], ["Carrières", `/${lang}#careers`]]
+                : [["About", `/${lang}#about`], ["Press", `/${lang}#press`], ["Careers", `/${lang}#careers`]]
+              ).map(function(item) {
+                return (
+                  <a key={item[0]} href={item[1]} style={{ display: "block", fontSize: 13, color: "rgba(255,255,255,0.4)", marginBottom: 12, textDecoration: "none" }}>
+                    {item[0]}
+                  </a>
+                );
+              })}
+            </div>
+            <div style={{ flex: "1 1 140px" }}>
+              <h4 style={{ fontSize: 10, fontWeight: 800, marginBottom: 20, color: "rgba(255,255,255,0.7)", letterSpacing: "2px", textTransform: "uppercase" }}>Contact</h4>
+              {[["Help / FAQ", `/${lang}#faq`], ["Team", `/${lang}#team`], ["mtlverde@gmail.com", "mailto:mtlverde@gmail.com"]].map(function(item) {
+                return (
+                  <a key={item[0]} href={item[1]} style={{ display: "block", fontSize: 13, color: "rgba(255,255,255,0.4)", marginBottom: 12, textDecoration: "none" }}>
+                    {item[0]}
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+          <div style={{ borderTop: "1px solid rgba(255,255,255,0.1)", paddingTop: 24, display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+            <p style={{ fontSize: 11, color: "rgba(255,255,255,0.25)" }}>
+              {"© 2026 MTLVerde — "}{fr ? "Événements. Montréal. Ensemble." : "Events. Montreal. Together."}
+            </p>
+            <p style={{ fontSize: 11, color: "rgba(255,255,255,0.25)" }}>mtlverde@gmail.com</p>
+          </div>
+        </div>
+      </footer>
+
     </div>
   );
 }
