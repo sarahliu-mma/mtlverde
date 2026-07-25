@@ -6,11 +6,8 @@ import { tField, eventDescription } from "./eventData";
 import { useBookmarks } from "@/lib/bookmarks";
 import { useEventsFeed } from "@/lib/useEventsFeed";
 import MultiSelect from "./MultiSelect";
-
 const Map = dynamic(() => import("./Map"), { ssr: false });
-
 const ALL = "Tous";
-
 const GREEN_DARK  = "#1e4d2b";
 const GREEN_MID   = "#6a9e5a";
 const GREEN_LIGHT = "#e8f0e4";
@@ -18,7 +15,6 @@ const RED         = "#b5281c";
 const RED_LIGHT   = "#fdf0ee";
 const CREAM       = "#f9f6f1";
 const DARK        = "#111";
-
 const EVENT_PHOTOS = {
   "Musique":                        "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=120&q=80",
   "Initiation à la musique":        "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=120&q=80",
@@ -46,21 +42,18 @@ const EVENT_PHOTOS = {
   "default":                        "https://images.unsplash.com/photo-1519098635131-4c8f806d1e82?w=120&q=80",
 };
 const getEventPhoto = (type) => EVENT_PHOTOS[type] || EVENT_PHOTOS["default"];
-
 const TEAM = [
   { name: "Yan-Ling Lu",  role: { en: "Data Pipeline",          fr: "Pipeline de données"    }, photo: "/Yan-Ling_Lu.jpeg" },
   { name: "Sarah Liu",    role: { en: "Backend Development",    fr: "Développement backend"  }, photo: "/Sarah_Liu.jpeg" },
   { name: "Joohee Kim",   role: { en: "Sustainability Scoring", fr: "Score de durabilité"    }, photo: "/Joohee_Kim.JPG" },
   { name: "Chloee Liew",  role: { en: "Frontend Development",   fr: "Développement frontend" }, photo: "/Chloee_Liew.jpg" },
 ];
-
 const PURPOSE = [
   { img: "https://images.unsplash.com/photo-1445296608114-4b8fabe48256?w=800&q=85", title: { en: "Discover by Borough", fr: "Découvrir par quartier" }, desc: { en: "Find events across all 20 Montreal boroughs, right in your neighbourhood.", fr: "Trouvez des événements dans vos 20 arrondissements de Montréal." } },
   { img: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&q=85", title: { en: "Free & Accessible",   fr: "Gratuit et accessible"  }, desc: { en: "Most events are free, outdoors, and open to everyone.", fr: "La majorité de nos événements sont gratuits et ouverts à tous." } },
   { img: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&q=85",    title: { en: "Local Events",         fr: "Événements locaux"      }, desc: { en: "Workshops, festivals, and markets that make the city pulse with life.", fr: "Des ateliers, festivals et marchés qui font battre le cœur de la ville." } },
   { img: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800&q=85", title: { en: "Built for You",       fr: "Personnalisé pour vous" }, desc: { en: "Filter by type, date, audience, and cost to find your perfect fit.", fr: "Filtrez par type, date, public et coût pour trouver votre événement idéal." } },
 ];
-
 const DICT = {
   en: {
     nav: { events: "Events", mission: "Our Mission", sustainability: "Sustainability", saved: "Saved", recommendations: "Recommendations" },
@@ -73,11 +66,8 @@ const DICT = {
     header: { brand: "MTLVerde" },
   },
 };
-
 export default function HomeClient({ dict, lang, initialEvents = [] }) {
   const { events } = useEventsFeed({ initialData: initialEvents });
-  // Multi-value filters hold an array of chosen values ([] = no filter);
-  // single-value filters keep the ALL sentinel.
   const [typeFilter, setTypeFilter] = useState([]);
   const [arrFilter, setArrFilter]   = useState([]);
   const [audFilter, setAudFilter]   = useState([]);
@@ -91,17 +81,13 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
   const [subscribed, setSubscribed] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
   const { isSaved, toggle } = useBookmarks();
-
   const eventsRef     = useRef(null);
   const purposeRef    = useRef(null);
   const teamRef       = useRef(null);
   const newsletterRef = useRef(null);
-
   const scrollTo = (ref) => { ref.current?.scrollIntoView({ behavior: "smooth" }); };
-
   const optionsFor = (field) =>
     [ALL, ...[...new Set(events.map((e) => e[field]).filter(Boolean))].sort()];
-
   const selectFilters = [
     { label: (dict || DICT[lang]).filters?.type           || "Type",           field: "type_evenement", value: typeFilter,  set: setTypeFilter, multi: true },
     { label: (dict || DICT[lang]).filters?.arrondissement || "Arrondissement", field: "arrondissement",  value: arrFilter,   set: setArrFilter,  multi: true },
@@ -110,11 +96,7 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
     { label: (dict || DICT[lang]).filters?.public         || "Audience",       field: "public_cible",    value: audFilter,   set: setAudFilter,  multi: true },
     { label: (dict || DICT[lang]).filters?.inscription    || "Registration",   field: "inscription",     value: inscFilter,  set: setInscFilter  },
   ];
-
   const filtered = events.filter((e) => {
-    // Multi filters: match if the event's value is among the chosen ones (OR
-    // within a filter; empty = no filter). Single filters use the ALL sentinel.
-    // Filters still combine with AND across fields.
     const selectMatch = selectFilters.every((f) =>
       f.multi
         ? (f.value.length === 0 || f.value.includes(e[f.field]))
@@ -124,13 +106,10 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
     const endMatch    = !endDate   || (e.date_fin   && e.date_fin   <= endDate);
     return selectMatch && startMatch && endMatch;
   });
-
   const t = (en, fr) => lang === "fr" ? fr : en;
   const headerDict = dict || DICT[lang];
-
   return (
     <div style={{ fontFamily: "'DM Sans','Inter',sans-serif", background: "#fff", color: DARK, margin: 0, padding: 0 }}>
-
       <style>{`
         * { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
@@ -150,6 +129,13 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
         .badge-red    { background: ${RED_LIGHT};   color: ${RED};        }
         .badge-purple { background: #f3e8ff; color: #6b21a8; }
         .badge-pink   { background: #fce7f3; color: #9d174d; }
+        .fest-preview-card { position: relative; border-radius: 18px; overflow: hidden; height: 320px; cursor: pointer; transition: transform 0.22s, box-shadow 0.22s; text-decoration: none; display: block; }
+        .fest-preview-card:hover { transform: translateY(-5px); box-shadow: 0 16px 40px rgba(0,0,0,0.18); }
+        .fest-preview-card:hover img { transform: scale(1.06); }
+        .fest-preview-card img { transition: transform 0.5s ease; width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
+        @media (max-width: 900px) {
+          .feat-grid { grid-template-columns: 1fr 1fr !important; }
+        }
         @media (max-width: 768px) {
           .section-pad { padding: 64px 24px; }
           .team-grid { grid-template-columns: repeat(2, 1fr); gap: 24px; }
@@ -161,6 +147,9 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
           .event-list-card .thumb { width: 100%; min-width: unset; height: 140px; }
           .newsletter-row { flex-direction: column; }
           .newsletter-row input, .newsletter-row button { width: 100%; }
+          .mission-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
+          .sustain-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
+          .feat-grid { grid-template-columns: 1fr !important; }
         }
         @media (max-width: 480px) {
           .team-grid { grid-template-columns: repeat(2, 1fr); }
@@ -171,7 +160,7 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
       {/* ── HEADER ── */}
       <Header dict={headerDict} lang={lang} />
 
-      {/* ── HERO ── */}
+      {/* ── 1. HERO ── */}
       <section style={{ position: "relative", height: "100vh", minHeight: 600, display: "flex", alignItems: "center", justifyContent: "center" }}>
         <img src="https://images.unsplash.com/photo-1445296608114-4b8fabe48256?w=1800&q=90" alt="Montreal"
           style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
@@ -210,7 +199,7 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
         </div>
       </section>
 
-      {/* ── OUR PURPOSE ── */}
+      {/* ── 2. OUR PURPOSE ── */}
       <section id="purpose" ref={purposeRef} className="section-pad" style={{ background: CREAM }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 56, flexWrap: "wrap", gap: 24 }}>
@@ -243,11 +232,11 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
         </div>
       </section>
 
-      {/* ── MISSION TEASER ── */}
-      <section style={{ background: "#1e4d2b", padding: "80px 48px" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "center" }}>
+      {/* ── 3. OUR MISSION TEASER ── */}
+      <section style={{ background: GREEN_DARK, padding: "80px 48px" }}>
+        <div className="mission-grid" style={{ maxWidth: 1200, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "center" }}>
           <div>
-            <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "3px", color: "#6a9e5a", textTransform: "uppercase", marginBottom: 16 }}>
+            <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "3px", color: GREEN_MID, textTransform: "uppercase", marginBottom: 16 }}>
               {t("OUR MISSION", "NOTRE MISSION")}
             </p>
             <h2 style={{ fontSize: "clamp(28px, 3.5vw, 48px)", fontWeight: 900, letterSpacing: "-1.5px", color: "#fff", marginBottom: 20, lineHeight: 1.1 }}>
@@ -259,7 +248,7 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
                 "Montréal organise des milliers d'événements communautaires gratuits chaque année — mais ils sont dispersés, difficiles à trouver et souvent uniquement en français. MTLVerde les rassemble en un seul endroit gratuit et bilingue."
               )}
             </p>
-            <a href={`/${lang}/mission`} style={{ display: "inline-block", background: "#fff", color: "#1e4d2b", borderRadius: 999, padding: "13px 32px", fontSize: 14, fontWeight: 800, textDecoration: "none" }}>
+            <a href={`/${lang}/mission`} style={{ display: "inline-block", background: "#fff", color: GREEN_DARK, borderRadius: 999, padding: "13px 32px", fontSize: 14, fontWeight: 800, textDecoration: "none" }}>
               {t("Read our mission →", "Lire notre mission →")}
             </a>
           </div>
@@ -279,9 +268,181 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
         </div>
       </section>
 
-      {/* ── SUSTAINABILITY TEASER ── */}
+      {/* ── 4. EVENTS ── */}
+      <section id="events" ref={eventsRef} className="section-pad" style={{ background: "#fff" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+          <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "3px", color: RED, textTransform: "uppercase", marginBottom: 14 }}>
+            {t("WHAT'S ON", "À L'AFFICHE")}
+          </p>
+          <h2 style={{ fontSize: "clamp(30px, 4vw, 54px)", fontWeight: 900, letterSpacing: "-1.5px", marginBottom: 52 }}>
+            {t("Upcoming Events", "Événements à venir")}
+          </h2>
+          {events.length > 0 && (
+            <div className="events-preview">
+              {events.slice(0, 3).map((event, i) => (
+                <div key={i} style={{ borderRadius: 20, overflow: "hidden", border: `1px solid ${GREEN_LIGHT}`, transition: "transform 0.2s, box-shadow 0.2s", cursor: "pointer" }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-5px)"; e.currentTarget.style.boxShadow = "0 16px 40px rgba(30,77,43,0.15)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}>
+                  <div style={{ height: 160, overflow: "hidden", position: "relative" }}>
+                    <img src={getEventPhoto(event.type_evenement)} alt={event.type_evenement}
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.2)" }} />
+                    <span style={{ position: "absolute", bottom: 14, left: 14, fontSize: 11, fontWeight: 800, padding: "5px 12px", borderRadius: 999, background: event.cout === "Gratuit" ? GREEN_DARK : RED, color: "#fff" }}>
+                      {tField("cout", event.cout, lang)}
+                    </span>
+                  </div>
+                  <div style={{ padding: "20px 22px 24px", background: "#fff" }}>
+                    <p style={{ fontSize: 11, color: GREEN_MID, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 8 }}>{tField("type_evenement", event.type_evenement, lang)}</p>
+                    <h3 style={{ fontSize: 15, fontWeight: 800, marginBottom: 6, color: DARK, lineHeight: 1.3 }}>{lang === "fr" ? event.titre : (event.titre_en || event.titre)}</h3>
+                    <p style={{ fontSize: 12, color: "#888", marginBottom: 4 }}>{event.arrondissement}</p>
+                    <p style={{ fontSize: 11, color: "#ccc" }}>{event.date_debut} → {event.date_fin}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          {!showEvents ? (
+            <div style={{ textAlign: "center" }}>
+              <button onClick={() => setShowEvents(true)} style={{ background: GREEN_DARK, color: "#fff", border: "none", borderRadius: 999, padding: "15px 44px", fontSize: 15, fontWeight: 800, cursor: "pointer", transition: "all 0.2s" }}
+                onMouseEnter={e => { e.currentTarget.style.background = RED; e.currentTarget.style.transform = "translateY(-2px)"; }}
+                onMouseLeave={e => { e.currentTarget.style.background = GREEN_DARK; e.currentTarget.style.transform = "translateY(0)"; }}>
+                {t("See all events", "Voir tous les événements")}
+              </button>
+            </div>
+          ) : (
+            <>
+              <div style={{ borderRadius: 20, overflow: "hidden", boxShadow: "0 4px 24px rgba(0,0,0,0.10)", marginBottom: 32, border: `1px solid ${GREEN_LIGHT}` }}>
+                <Map events={filtered} lang={lang} readMoreLabel={(dict || DICT[lang]).event?.readMore || "Read more"} selectedId={selectedId} />
+              </div>
+              <div className="filters-wrap" style={{ background: CREAM, borderRadius: 16, padding: "24px 28px", marginBottom: 28 }}>
+                {selectFilters.map((f) =>
+                  f.multi ? (
+                    <MultiSelect
+                      key={f.field}
+                      label={f.label}
+                      field={f.field}
+                      options={optionsFor(f.field).filter((o) => o !== ALL)}
+                      selected={f.value}
+                      onChange={f.set}
+                      dict={dict || DICT[lang]}
+                      lang={lang}
+                    />
+                  ) : (
+                    <div key={f.field}>
+                      <label style={{ display: "block", fontSize: 10, fontWeight: 800, color: "#999", textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 7 }}>{f.label}</label>
+                      <select style={{ border: `1.5px solid ${GREEN_LIGHT}`, borderRadius: 10, padding: "9px 14px", fontSize: 13, background: "#fff", cursor: "pointer", color: DARK }}
+                        value={f.value} onChange={(e) => f.set(e.target.value)}>
+                        {optionsFor(f.field).map((o) => (
+                          <option key={o} value={o}>{o === ALL ? ((dict || DICT[lang]).filters?.all || "All") : tField(f.field, o, lang)}</option>
+                        ))}
+                      </select>
+                    </div>
+                  )
+                )}
+                <div>
+                  <label style={{ display: "block", fontSize: 10, fontWeight: 800, color: "#999", textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 7 }}>{(dict || DICT[lang]).filters?.startDate || "Start date"}</label>
+                  <input type="date" style={{ border: `1.5px solid ${GREEN_LIGHT}`, borderRadius: 10, padding: "9px 14px", fontSize: 13, color: DARK }} value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+                </div>
+                <div>
+                  <label style={{ display: "block", fontSize: 10, fontWeight: 800, color: "#999", textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 7 }}>{(dict || DICT[lang]).filters?.endDate || "End date"}</label>
+                  <input type="date" style={{ border: `1.5px solid ${GREEN_LIGHT}`, borderRadius: 10, padding: "9px 14px", fontSize: 13, color: DARK }} value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+                </div>
+                <p style={{ fontSize: 13, color: "#aaa" }}>{(dict || DICT[lang]).results?.count?.replace("{count}", filtered.length) || `${filtered.length} events`}</p>
+              </div>
+              <div style={{ display: "grid", gap: 12 }}>
+                {filtered.map((event) => (
+                  <div key={event.id} className={`event-list-card ${ selectedId === event.id ? "selected" : ""}`} onClick={() => setSelectedId(prev => (prev === event.id ? null : event.id))}>
+                    <div className="thumb">
+                      <img src={getEventPhoto(event.type_evenement)} alt={event.type_evenement} />
+                    </div>
+                    <div className="body">
+                      <div style={{ flex: 1 }}>
+                        <p style={{ fontSize: 10, color: GREEN_MID, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 5 }}>{tField("type_evenement", event.type_evenement, lang)}</p>
+                        <h2 style={{ fontSize: 15, fontWeight: 800, color: DARK, marginBottom: 4, lineHeight: 1.3 }}>{lang === "fr" ? event.titre : (event.titre_en || event.titre)}</h2>
+                        <p style={{ fontSize: 12, color: "#888", marginBottom: 3 }}>{event.arrondissement}</p>
+                        <p style={{ fontSize: 11, color: "#ccc", marginBottom: 8 }}>{event.date_debut} → {event.date_fin}</p>
+                        <p style={{ fontSize: 12, color: "#666", lineHeight: 1.6, marginBottom: 10 }}>{eventDescription(event, lang)}</p>
+                        {event.url_fiche && (
+                          <a href={event.url_fiche} target="_blank" rel="noopener noreferrer"
+                            style={{ fontSize: 12, fontWeight: 700, color: GREEN_DARK, textDecoration: "none" }}
+                            onMouseEnter={e => { e.currentTarget.style.textDecoration = "underline"; }}
+                            onMouseLeave={e => { e.currentTarget.style.textDecoration = "none"; }}>
+                            {(dict || DICT[lang]).event?.readMore || "Read more"} →
+                          </a>
+                        )}
+                      </div>
+                      <div style={{ display: "flex", flexDirection: "column", gap: 6, flexShrink: 0, alignItems: "flex-end", alignSelf: "stretch" }}>
+                        {event.public_cible && <span className="badge badge-pink">{tField("public_cible", event.public_cible, lang)}</span>}
+                        <span className={`badge ${event.cout === "Gratuit" ? "badge-green" : "badge-red"}`}>
+                          {tField("cout", event.cout, lang)}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); toggle(event.id); }}
+                          aria-label={isSaved(event.id) ? ((dict || DICT[lang]).event?.unsave || "Remove from saved") : ((dict || DICT[lang]).event?.save || "Save event")}
+                          aria-pressed={isSaved(event.id)}
+                          style={{ background: "none", border: "none", padding: 0, cursor: "pointer", color: RED, display: "flex", marginTop: "auto" }}
+                        >
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill={isSaved(event.id) ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      </section>
+
+      {/* ── 5. FEATURED FESTIVALS TEASER ── */}
+      <section style={{ background: CREAM, padding: "80px 48px" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+          <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 40, flexWrap: "wrap", gap: 24 }}>
+            <div>
+              <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "3px", color: RED, textTransform: "uppercase", marginBottom: 14 }}>
+                {t("MTLVERDE · CURATED", "MTLVERDE · SÉLECTION")}
+              </p>
+              <h2 style={{ fontSize: "clamp(28px, 3.5vw, 48px)", fontWeight: 900, letterSpacing: "-1.5px", color: DARK, lineHeight: 1.1, maxWidth: 420 }}>
+                {t("Featured Festivals", "Festivals à l'affiche")}
+              </h2>
+            </div>
+            <a href={`/${lang}/festivals`}
+              style={{ display: "inline-flex", alignItems: "center", gap: 8, border: `2px solid ${GREEN_DARK}`, color: GREEN_DARK, borderRadius: 999, padding: "12px 28px", fontSize: 14, fontWeight: 800, textDecoration: "none", transition: "all 0.2s", whiteSpace: "nowrap" }}
+              onMouseEnter={e => { e.currentTarget.style.background = GREEN_DARK; e.currentTarget.style.color = "#fff"; }}
+              onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = GREEN_DARK; }}>
+              {t("See all festivals →", "Voir tous les festivals →")}
+            </a>
+          </div>
+          <div className="feat-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
+            {[
+              { photo: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=700&q=85", label: t("Music & Arts", "Musique et arts"), tag: t("Festival", "Festival") },
+              { photo: "https://images.unsplash.com/photo-1527224538127-2104bb71c51b?w=700&q=85", label: t("Comedy",      "Humour"),          tag: t("Annual",   "Annuel")   },
+              { photo: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=700&q=85", label: t("Cinema",      "Cinéma"),          tag: t("Curated",  "Sélection") },
+            ].map((card, i) => (
+              <a key={i} href={`/${lang}/festivals`} className="fest-preview-card">
+                <img src={card.photo} alt={card.label} />
+                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(5,12,5,0.92) 0%, rgba(5,12,5,0.3) 55%, rgba(5,12,5,0.05) 100%)" }} />
+                <div style={{ position: "absolute", top: 16, left: 16 }}>
+                  <span style={{ fontSize: 9, fontWeight: 800, padding: "4px 10px", borderRadius: 999, background: "rgba(255,255,255,0.15)", color: "#fff", letterSpacing: "0.5px", backdropFilter: "blur(4px)" }}>
+                    {card.tag}
+                  </span>
+                </div>
+                <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "0 20px 22px" }}>
+                  <h3 style={{ fontSize: 20, fontWeight: 900, color: "#fff", letterSpacing: "-0.5px", lineHeight: 1.2 }}>{card.label}</h3>
+                  <p style={{ fontSize: 12, color: "rgba(255,255,255,0.55)", marginTop: 6 }}>Montréal</p>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── 6. SUSTAINABILITY TEASER ── */}
       <section style={{ background: "#fff", padding: "80px 48px" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "center" }}>
+        <div className="sustain-grid" style={{ maxWidth: 1200, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "center" }}>
           <div style={{ position: "relative", borderRadius: 24, overflow: "hidden", height: 420 }}>
             <img
               src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=900&q=85"
@@ -318,7 +479,7 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
         </div>
       </section>
 
-      {/* ── TEAM ── */}
+      {/* ── 7. ABOUT THE TEAM ── */}
       <section id="team" ref={teamRef} className="section-pad" style={{ background: CREAM }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "3px", color: RED, textTransform: "uppercase", marginBottom: 14 }}>
@@ -346,141 +507,8 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
         </div>
       </section>
 
-      {/* ── EVENTS ── */}
-      <section id="events" ref={eventsRef} className="section-pad" style={{ background: "#fff" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "3px", color: RED, textTransform: "uppercase", marginBottom: 14 }}>
-            {t("WHAT'S ON", "À L'AFFICHE")}
-          </p>
-          <h2 style={{ fontSize: "clamp(30px, 4vw, 54px)", fontWeight: 900, letterSpacing: "-1.5px", marginBottom: 52 }}>
-            {t("Upcoming Events", "Événements à venir")}
-          </h2>
-
-          {events.length > 0 && (
-            <div className="events-preview">
-              {events.slice(0, 3).map((event, i) => (
-                <div key={i} style={{ borderRadius: 20, overflow: "hidden", border: `1px solid ${GREEN_LIGHT}`, transition: "transform 0.2s, box-shadow 0.2s", cursor: "pointer" }}
-                  onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-5px)"; e.currentTarget.style.boxShadow = "0 16px 40px rgba(30,77,43,0.15)"; }}
-                  onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}>
-                  <div style={{ height: 160, overflow: "hidden", position: "relative" }}>
-                    <img src={getEventPhoto(event.type_evenement)} alt={event.type_evenement}
-                      style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                    <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.2)" }} />
-                    <span style={{ position: "absolute", bottom: 14, left: 14, fontSize: 11, fontWeight: 800, padding: "5px 12px", borderRadius: 999, background: event.cout === "Gratuit" ? GREEN_DARK : RED, color: "#fff" }}>
-                      {tField("cout", event.cout, lang)}
-                    </span>
-                  </div>
-                  <div style={{ padding: "20px 22px 24px", background: "#fff" }}>
-                    <p style={{ fontSize: 11, color: GREEN_MID, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 8 }}>{tField("type_evenement", event.type_evenement, lang)}</p>
-                    <h3 style={{ fontSize: 15, fontWeight: 800, marginBottom: 6, color: DARK, lineHeight: 1.3 }}>{lang === "fr" ? event.titre : (event.titre_en || event.titre)}</h3>
-                    <p style={{ fontSize: 12, color: "#888", marginBottom: 4 }}>{event.arrondissement}</p>
-                    <p style={{ fontSize: 11, color: "#ccc" }}>{event.date_debut} → {event.date_fin}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {!showEvents ? (
-            <div style={{ textAlign: "center" }}>
-              <button onClick={() => setShowEvents(true)} style={{ background: GREEN_DARK, color: "#fff", border: "none", borderRadius: 999, padding: "15px 44px", fontSize: 15, fontWeight: 800, cursor: "pointer", transition: "all 0.2s" }}
-                onMouseEnter={e => { e.currentTarget.style.background = RED; e.currentTarget.style.transform = "translateY(-2px)"; }}
-                onMouseLeave={e => { e.currentTarget.style.background = GREEN_DARK; e.currentTarget.style.transform = "translateY(0)"; }}>
-                {t("See all events", "Voir tous les événements")}
-              </button>
-            </div>
-          ) : (
-            <>
-              <div style={{ borderRadius: 20, overflow: "hidden", boxShadow: "0 4px 24px rgba(0,0,0,0.10)", marginBottom: 32, border: `1px solid ${GREEN_LIGHT}` }}>
-                <Map events={filtered} lang={lang} readMoreLabel={(dict || DICT[lang]).event?.readMore || "Read more"} selectedId={selectedId} />
-              </div>
-
-              <div className="filters-wrap" style={{ background: CREAM, borderRadius: 16, padding: "24px 28px", marginBottom: 28 }}>
-                {selectFilters.map((f) =>
-                  f.multi ? (
-                    <MultiSelect
-                      key={f.field}
-                      label={f.label}
-                      field={f.field}
-                      options={optionsFor(f.field).filter((o) => o !== ALL)}
-                      selected={f.value}
-                      onChange={f.set}
-                      dict={dict || DICT[lang]}
-                      lang={lang}
-                    />
-                  ) : (
-                    <div key={f.field}>
-                      <label style={{ display: "block", fontSize: 10, fontWeight: 800, color: "#999", textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 7 }}>{f.label}</label>
-                      <select style={{ border: `1.5px solid ${GREEN_LIGHT}`, borderRadius: 10, padding: "9px 14px", fontSize: 13, background: "#fff", cursor: "pointer", color: DARK }}
-                        value={f.value} onChange={(e) => f.set(e.target.value)}>
-                        {optionsFor(f.field).map((o) => (
-                          <option key={o} value={o}>{o === ALL ? ((dict || DICT[lang]).filters?.all || "All") : tField(f.field, o, lang)}</option>
-                        ))}
-                      </select>
-                    </div>
-                  )
-                )}
-                <div>
-                  <label style={{ display: "block", fontSize: 10, fontWeight: 800, color: "#999", textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 7 }}>{(dict || DICT[lang]).filters?.startDate || "Start date"}</label>
-                  <input type="date" style={{ border: `1.5px solid ${GREEN_LIGHT}`, borderRadius: 10, padding: "9px 14px", fontSize: 13, color: DARK }} value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-                </div>
-                <div>
-                  <label style={{ display: "block", fontSize: 10, fontWeight: 800, color: "#999", textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 7 }}>{(dict || DICT[lang]).filters?.endDate || "End date"}</label>
-                  <input type="date" style={{ border: `1.5px solid ${GREEN_LIGHT}`, borderRadius: 10, padding: "9px 14px", fontSize: 13, color: DARK }} value={endDate} onChange={(e) => setEndDate(e.target.value)} />
-                </div>
-                <p style={{ fontSize: 13, color: "#aaa" }}>{(dict || DICT[lang]).results?.count?.replace("{count}", filtered.length) || `${filtered.length} events`}</p>
-              </div>
-
-              <div style={{ display: "grid", gap: 12 }}>
-                {filtered.map((event, i) => (
-                  <div key={event.id} className={`event-list-card ${ selectedId === event.id ? "selected" : ""}`} onClick={() => setSelectedId(prev => (prev === event.id ? null : event.id))}>
-                    <div className="thumb">
-                      <img src={getEventPhoto(event.type_evenement)} alt={event.type_evenement} />
-                    </div>
-                    <div className="body">
-                      <div style={{ flex: 1 }}>
-                        <p style={{ fontSize: 10, color: GREEN_MID, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 5 }}>{tField("type_evenement", event.type_evenement, lang)}</p>
-                        <h2 style={{ fontSize: 15, fontWeight: 800, color: DARK, marginBottom: 4, lineHeight: 1.3 }}>{lang === "fr" ? event.titre : (event.titre_en || event.titre)}</h2>
-                        <p style={{ fontSize: 12, color: "#888", marginBottom: 3 }}>{event.arrondissement}</p>
-                        <p style={{ fontSize: 11, color: "#ccc", marginBottom: 8 }}>{event.date_debut} → {event.date_fin}</p>
-                        <p style={{ fontSize: 12, color: "#666", lineHeight: 1.6, marginBottom: 10 }}>{eventDescription(event, lang)}</p>
-                        {event.url_fiche && (
-                          <a href={event.url_fiche} target="_blank" rel="noopener noreferrer"
-                            style={{ fontSize: 12, fontWeight: 700, color: GREEN_DARK, textDecoration: "none" }}
-                            onMouseEnter={e => { e.currentTarget.style.textDecoration = "underline"; }}
-                            onMouseLeave={e => { e.currentTarget.style.textDecoration = "none"; }}>
-                            {(dict || DICT[lang]).event?.readMore || "Read more"} →
-                          </a>
-                        )}
-                      </div>
-                      <div style={{ display: "flex", flexDirection: "column", gap: 6, flexShrink: 0, alignItems: "flex-end", alignSelf: "stretch" }}>
-                        {event.public_cible   && <span className="badge badge-pink">{tField("public_cible", event.public_cible, lang)}</span>}
-                        <span className={`badge ${event.cout === "Gratuit" ? "badge-green" : "badge-red"}`}>
-                          {tField("cout", event.cout, lang)}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={(e) => { e.stopPropagation(); toggle(event.id); }}
-                          aria-label={isSaved(event.id) ? ((dict || DICT[lang]).event?.unsave || "Remove from saved") : ((dict || DICT[lang]).event?.save || "Save event")}
-                          aria-pressed={isSaved(event.id)}
-                          style={{ background: "none", border: "none", padding: 0, cursor: "pointer", color: RED, display: "flex", marginTop: "auto" }}
-                        >
-                          <svg viewBox="0 0 24 24" width="20" height="20" fill={isSaved(event.id) ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
-        </div>
-      </section>
-
-      {/* ── NEWSLETTER ── */}
-      <section id="newsletter" ref={newsletterRef} className="section-pad" style={{ background: CREAM }}>
+      {/* ── 8. NEWSLETTER ── */}
+      <section id="newsletter" ref={newsletterRef} className="section-pad" style={{ background: "#fff" }}>
         <div style={{ maxWidth: 560, margin: "0 auto", textAlign: "center" }}>
           <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "3px", color: GREEN_DARK, textTransform: "uppercase", marginBottom: 20 }}>
             {t("STAY CONNECTED", "RESTEZ CONNECTÉ")}
@@ -540,7 +568,6 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
           </div>
         </div>
       </footer>
-
     </div>
   );
 }
