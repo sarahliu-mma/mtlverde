@@ -460,11 +460,6 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
                             </div>
                           )}
                         </div>
-                        {event.wheelchair_metro_accessible && (
-                          <span style={{ fontSize: 14, marginLeft: 4 }} title="Wheelchair-accessible metro nearby" aria-label="Wheelchair accessible">
-                          ♿
-                          </span>
-                        )}
                         <h2 style={{ fontSize: 15, fontWeight: 800, color: DARK, marginBottom: 4, lineHeight: 1.3 }}>{lang === "fr" ? event.titre : (event.titre_en || event.titre)}</h2>
                         <p style={{ fontSize: 12, color: "#888", marginBottom: 3 }}>{event.arrondissement}</p>
                         <p style={{ fontSize: 11, color: "#ccc", marginBottom: 8 }}>{event.date_debut} → {event.date_fin}</p>
@@ -480,6 +475,14 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
                       </div>
                       <div style={{ display: "flex", flexDirection: "column", gap: 6, flexShrink: 0, alignItems: "flex-end", alignSelf: "stretch" }}>
                         {event.public_cible && <span className="badge badge-pink">{tField("public_cible", event.public_cible, lang)}</span>}
+                        
+                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}> 
+                        {event.wheelchair_metro_accessible && (
+                          <span style={{ fontSize: 14 }} title="Wheelchair-accessible metro nearby" aria-label="Wheelchair accessible">
+                          ♿
+                          </span>
+                        )}
+                          
                         <span className={`badge ${event.cout === "Gratuit" ? "badge-green" : "badge-red"}`}>
                           {tField("cout", event.cout, lang)}
                         </span>
