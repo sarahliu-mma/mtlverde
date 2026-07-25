@@ -166,7 +166,7 @@ export default async function Sustainability({ params }) {
             <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
               {[
                 {
-                  n: "45", label: fr ? "pts transport" : "pts transit",
+                  n: "45", label: fr ? "transport" : "transit",
                   icon: (
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={SAGE} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <rect x="3" y="4" width="18" height="13" rx="2" />
@@ -178,7 +178,7 @@ export default async function Sustainability({ params }) {
                   ),
                 },
                 {
-                  n: "35", label: fr ? "pts piéton" : "pts walk-in",
+                  n: "35", label: fr ? "piéton" : "walk-in",
                   icon: (
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={SAGE} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <circle cx="12" cy="4" r="1.5" />
@@ -189,7 +189,7 @@ export default async function Sustainability({ params }) {
                   ),
                 },
                 {
-                  n: "20", label: fr ? "pts extérieur" : "pts outdoor",
+                  n: "20", label: fr ? "extérieur" : "outdoor",
                   icon: (
                     <svg width="22" height="22" viewBox="0 0 24 24" fill={SAGE} stroke="none" aria-hidden="true">
                       <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" />
@@ -199,17 +199,23 @@ export default async function Sustainability({ params }) {
               ].map(function(stat) {
                 return (
                   <div key={stat.n} style={{ background: "rgba(255,255,255,0.08)", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 16, padding: "20px 24px 18px", minWidth: 110, display: "flex", flexDirection: "column", gap: 4, alignItems: "flex-start" }}>
-                    <p style={{ fontSize: 30, fontWeight: 900, color: WHITE, letterSpacing: "-1px", margin: 0 }}>{stat.n}</p>
-                    <p style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.45)", textTransform: "uppercase", letterSpacing: "1px", margin: 0 }}>{stat.label}</p>
+                    <p style={{ display: "flex", alignItems: "baseline", gap: 4, margin: 0 }}>
+                      <span style={{ fontSize: 30, fontWeight: 900, color: WHITE, letterSpacing: "-1px" }}>
+                        {stat.n}
+                      </span>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: "rgba(255,255,255,0.55)", letterSpacing: "0.5px" }}>
+                        pts
+                      </span>
+                    </p>
+                    <p style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.45)", textTransform: "uppercase", letterSpacing: "1px", margin: 0 }}>
+                      {stat.label}
+                    </p>
+      
                     <div style={{ marginTop: 10 }}>{stat.icon}</div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </section>
-
+                    </div>
+                  );
+                })}
+   
       {/* ── NATURE BRIDGE — family photo ── */}
       <section style={{ position: "relative", height: "68vh", minHeight: 400, overflow: "hidden" }}>
         <img
