@@ -379,23 +379,23 @@ export default async function Sustainability({ params }) {
             <div style={{ flex: "1 1 280px", display: "flex", flexDirection: "column", gap: 16, paddingBottom: 80 }}>
               <div style={{ background: PINE, borderRadius: 20, padding: "28px 28px", display: "flex", alignItems: "center", gap: 24 }}>
                 <svg width="108" height="108" viewBox="0 0 108 108" style={{ flexShrink: 0 }} aria-hidden="true">
-                  <circle cx="54" cy="54" r="44" fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="9" />
-                  <circle cx="54" cy="54" r="44" fill="none" stroke={SAGE} strokeWidth="9"
+                  <circle cx="54" cy="54" r="44" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="9" />
+                  <circle cx="54" cy="54" r="44" fill="none" stroke={STONE} strokeWidth="9"
                     strokeDasharray={String(CIRC)} strokeDashoffset={dashOffset}
                     strokeLinecap="round" transform="rotate(-90 54 54)" />
                   <text x="54" y="48" textAnchor="middle" fontSize="24" fontWeight="900" fill={WHITE} fontFamily="DM Sans, Inter, sans-serif">25</text>
-                  <text x="54" y="63" textAnchor="middle" fontSize="9" fill="rgba(255,255,255,0.45)" fontFamily="DM Sans, Inter, sans-serif">{fr ? "sur 68" : "of 68"}</text>
+                  <text x="54" y="63" textAnchor="middle" fontSize="9" fill="rgba(255,255,255,0.6)" fontFamily="DM Sans, Inter, sans-serif">{fr ? "sur 68" : "of 68"}</text>
                 </svg>
                 <div>
                   <p style={{ fontSize: 13, fontWeight: 800, color: WHITE, marginBottom: 6, lineHeight: 1.3 }}>
                     {fr ? "Stations accessibles" : "Accessible metro stations"}
                   </p>
-                  <p style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", lineHeight: 1.7, marginBottom: 14 }}>
+                  <p style={{ fontSize: 12, color: "rgba(255,255,255,0.72)", lineHeight: 1.7, marginBottom: 14 }}>
                     {fr
                       ? "Seulement 25 des 68 stations sont accessibles en fauteuil roulant."
                       : "Only 25 of Montréal's 68 metro stations are wheelchair-accessible."}
                   </p>
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={SAGE} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={STONE} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <circle cx="12" cy="4.5" r="1.5" />
                     <path d="M12 7v5l3.5 2" />
                     <path d="M9 10.5H5.5L4 17.5h9l-1-4" />
@@ -403,11 +403,11 @@ export default async function Sustainability({ params }) {
                   </svg>
                 </div>
               </div>
-              <div style={{ background: MOSS, borderRadius: 20, padding: "24px 28px", borderLeft: "4px solid " + SAGE }}>
-                <p style={{ fontSize: 10, fontWeight: 800, color: SAGE, marginBottom: 8, textTransform: "uppercase", letterSpacing: "1.5px" }}>
+              <div style={{ background: MOSS, borderRadius: 20, padding: "24px 28px", borderLeft: "4px solid " + STONE }}>
+                <p style={{ fontSize: 10, fontWeight: 800, color: STONE, marginBottom: 8, textTransform: "uppercase", letterSpacing: "1.5px" }}>
                   {fr ? "À NOTER" : "IMPORTANT NOTE"}
                 </p>
-                <p style={{ fontSize: 14, color: "rgba(255,255,255,0.75)", lineHeight: 1.85 }}>
+                <p style={{ fontSize: 14, color: WHITE, lineHeight: 1.85 }}>
                   {fr
                     ? "Un score élevé ne garantit pas l'accessibilité en fauteuil roulant. Nous l'indiquons séparément."
                     : "A high eco-badge does not guarantee wheelchair access. We report it separately."}
