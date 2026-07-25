@@ -518,15 +518,6 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
                                     </div>
                                   );
                                 })}
-                                  <a
-                                  href={`/${lang}/sustainability`}
-                                  onClick={(e) => e.stopPropagation()}
-                                  style={{ fontSize: 11, fontWeight: 700, color: GREEN_DARK, textDecoration: "none", marginTop: 2 }}
-                                  onMouseEnter={e => { e.currentTarget.style.textDecoration = "underline"; }}
-                                  onMouseLeave={e => { e.currentTarget.style.textDecoration = "none"; }}
-                                >
-                                  {lang === "fr" ? "Notre méthode d'évaluation →" : "How we score →"}
-                                </a>
                               </div>
                             )}
                           </div>
