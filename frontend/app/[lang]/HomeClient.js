@@ -531,8 +531,8 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
           </h2>
           <p style={{ fontSize: "clamp(13px, 1.4vw, 17px)", color: "rgba(255,255,255,0.65)", lineHeight: 1.75, marginBottom: 40, maxWidth: 560, margin: "0 auto 40px" }}>
             {t(
-              "Every event on MTLVerde gets an eco-score based on transit access, carbon footprint, and more.",
-              "Chaque événement sur MTLVerde reçoit un score écologique basé sur l'accès aux transports et l'empreinte carbone."
+              "Every event on MTLVerde gets an eco-score based on transit access, accessibility, and more.",
+              "Chaque événement sur MTLVerde reçoit un score écologique basé sur l'accès aux transports, l'accessibilité, et bien plus."
             )}
           </p>
           <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
@@ -547,7 +547,7 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
 
         {/* Frosted tag pills — bottom left */}
         <div style={{ position: "absolute", bottom: 28, left: 48, display: "flex", gap: 8, flexWrap: "wrap" }}>
-          {[t("Low emissions","Faibles émissions"), t("Walkable","Accessible à pied"), t("Zero waste","Zéro déchet"), t("Local","Local")].map(tag => (
+          {[t("Transit-Friendly", "Accès transport"), t("Walkable", "Accessible à pied"), t("Outdoors", "En plein air")].map(tag => (
             <span key={tag} style={{ background: "rgba(255,255,255,0.12)", backdropFilter: "blur(8px)", color: "#fff", fontSize: 11, fontWeight: 700, padding: "6px 14px", borderRadius: 999, border: "1px solid rgba(255,255,255,0.25)" }}>{tag}</span>
           ))}
         </div>
