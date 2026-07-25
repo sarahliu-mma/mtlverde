@@ -254,8 +254,8 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
       <section style={{ position: "relative", overflow: "hidden", padding: "80px 48px" }}>
         {/* Aerial rainforest photo — full bleed */}
         <img
-          src="https://images.unsplash.com/photo-1542401886-65d6c61db217?w=1800&q=90"
-          alt="Aerial forest canopy"
+          src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=1800&q=90"
+          alt="Happy people together"
           style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
         />
         {/* Dark green overlay so text is legible */}
@@ -298,9 +298,9 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
       {/* ── 4. FEATURED FESTIVALS TEASER ── */}
       <section style={{ background: "#fff", padding: "72px 48px" }}>
         <div style={{ maxWidth: 1400, margin: "0 auto" }}>
-          <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "3px", color: "#aaa", textTransform: "uppercase", marginBottom: 32 }}>
+          <h2 style={{ fontSize: "clamp(32px, 4vw, 56px)", fontWeight: 900, letterSpacing: "-1.5px", color: DARK, marginBottom: 32, lineHeight: 1.05 }}>
             {t("Featured Festivals", "Festivals à l'affiche")}
-          </p>
+          </h2>
           {/* 2-up full-bleed cards like Patagonia Stories */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
             {[
@@ -310,8 +310,8 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
                 btn: t("View All", "Voir tout"),
               },
               {
-                photo: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1000&q=90",
-                label: t("Food & Markets", "Marchés et Saveurs"),
+                photo: "https://images.unsplash.com/photo-1527224538127-2104bb71c51b?w=1000&q=90",
+                label: t("Comedy & Film", "Humour et cinéma"),
                 btn: t("View All", "Voir tout"),
               },
             ].map((card, i) => (
