@@ -122,6 +122,7 @@ export default function RecommendationsClient({ dict, lang }) {
   const bottomRef = useRef(null);
 
   useEffect(() => {
+    if (messages.length === 0) return;
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
@@ -168,6 +169,7 @@ export default function RecommendationsClient({ dict, lang }) {
           }
         @media (max-width: 860px) {
           .rec-hero { flex-direction: column !important; }
+          .rec-hero-text { padding-top: 100px !important; }
           .rec-hero-photo { flex: none !important; width: 100% !important; height: 200px !important; }
           .rec-main { flex-direction: column !important; }
           .rec-sidebar { flex: none !important; width: 100% !important; position: static !important; }
@@ -180,7 +182,7 @@ export default function RecommendationsClient({ dict, lang }) {
       <section style={{ background: PINE, flexShrink: 0, overflow: "hidden" }}>
         <div className="rec-hero" style={{ maxWidth: 1200, margin: "0 auto", display: "flex", alignItems: "stretch", minHeight: 320 }}>
           {/* Left: text */}
-          <div style={{ flex: "1 1 0", padding: "56px 48px 56px", display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
+          <div className="rec-hero-text" style={{ flex: "1 1 0", padding: "56px 48px 56px", display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
             <p style={{ fontSize: 10, fontWeight: 800, letterSpacing: "4px", color: SAGE, textTransform: "uppercase", marginBottom: 16 }}>
               {fr ? "MTLVERDE · RECOMMANDATIONS" : "MTLVERDE · RECOMMENDATIONS"}
             </p>

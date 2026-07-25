@@ -170,14 +170,14 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
           .mission-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
           .sustain-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
           .feat-grid { grid-template-columns: 1fr !important; }
-          .purpose-grid { grid-template-columns: 1fr 1fr; gap: 24px; }
-          .purpose-img { height: 260px; }
+          .purpose-grid { grid-template-columns: 1fr 1fr !important; gap: 24px !important; }
+          .purpose-img { height: 260px !important; }
         }
         @media (max-width: 480px) {
           .team-grid { grid-template-columns: repeat(2, 1fr); }
           .footer-grid { grid-template-columns: 1fr; }
-          .purpose-grid { grid-template-columns: 1fr; }
-          .purpose-img { height: 220px; }
+          .purpose-grid { grid-template-columns: 1fr !important; }
+          .purpose-img { height: 220px !important; }
         }
       `}</style>
 

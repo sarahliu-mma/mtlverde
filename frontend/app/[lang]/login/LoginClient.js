@@ -61,6 +61,16 @@ export default function LoginClient({ dict, lang }) {
   return (
     <div style={{ minHeight: "100vh", fontFamily: "'DM Sans','Inter',sans-serif", position: "relative", display: "flex", flexDirection: "column" }}>
 
+      <style jsx>{`
+        @media (max-width: 860px) {
+          .login-main { grid-template-columns: 1fr !important; gap: 40px !important; padding: 100px 24px 60px !important; }
+          .login-footer-grid { grid-template-columns: 1fr 1fr !important; gap: 32px !important; }
+        }
+        @media (max-width: 480px) {
+          .login-footer-grid { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
+
       {/* Full-page nature background */}
       <div style={{ position: "fixed", inset: 0, zIndex: 0 }}>
         <img
@@ -76,7 +86,7 @@ export default function LoginClient({ dict, lang }) {
 
         <Header dict={dict} lang={lang} />
 
-        <main style={{ flex: 1, maxWidth: 1100, margin: "0 auto", width: "100%", padding: "120px 48px 100px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80, alignItems: "start" }}>
+        <main className="login-main" style={{ flex: 1, maxWidth: 1100, margin: "0 auto", width: "100%", padding: "120px 48px 100px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80, alignItems: "start" }}>
 
           {/* ── LEFT: Form ── */}
           <div>
@@ -210,7 +220,7 @@ export default function LoginClient({ dict, lang }) {
       {/* ── FOOTER ── */}
       <footer style={{ position: "relative", zIndex: 1, background: GREEN_DARK, color: WHITE, padding: "72px 48px 32px" }}>
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "2.5fr 1fr 1fr 1fr", gap: 48, marginBottom: 56 }}>
+          <div className="login-footer-grid" style={{ display: "grid", gridTemplateColumns: "2.5fr 1fr 1fr 1fr", gap: 48, marginBottom: 56 }}>
             <div>
               <img
                 src="/MTLVerde_Logo.png"
