@@ -496,7 +496,7 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
                                 e.stopPropagation();
                                 setOpenBreakdownId(prev => (prev === event.id ? null : event.id));
                               }}
-                              style={{ background: "none", border: "none", padding: 0, cursor: "pointer", fontSize: 11, fontWeight: 700, color: GREEN_MID, display: "flex", alignItems: "center", gap: 4 }}
+                              style={{ background: "none", border: "none", padding: 0, cursor: "pointer", fontSize: 11, fontWeight: 700, color: GREEN_MID, display: "inline-flex", alignItems: "center", gap: 4 }}
                               aria-expanded={openBreakdownId === event.id}
                             >
                               {lang === "fr" ? "Durabilité" : "Sustainability"} {event.sustainability_score} / 100
