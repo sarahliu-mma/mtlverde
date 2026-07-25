@@ -267,7 +267,73 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
         </div>
       </section>
 
-      {/* ── 4. EVENTS ── */}
+      {/* ── 4. FEATURED FESTIVALS TEASER ── */}
+      <section style={{ background: CREAM, padding: "72px 0 0" }}>
+        {/* Header row — padded */}
+        <div style={{ padding: "0 48px", marginBottom: 36, display: "flex", alignItems: "baseline", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 16 }}>
+            <h2 style={{ fontSize: "clamp(26px, 3vw, 40px)", fontWeight: 900, letterSpacing: "-1px", color: DARK, lineHeight: 1.1 }}>
+              {t("Featured Festivals", "Festivals à l'affiche")}
+            </h2>
+            <span style={{ fontSize: 14, color: "#aaa", fontWeight: 500 }}>5 {t("Items", "éléments")}</span>
+          </div>
+          <a href={`/${lang}/festivals`}
+            style={{ fontSize: 13, fontWeight: 700, color: GREEN_DARK, textDecoration: "none", borderBottom: `1.5px solid ${GREEN_DARK}`, paddingBottom: 1, transition: "opacity 0.2s" }}
+            onMouseEnter={e => { e.currentTarget.style.opacity = "0.6"; }}
+            onMouseLeave={e => { e.currentTarget.style.opacity = "1"; }}>
+            {t("View All", "Voir tout")}
+          </a>
+        </div>
+
+        {/* Horizontal scroll row — bleeds to edges */}
+        <div style={{ position: "relative" }}>
+          <div className="feat-scroll" style={{ display: "flex", gap: 4, overflowX: "auto", paddingLeft: 48, paddingBottom: 72 }}>
+            {[
+              { photo: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&q=85", label: t("Music & Arts",    "Musique et arts"),  sub: t("Outdoor · Free", "Plein air · Gratuit"), tag: t("Festival", "Festival") },
+              { photo: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&q=85", label: t("Jazz Festival",    "Festival de Jazz"), sub: t("Downtown · Free", "Centre-ville · Gratuit"), tag: t("Annual", "Annuel") },
+              { photo: "https://images.unsplash.com/photo-1527224538127-2104bb71c51b?w=800&q=85", label: t("Comedy",           "Humour"),           sub: t("Various · Paid",  "Divers · Payant"),     tag: t("Annual", "Annuel") },
+              { photo: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=800&q=85", label: t("Cinema",           "Cinéma"),           sub: t("Rialto · Curated","Rialto · Sélection"),  tag: t("Curated", "Sélection") },
+              { photo: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&q=85",    label: t("Food & Markets",   "Marchés et Saveurs"), sub: t("Markets · Free", "Marchés · Gratuit"),  tag: t("Weekend", "Week-end") },
+            ].map((card, i) => (
+              <a key={i} href={`/${lang}/festivals`} className="fest-preview-card">
+                <img src={card.photo} alt={card.label} />
+                {/* gradient */}
+                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(5,12,5,0.90) 0%, rgba(5,12,5,0.25) 50%, rgba(5,12,5,0.0) 100%)" }} />
+                {/* bottom info */}
+                <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "0 22px 24px", display: "flex", flexDirection: "column", gap: 10 }}>
+                  <div>
+                    <h3 style={{ fontSize: 22, fontWeight: 900, color: "#fff", letterSpacing: "-0.5px", lineHeight: 1.15, marginBottom: 4 }}>{card.label}</h3>
+                    <p style={{ fontSize: 12, color: "rgba(255,255,255,0.5)" }}>{card.sub}</p>
+                  </div>
+                  <div style={{ display: "inline-flex" }}>
+                    <span style={{ fontSize: 11, fontWeight: 800, padding: "7px 18px", borderRadius: 999, background: "#fff", color: DARK, letterSpacing: "0.2px" }}>
+                      {t("View Festival", "Voir le festival")}
+                    </span>
+                  </div>
+                </div>
+              </a>
+            ))}
+            {/* right padding sentinel */}
+            <div style={{ width: 48, flexShrink: 0 }} />
+          </div>
+          {/* Right arrow */}
+          <button
+            type="button"
+            onClick={() => {
+              const el = document.querySelector(".feat-scroll");
+              if (el) el.scrollBy({ left: 400, behavior: "smooth" });
+            }}
+            style={{ position: "absolute", right: 20, top: "50%", transform: "translateY(-80%)", width: 44, height: 44, borderRadius: "50%", background: "#fff", border: "1px solid #e0e0e0", boxShadow: "0 2px 12px rgba(0,0,0,0.15)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2 }}
+            aria-label="Scroll right"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={DARK} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
+        </div>
+      </section>
+
+      {/* ── 5. EVENTS ── */}
       <section id="events" ref={eventsRef} className="section-pad" style={{ background: "#fff" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "3px", color: RED, textTransform: "uppercase", marginBottom: 14 }}>
@@ -393,72 +459,6 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
               </div>
             </>
           )}
-        </div>
-      </section>
-
-      {/* ── 5. FEATURED FESTIVALS TEASER ── */}
-      <section style={{ background: "#fff", padding: "72px 0 0" }}>
-        {/* Header row — padded */}
-        <div style={{ padding: "0 48px", marginBottom: 36, display: "flex", alignItems: "baseline", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
-          <div style={{ display: "flex", alignItems: "baseline", gap: 16 }}>
-            <h2 style={{ fontSize: "clamp(26px, 3vw, 40px)", fontWeight: 900, letterSpacing: "-1px", color: DARK, lineHeight: 1.1 }}>
-              {t("Featured Festivals", "Festivals à l'affiche")}
-            </h2>
-            <span style={{ fontSize: 14, color: "#aaa", fontWeight: 500 }}>5 {t("Items", "éléments")}</span>
-          </div>
-          <a href={`/${lang}/festivals`}
-            style={{ fontSize: 13, fontWeight: 700, color: GREEN_DARK, textDecoration: "none", borderBottom: `1.5px solid ${GREEN_DARK}`, paddingBottom: 1, transition: "opacity 0.2s" }}
-            onMouseEnter={e => { e.currentTarget.style.opacity = "0.6"; }}
-            onMouseLeave={e => { e.currentTarget.style.opacity = "1"; }}>
-            {t("View All", "Voir tout")}
-          </a>
-        </div>
-
-        {/* Horizontal scroll row — bleeds to edges */}
-        <div style={{ position: "relative" }}>
-          <div className="feat-scroll" style={{ display: "flex", gap: 4, overflowX: "auto", paddingLeft: 48, paddingBottom: 72 }}>
-            {[
-              { photo: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&q=85", label: t("Music & Arts",    "Musique et arts"),  sub: t("Outdoor · Free", "Plein air · Gratuit"), tag: t("Festival", "Festival") },
-              { photo: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&q=85", label: t("Jazz Festival",    "Festival de Jazz"), sub: t("Downtown · Free", "Centre-ville · Gratuit"), tag: t("Annual", "Annuel") },
-              { photo: "https://images.unsplash.com/photo-1527224538127-2104bb71c51b?w=800&q=85", label: t("Comedy",           "Humour"),           sub: t("Various · Paid",  "Divers · Payant"),     tag: t("Annual", "Annuel") },
-              { photo: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=800&q=85", label: t("Cinema",           "Cinéma"),           sub: t("Rialto · Curated","Rialto · Sélection"),  tag: t("Curated", "Sélection") },
-              { photo: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&q=85",    label: t("Food & Markets",   "Marchés et Saveurs"), sub: t("Markets · Free", "Marchés · Gratuit"),  tag: t("Weekend", "Week-end") },
-            ].map((card, i) => (
-              <a key={i} href={`/${lang}/festivals`} className="fest-preview-card">
-                <img src={card.photo} alt={card.label} />
-                {/* gradient */}
-                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(5,12,5,0.90) 0%, rgba(5,12,5,0.25) 50%, rgba(5,12,5,0.0) 100%)" }} />
-                {/* bottom info */}
-                <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "0 22px 24px", display: "flex", flexDirection: "column", gap: 10 }}>
-                  <div>
-                    <h3 style={{ fontSize: 22, fontWeight: 900, color: "#fff", letterSpacing: "-0.5px", lineHeight: 1.15, marginBottom: 4 }}>{card.label}</h3>
-                    <p style={{ fontSize: 12, color: "rgba(255,255,255,0.5)" }}>{card.sub}</p>
-                  </div>
-                  <div style={{ display: "inline-flex" }}>
-                    <span style={{ fontSize: 11, fontWeight: 800, padding: "7px 18px", borderRadius: 999, background: "#fff", color: DARK, letterSpacing: "0.2px" }}>
-                      {t("View Festival", "Voir le festival")}
-                    </span>
-                  </div>
-                </div>
-              </a>
-            ))}
-            {/* right padding sentinel */}
-            <div style={{ width: 48, flexShrink: 0 }} />
-          </div>
-          {/* Right arrow */}
-          <button
-            type="button"
-            onClick={() => {
-              const el = document.querySelector(".feat-scroll");
-              if (el) el.scrollBy({ left: 400, behavior: "smooth" });
-            }}
-            style={{ position: "absolute", right: 20, top: "50%", transform: "translateY(-80%)", width: 44, height: 44, borderRadius: "50%", background: "#fff", border: "1px solid #e0e0e0", boxShadow: "0 2px 12px rgba(0,0,0,0.15)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2 }}
-            aria-label="Scroll right"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={DARK} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="9 18 15 12 9 6" />
-            </svg>
-          </button>
         </div>
       </section>
 
