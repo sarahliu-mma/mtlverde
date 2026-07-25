@@ -165,6 +165,12 @@ export default function RecommendationsClient({ dict, lang }) {
         @keyframes bounce {
           0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
           40% { transform: translateY(-5px); opacity: 1; }
+          }
+        @media (max-width: 860px) {
+          .rec-hero { flex-direction: column !important; }
+          .rec-hero-photo { flex: none !important; width: 100% !important; height: 200px !important; }
+          .rec-main { flex-direction: column !important; }
+          .rec-sidebar { flex: none !important; width: 100% !important; position: static !important; }
         }
       `}</style>
 
@@ -172,7 +178,7 @@ export default function RecommendationsClient({ dict, lang }) {
 
       {/* ── HERO — split: text left, nature photo right ── */}
       <section style={{ background: PINE, flexShrink: 0, overflow: "hidden" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", alignItems: "stretch", minHeight: 320 }}>
+        <div className="rec-hero" style={{ maxWidth: 1200, margin: "0 auto", display: "flex", alignItems: "stretch", minHeight: 320 }}>
           {/* Left: text */}
           <div style={{ flex: "1 1 0", padding: "56px 48px 56px", display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
             <p style={{ fontSize: 10, fontWeight: 800, letterSpacing: "4px", color: SAGE, textTransform: "uppercase", marginBottom: 16 }}>
@@ -186,7 +192,7 @@ export default function RecommendationsClient({ dict, lang }) {
             </p>
           </div>
           {/* Right: nature photo card */}
-          <div style={{ flex: "0 0 380px", position: "relative", overflow: "hidden" }}>
+          <div className="rec-hero-photo" style={{ flex: "0 0 380px", position: "relative", overflow: "hidden" }}>
             <img
               src="https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&q=85"
               alt=""
@@ -204,11 +210,11 @@ export default function RecommendationsClient({ dict, lang }) {
       </section>
 
       {/* ── MAIN — split layout ── */}
-      <main style={{ flex: 1, display: "flex", maxWidth: 1200, width: "100%", margin: "0 auto", padding: "48px 24px 60px", gap: 32, alignItems: "flex-start" }}>
+      <main className="rec-main" style={{ flex: 1, display: "flex", maxWidth: 1200, width: "100%", margin: "0 auto", padding: "48px 24px 60px", gap: 32, alignItems: "flex-start" }}>
 
         {/* ── LEFT PANEL — prompt cards ── */}
         {!hasMessages && (
-          <div style={{ flex: "0 0 300px", display: "flex", flexDirection: "column", gap: 20, position: "sticky", top: 32 }}>
+          <div className="rec-sidebar" style={{ flex: "0 0 300px", display: "flex", flexDirection: "column", gap: 20, position: "sticky", top: 32 }}>
             <div style={{ width: "100%", height: 1, background: "#e0d8cc" }} />
 
             <div>
