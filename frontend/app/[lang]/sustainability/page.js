@@ -37,12 +37,33 @@ export default async function Sustainability({ params }) {
   ];
 
   const tiers = [
-    { label: fr ? "CHEF DE FILE VERT" : "GREEN LEADER", range: "90–100", body: s.tier3, color: MOSS,  leaves: 3 },
-    { label: fr ? "ÉCO-RESPONSABLE"   : "ECO-FRIENDLY",  range: "65–89",  body: s.tier2, color: SAGE,  leaves: 2 },
-    { label: fr ? "EN CHEMIN"          : "GETTING THERE", range: "0–64",   body: s.tier1, color: STONE, leaves: 1 },
+    {
+      label:  fr ? "CHEF DE FILE VERT" : "GREEN LEADER",
+      range:  "90–100",
+      body:   s.tier3,
+      color:  MOSS,
+      leaves: 3,
+      photo:  "https://images.unsplash.com/photo-1511497584788-876760111969?w=800&q=85",
+    },
+    {
+      label:  fr ? "ÉCO-RESPONSABLE" : "ECO-FRIENDLY",
+      range:  "65–89",
+      body:   s.tier2,
+      color:  SAGE,
+      leaves: 2,
+      photo:  "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&q=85",
+    },
+    {
+      label:  fr ? "EN CHEMIN" : "GETTING THERE",
+      range:  "0–64",
+      body:   s.tier1,
+      color:  STONE,
+      leaves: 1,
+      photo:  "https://images.unsplash.com/photo-1440342359743-84fcb8c21f21?w=800&q=85",
+    },
   ];
 
-  const methodologyBullets = fr ? [
+  const methodologyItems = fr ? [
     "Le trajet des participants est le principal facteur environnemental.",
     "Les données de transit sont précises, vérifiables et à l'échelle de la ville.",
     "Retesté sur des milliers d'événements — les classements restent stables.",
@@ -64,19 +85,27 @@ export default async function Sustainability({ params }) {
     ["mtlverde@gmail.com", "mailto:mtlverde@gmail.com"],
   ];
 
-  // Donut stat: 25 of 68 stations wheelchair accessible
-  // circumference = 2 * π * 44 ≈ 276.5
   const CIRC = 276.5;
   const dashOffset = (CIRC * (1 - 25 / 68)).toFixed(1);
 
   return (
     <div style={{ fontFamily: "'DM Sans','Inter',sans-serif", background: CREAM, color: DARK, margin: 0, padding: 0 }}>
       <style>{`
+        /* details/summary */
         details > summary { list-style: none; }
         details > summary::-webkit-details-marker { display: none; }
         details > summary::marker { display: none; }
         details[open] .sig-chevron { transform: rotate(45deg); }
         details .sig-chevron { display: inline-block; transition: transform 0.2s; }
+
+        /* Tier photo cards */
+        .tier-card { position: relative; overflow: hidden; cursor: default; }
+        .tier-img { transition: transform 0.55s ease; width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
+        .tier-card:hover .tier-img { transform: scale(1.06); }
+        .tier-hover-overlay { position: absolute; inset: 0; background: rgba(26,46,26,0.65); opacity: 0; transition: opacity 0.35s; }
+        .tier-card:hover .tier-hover-overlay { opacity: 1; }
+        .tier-desc { opacity: 0; transform: translateY(14px); transition: opacity 0.3s 0.06s, transform 0.3s 0.06s; }
+        .tier-card:hover .tier-desc { opacity: 1; transform: translateY(0); }
       `}</style>
 
       <Header dict={dict} lang={lang} />
@@ -110,7 +139,7 @@ export default async function Sustainability({ params }) {
       </section>
 
       {/* ── HOW WE SCORE — editorial ── */}
-      <section style={{ background: WHITE, padding: "96px 48px", borderBottom: "1px solid #eee" }}>
+      <section style={{ background: WHITE, padding: "96px 48px 72px", borderBottom: "1px solid #eee" }}>
         <div style={{ maxWidth: 1100, margin: "0 auto", display: "flex", flexWrap: "wrap", gap: 64, alignItems: "flex-start" }}>
           <div style={{ flex: "1 1 340px" }}>
             <p style={{ fontSize: 10, fontWeight: 800, letterSpacing: "4px", color: RUST, textTransform: "uppercase", marginBottom: 20 }}>
@@ -121,19 +150,49 @@ export default async function Sustainability({ params }) {
             </h2>
           </div>
           <div style={{ flex: "1 1 340px", paddingTop: 8 }}>
-            <p style={{ fontSize: "clamp(15px, 1.6vw, 18px)", color: "#555", lineHeight: 1.85, marginBottom: 24 }}>
+            <p style={{ fontSize: "clamp(15px, 1.6vw, 18px)", color: "#555", lineHeight: 1.85, marginBottom: 28 }}>
               {s.intro}
             </p>
+            {/* Stat pills with icons */}
             <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
               {[
-                { n: "45", label: fr ? "pts transport" : "pts transit" },
-                { n: "35", label: fr ? "pts piéton"    : "pts walk-in" },
-                { n: "20", label: fr ? "pts extérieur"  : "pts outdoor" },
+                {
+                  n: "45", label: fr ? "pts transport" : "pts transit",
+                  icon: (
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={MOSS} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <rect x="3" y="4" width="18" height="13" rx="2" />
+                      <path d="M3 9h18" />
+                      <circle cx="8" cy="14" r="1" fill={MOSS} stroke="none" />
+                      <circle cx="16" cy="14" r="1" fill={MOSS} stroke="none" />
+                      <path d="M7 17l-1 3M17 17l1 3" />
+                    </svg>
+                  ),
+                },
+                {
+                  n: "35", label: fr ? "pts piéton" : "pts walk-in",
+                  icon: (
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={MOSS} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <circle cx="13" cy="4" r="1.5" />
+                      <path d="M9 20l1.5-4.5 2.5 2 2-4" />
+                      <path d="M12 7l1.5 3.5L16 12l-3 .5" />
+                      <path d="M9.5 10.5L7 20" />
+                    </svg>
+                  ),
+                },
+                {
+                  n: "20", label: fr ? "pts extérieur" : "pts outdoor",
+                  icon: (
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill={MOSS} stroke="none" aria-hidden="true">
+                      <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" />
+                    </svg>
+                  ),
+                },
               ].map(function(stat) {
                 return (
-                  <div key={stat.n} style={{ background: CREAM, borderRadius: 14, padding: "18px 22px", minWidth: 100 }}>
-                    <p style={{ fontSize: 28, fontWeight: 900, color: DARK, letterSpacing: "-1px", margin: 0 }}>{stat.n}</p>
-                    <p style={{ fontSize: 11, fontWeight: 700, color: "#999", textTransform: "uppercase", letterSpacing: "1px", margin: "4px 0 0" }}>{stat.label}</p>
+                  <div key={stat.n} style={{ background: CREAM, borderRadius: 16, padding: "20px 24px 18px", minWidth: 110, display: "flex", flexDirection: "column", gap: 4, alignItems: "flex-start" }}>
+                    <p style={{ fontSize: 30, fontWeight: 900, color: DARK, letterSpacing: "-1px", margin: 0 }}>{stat.n}</p>
+                    <p style={{ fontSize: 10, fontWeight: 700, color: "#999", textTransform: "uppercase", letterSpacing: "1px", margin: 0 }}>{stat.label}</p>
+                    <div style={{ marginTop: 10 }}>{stat.icon}</div>
                   </div>
                 );
               })}
@@ -142,7 +201,33 @@ export default async function Sustainability({ params }) {
         </div>
       </section>
 
-      {/* ── TIERS ── */}
+      {/* ── NATURE PHOTO BRIDGE — "What we do" style ── */}
+      <section style={{ position: "relative", height: "68vh", minHeight: 400, overflow: "hidden" }}>
+        <img
+          src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1600&q=85"
+          alt=""
+          aria-hidden="true"
+          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 30%" }}
+        />
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(10,20,10,0.96) 0%, rgba(10,20,10,0.55) 55%, rgba(10,20,10,0.1) 100%)" }} />
+        <div style={{ position: "relative", zIndex: 1, maxWidth: 1100, margin: "0 auto", padding: "0 48px", height: "100%", display: "flex", alignItems: "flex-end", paddingBottom: 72 }}>
+          <div>
+            <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: "4px", color: "rgba(255,255,255,0.35)", textTransform: "uppercase", display: "block", marginBottom: 18 }}>
+              {fr ? "02 · NOTRE APPROCHE" : "02 · OUR APPROACH"}
+            </span>
+            <h2 style={{ fontSize: "clamp(40px, 6vw, 84px)", fontWeight: 900, color: WHITE, lineHeight: 0.9, letterSpacing: "-3px", marginBottom: 24, maxWidth: 700 }}>
+              {fr ? "Chaque trajet\ncompte." : "Every journey\ncounts."}
+            </h2>
+            <p style={{ fontSize: 16, color: "rgba(255,255,255,0.45)", lineHeight: 1.75, maxWidth: 480 }}>
+              {fr
+                ? "La façon dont les gens se rendent à un événement est l'empreinte écologique la plus importante — et c'est ce que nous mesurons."
+                : "How people get to an event is the biggest environmental footprint — and that's what we measure."}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── TIERS — photo cards with hover reveal (North Face style) ── */}
       <section style={{ background: WHITE, padding: "100px 48px" }}>
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
           <p style={{ fontSize: 10, fontWeight: 800, letterSpacing: "4px", color: RUST, textTransform: "uppercase", marginBottom: 16 }}>
@@ -151,33 +236,48 @@ export default async function Sustainability({ params }) {
           <h2 style={{ fontSize: "clamp(28px, 3.5vw, 50px)", fontWeight: 900, letterSpacing: "-1.5px", color: DARK, marginBottom: 48, lineHeight: 1.1 }}>
             {s.tiersTitle}
           </h2>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 20 }}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 16 }}>
             {tiers.map(function(tier) {
               return (
-                <div key={tier.label} style={{ flex: "1 1 280px", background: CREAM, borderRadius: 20, padding: "36px 28px", borderTop: "4px solid " + tier.color }}>
-                  <div style={{ display: "flex", gap: 4, marginBottom: 14 }}>
-                    {Array.from({ length: tier.leaves }).map(function(_, i) {
-                      return (
-                        <svg key={i} width="20" height="20" viewBox="0 0 24 24" fill={tier.color} stroke="none" aria-hidden="true">
-                          <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" />
-                        </svg>
-                      );
-                    })}
-                    {Array.from({ length: 3 - tier.leaves }).map(function(_, i) {
-                      return (
-                        <svg key={"e" + i} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={tier.color} strokeWidth="1.5" opacity="0.25" aria-hidden="true">
-                          <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" />
-                        </svg>
-                      );
-                    })}
+                <div key={tier.label} className="tier-card" style={{ flex: "1 1 280px", height: 440, borderRadius: 22 }}>
+                  {/* Photo */}
+                  <img className="tier-img" src={tier.photo} alt="" aria-hidden="true" />
+                  {/* Always-on gradient */}
+                  <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(5,12,5,0.92) 0%, rgba(5,12,5,0.35) 50%, rgba(5,12,5,0.05) 100%)" }} />
+                  {/* Hover overlay */}
+                  <div className="tier-hover-overlay" />
+                  {/* Content */}
+                  <div style={{ position: "absolute", inset: 0, padding: "28px 28px 32px", display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
+                    {/* Leaf icons */}
+                    <div style={{ display: "flex", gap: 5, marginBottom: 14 }}>
+                      {Array.from({ length: tier.leaves }).map(function(_, i) {
+                        return (
+                          <svg key={i} width="18" height="18" viewBox="0 0 24 24" fill={tier.color} stroke="none" aria-hidden="true">
+                            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" />
+                          </svg>
+                        );
+                      })}
+                      {Array.from({ length: 3 - tier.leaves }).map(function(_, i) {
+                        return (
+                          <svg key={"e" + i} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth="1.5" aria-hidden="true">
+                            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" />
+                          </svg>
+                        );
+                      })}
+                    </div>
+                    {/* Label */}
+                    <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: "2.5px", color: "rgba(255,255,255,0.55)", textTransform: "uppercase", display: "block", marginBottom: 6 }}>
+                      {tier.label}
+                    </span>
+                    {/* Score range */}
+                    <span style={{ fontSize: 38, fontWeight: 900, color: WHITE, display: "block", letterSpacing: "-2px", lineHeight: 1, marginBottom: 14 }}>
+                      {tier.range}
+                    </span>
+                    {/* Description — hover reveal */}
+                    <p className="tier-desc" style={{ fontSize: 13, color: "rgba(255,255,255,0.78)", lineHeight: 1.75, margin: 0 }}>
+                      {tier.body}
+                    </p>
                   </div>
-                  <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: "2px", color: tier.color, textTransform: "uppercase", display: "block", marginBottom: 12 }}>
-                    {tier.label}
-                  </span>
-                  <span style={{ fontSize: 32, fontWeight: 900, color: DARK, display: "block", marginBottom: 16, letterSpacing: "-1.5px" }}>
-                    {tier.range}
-                  </span>
-                  <p style={{ fontSize: 14, color: "#666", lineHeight: 1.8 }}>{tier.body}</p>
                 </div>
               );
             })}
@@ -185,7 +285,7 @@ export default async function Sustainability({ params }) {
         </div>
       </section>
 
-      {/* ── OUR METHODOLOGY — photo background + bullets + expandable cards ── */}
+      {/* ── OUR METHODOLOGY — photo background + numbered items + expandable cards ── */}
       <section style={{ position: "relative", padding: "100px 48px", overflow: "hidden" }}>
         <img
           src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1800&q=85"
@@ -197,27 +297,31 @@ export default async function Sustainability({ params }) {
         <div style={{ position: "relative", zIndex: 1, maxWidth: 1100, margin: "0 auto" }}>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 72, alignItems: "flex-start" }}>
 
-            {/* Left: heading + bullet points */}
+            {/* Left: heading + numbered items */}
             <div style={{ flex: "1 1 300px" }}>
               <p style={{ fontSize: 10, fontWeight: 800, letterSpacing: "4px", color: SAGE, textTransform: "uppercase", marginBottom: 16 }}>
                 {fr ? "NOTRE MÉTHODOLOGIE" : "OUR METHODOLOGY"}
               </p>
-              <h2 style={{ fontSize: "clamp(26px, 3vw, 44px)", fontWeight: 900, letterSpacing: "-1.5px", color: WHITE, lineHeight: 1.1, marginBottom: 28 }}>
+              <h2 style={{ fontSize: "clamp(26px, 3vw, 44px)", fontWeight: 900, letterSpacing: "-1.5px", color: WHITE, lineHeight: 1.1, marginBottom: 36 }}>
                 {s.signalsTitle}
               </h2>
-              <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 14 }}>
-                {methodologyBullets.map(function(point, i) {
+              {/* Numbered list with dividers */}
+              <div>
+                {methodologyItems.map(function(point, i) {
                   return (
-                    <li key={i} style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
-                      <span style={{ color: SAGE, fontSize: 16, marginTop: 0, flexShrink: 0, fontWeight: 800, lineHeight: 1.5 }}>—</span>
+                    <div key={i} style={{ display: "flex", gap: 20, alignItems: "flex-start", padding: "16px 0", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+                      <span style={{ fontSize: 10, fontWeight: 900, color: SAGE, letterSpacing: "1px", flexShrink: 0, fontFamily: "monospace", paddingTop: 2 }}>
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
                       <span style={{ fontSize: 14, color: "rgba(255,255,255,0.52)", lineHeight: 1.8 }}>{point}</span>
-                    </li>
+                    </div>
                   );
                 })}
-              </ul>
+                <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }} />
+              </div>
             </div>
 
-            {/* Right: expandable signal cards (click to expand) */}
+            {/* Right: expandable signal cards */}
             <div style={{ flex: "1 1 300px", display: "flex", flexDirection: "column", gap: 10 }}>
               {signals.map(function(sig) {
                 return (
@@ -239,12 +343,11 @@ export default async function Sustainability({ params }) {
                 );
               })}
             </div>
-
           </div>
         </div>
       </section>
 
-      {/* ── FULL-BLEED QUOTE — mountain hiker, not forest ── */}
+      {/* ── FULL-BLEED QUOTE — mountain hiker ── */}
       <div style={{ position: "relative", height: "52vh", minHeight: 300, overflow: "hidden" }}>
         <img
           src="https://images.unsplash.com/photo-1551632811-561732d1e306?w=1600&q=85"
@@ -261,8 +364,8 @@ export default async function Sustainability({ params }) {
         </div>
       </div>
 
-      {/* ── WHEELCHAIR — accessibility graphic ── */}
-      <section style={{ background: CREAM, padding: "80px 48px" }}>
+      {/* ── WHEELCHAIR — accessibility graphic + note ── */}
+      <section style={{ background: CREAM, padding: "80px 48px 0" }}>
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 64, alignItems: "flex-start" }}>
 
@@ -277,40 +380,26 @@ export default async function Sustainability({ params }) {
               <p style={{ fontSize: 16, color: "#666", lineHeight: 1.85 }}>{s.wheelchair}</p>
             </div>
 
-            {/* Right: donut stat graphic + note */}
-            <div style={{ flex: "1 1 280px", display: "flex", flexDirection: "column", gap: 16 }}>
-
-              {/* Stat card with donut chart */}
+            {/* Right: donut stat + note */}
+            <div style={{ flex: "1 1 280px", display: "flex", flexDirection: "column", gap: 16, paddingBottom: 80 }}>
               <div style={{ background: WHITE, borderRadius: 20, padding: "28px 28px", display: "flex", alignItems: "center", gap: 24 }}>
-                {/* Donut chart: 25/68 ≈ 37% */}
                 <svg width="108" height="108" viewBox="0 0 108 108" style={{ flexShrink: 0 }} aria-hidden="true">
-                  {/* Track */}
                   <circle cx="54" cy="54" r="44" fill="none" stroke="#e4dfd5" strokeWidth="9" />
-                  {/* Fill arc */}
-                  <circle
-                    cx="54" cy="54" r="44"
-                    fill="none"
-                    stroke={MOSS}
-                    strokeWidth="9"
-                    strokeDasharray={String(CIRC)}
-                    strokeDashoffset={dashOffset}
-                    strokeLinecap="round"
-                    transform="rotate(-90 54 54)"
-                  />
-                  {/* Center: number */}
+                  <circle cx="54" cy="54" r="44" fill="none" stroke={MOSS} strokeWidth="9"
+                    strokeDasharray={String(CIRC)} strokeDashoffset={dashOffset}
+                    strokeLinecap="round" transform="rotate(-90 54 54)" />
                   <text x="54" y="48" textAnchor="middle" fontSize="24" fontWeight="900" fill={DARK} fontFamily="DM Sans, Inter, sans-serif">25</text>
                   <text x="54" y="63" textAnchor="middle" fontSize="9" fill="#aaa" fontFamily="DM Sans, Inter, sans-serif">{fr ? "sur 68" : "of 68"}</text>
                 </svg>
                 <div>
                   <p style={{ fontSize: 13, fontWeight: 800, color: DARK, marginBottom: 6, lineHeight: 1.3 }}>
-                    {fr ? "Stations de métro accessibles" : "Accessible metro stations"}
+                    {fr ? "Stations accessibles" : "Accessible metro stations"}
                   </p>
                   <p style={{ fontSize: 12, color: "#888", lineHeight: 1.7, marginBottom: 14 }}>
                     {fr
                       ? "Seulement 25 des 68 stations sont accessibles en fauteuil roulant."
                       : "Only 25 of Montréal's 68 metro stations are wheelchair-accessible."}
                   </p>
-                  {/* Accessibility icon */}
                   <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={MOSS} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <circle cx="12" cy="4.5" r="1.5" />
                     <path d="M12 7v5l3.5 2" />
@@ -319,8 +408,6 @@ export default async function Sustainability({ params }) {
                   </svg>
                 </div>
               </div>
-
-              {/* Note card */}
               <div style={{ background: WHITE, borderRadius: 20, padding: "24px 28px", borderLeft: "4px solid " + MOSS }}>
                 <p style={{ fontSize: 10, fontWeight: 800, color: MOSS, marginBottom: 8, textTransform: "uppercase", letterSpacing: "1.5px" }}>
                   {fr ? "À NOTER" : "IMPORTANT NOTE"}
@@ -332,15 +419,39 @@ export default async function Sustainability({ params }) {
                 </p>
               </div>
             </div>
-
           </div>
         </div>
       </section>
 
-      {/* ── DISCLAIMER — "What this score is not" ── */}
+      {/* ── WHEELCHAIR PHOTO BANNER — "Our Mission" style ── */}
+      <section style={{ position: "relative", height: "65vh", minHeight: 380, overflow: "hidden" }}>
+        <img
+          src="https://images.unsplash.com/photo-1448375240586-882707db888b?w=1600&q=85"
+          alt=""
+          aria-hidden="true"
+          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 55%" }}
+        />
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(10,20,10,0.92) 0%, rgba(10,20,10,0.6) 55%, rgba(10,20,10,0.1) 100%)" }} />
+        <div style={{ position: "relative", zIndex: 1, maxWidth: 1100, margin: "0 auto", padding: "0 48px", height: "100%", display: "flex", alignItems: "center" }}>
+          <div style={{ maxWidth: 520 }}>
+            <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: "4px", color: "rgba(255,255,255,0.35)", textTransform: "uppercase", display: "block", marginBottom: 18 }}>
+              {fr ? "03 · LA NATURE POUR TOUS" : "03 · NATURE FOR EVERYONE"}
+            </span>
+            <h2 style={{ fontSize: "clamp(34px, 4.5vw, 62px)", fontWeight: 900, color: WHITE, lineHeight: 0.95, letterSpacing: "-2.5px", marginBottom: 22 }}>
+              {fr ? "Des événements\naccessibles\nà toutes et tous." : "Events that\neveryone can\nreach."}
+            </h2>
+            <p style={{ fontSize: 15, color: "rgba(255,255,255,0.48)", lineHeight: 1.8, maxWidth: 400 }}>
+              {fr
+                ? "Nous affichons l'accessibilité en fauteuil roulant séparément du score écologique, parce que chaque personne mérite de participer."
+                : "We display wheelchair access separately from the eco score, because every person deserves to participate."}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── DISCLAIMER ── */}
       <section style={{ background: "#fffbf0", padding: "28px 48px", borderTop: "1px solid #f0e6c0", borderBottom: "1px solid #f0e6c0" }}>
         <div style={{ maxWidth: 1100, margin: "0 auto", display: "flex", gap: 18, alignItems: "flex-start" }}>
-          {/* Warning triangle */}
           <div style={{ flexShrink: 0, marginTop: 2 }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c4921a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
@@ -357,7 +468,7 @@ export default async function Sustainability({ params }) {
         </div>
       </section>
 
-      {/* ── RANKING — horizontal scroll ── */}
+      {/* ── RANKING ── */}
       <section style={{ background: CREAM, padding: "80px 48px 100px" }}>
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
           <p style={{ fontSize: 10, fontWeight: 800, letterSpacing: "4px", color: RUST, textTransform: "uppercase", marginBottom: 16 }}>
