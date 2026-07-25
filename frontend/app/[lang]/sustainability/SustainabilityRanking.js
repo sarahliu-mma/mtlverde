@@ -22,6 +22,12 @@ const BADGE_STYLE = {
   "Getting There": { bg: "#f0e8dc", color: "#7a5a2a"   },
 };
 
+const BADGE_LEAVES = {
+  "Green Leader":  3,
+  "Eco-Friendly":  2,
+  "Getting There": 1,
+};
+
 const COMPONENTS = [
   { key: "transit_access", max: 45, labelKey: "transitLabel", fallback: "Transit access" },
   { key: "walkin_access",  max: 35, labelKey: "walkinLabel",  fallback: "Walk-in access" },
@@ -102,6 +108,8 @@ export default function SustainabilityRanking({ dict, lang }) {
             const badgeName    = b[BADGE_KEY[event.badge]] ?? event.badge;
             const badgeStyle   = BADGE_STYLE[event.badge] ?? { bg: "#eee", color: "#666" };
 
+            const leafCount = BADGE_LEAVES[event.badge] || 1;
+
             return (
               <button
                 key={event.id}
@@ -124,7 +132,7 @@ export default function SustainabilityRanking({ dict, lang }) {
                 }}
               >
                 {/* Rank + badge */}
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
                   <span style={{ fontSize: 11, fontFamily: "monospace", color: isOpen ? "rgba(255,255,255,0.22)" : "#ddd" }}>
                     #{i + 1}
                   </span>
@@ -136,6 +144,24 @@ export default function SustainabilityRanking({ dict, lang }) {
                   }}>
                     {badgeName}
                   </span>
+                </div>
+
+                {/* Leaf icons */}
+                <div style={{ display: "flex", gap: 3, marginBottom: 12 }}>
+                  {Array.from({ length: leafCount }).map(function(_, li) {
+                    return (
+                      <svg key={li} width="13" height="13" viewBox="0 0 24 24" fill={isOpen ? SAGE : badgeStyle.color} stroke="none" aria-hidden="true">
+                        <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" />
+                      </svg>
+                    );
+                  })}
+                  {Array.from({ length: 3 - leafCount }).map(function(_, li) {
+                    return (
+                      <svg key={"e" + li} width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={isOpen ? "rgba(255,255,255,0.18)" : "#ddd"} strokeWidth="1.5" aria-hidden="true">
+                        <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" />
+                      </svg>
+                    );
+                  })}
                 </div>
 
                 {/* Title */}
