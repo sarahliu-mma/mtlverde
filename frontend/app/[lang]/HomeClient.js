@@ -254,8 +254,8 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
       <section style={{ position: "relative", overflow: "hidden", padding: "80px 48px" }}>
         {/* Aerial rainforest photo — full bleed */}
         <img
-          src="https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=1800&q=90"
-          alt="Rainforest from above"
+          src="https://images.unsplash.com/photo-1448375240586-882707db888b?w=1800&q=90"
+          alt="Forest from above"
           style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
         />
         {/* Dark green overlay so text is legible */}
@@ -296,68 +296,56 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
       </section>
 
       {/* ── 4. FEATURED FESTIVALS TEASER ── */}
-      <section style={{ background: CREAM, padding: "72px 0 0" }}>
-        {/* Header row — padded */}
-        <div style={{ padding: "0 48px", marginBottom: 36, display: "flex", alignItems: "baseline", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
-          <div style={{ display: "flex", alignItems: "baseline", gap: 16 }}>
-            <h2 style={{ fontSize: "clamp(26px, 3vw, 40px)", fontWeight: 900, letterSpacing: "-1px", color: DARK, lineHeight: 1.1 }}>
-              {t("Featured Festivals", "Festivals à l'affiche")}
-            </h2>
-            <span style={{ fontSize: 14, color: "#aaa", fontWeight: 500 }}>5 {t("Items", "éléments")}</span>
+      <section style={{ background: CREAM, padding: "80px 48px" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+          <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 48, flexWrap: "wrap", gap: 20 }}>
+            <div>
+              <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "3px", color: RED, textTransform: "uppercase", marginBottom: 14 }}>
+                {t("MTLVERDE · CURATED", "MTLVERDE · SÉLECTION")}
+              </p>
+              <h2 style={{ fontSize: "clamp(28px, 3.5vw, 48px)", fontWeight: 900, letterSpacing: "-1.5px", color: DARK, lineHeight: 1.1 }}>
+                {t("Featured Festivals", "Festivals à l'affiche")}
+              </h2>
+            </div>
+            <a href={`/${lang}/festivals`}
+              style={{ display: "inline-flex", alignItems: "center", gap: 8, border: `2px solid ${GREEN_DARK}`, color: GREEN_DARK, borderRadius: 999, padding: "11px 26px", fontSize: 13, fontWeight: 800, textDecoration: "none", transition: "all 0.2s", whiteSpace: "nowrap" }}
+              onMouseEnter={e => { e.currentTarget.style.background = GREEN_DARK; e.currentTarget.style.color = "#fff"; }}
+              onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = GREEN_DARK; }}>
+              {t("See all festivals →", "Voir tous les festivals →")}
+            </a>
           </div>
-          <a href={`/${lang}/festivals`}
-            style={{ fontSize: 13, fontWeight: 700, color: GREEN_DARK, textDecoration: "none", borderBottom: `1.5px solid ${GREEN_DARK}`, paddingBottom: 1, transition: "opacity 0.2s" }}
-            onMouseEnter={e => { e.currentTarget.style.opacity = "0.6"; }}
-            onMouseLeave={e => { e.currentTarget.style.opacity = "1"; }}>
-            {t("View All", "Voir tout")}
-          </a>
-        </div>
-
-        {/* Horizontal scroll row — bleeds to edges */}
-        <div style={{ position: "relative" }}>
-          <div className="feat-scroll" style={{ display: "flex", gap: 4, overflowX: "auto", paddingLeft: 48, paddingBottom: 72 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}>
             {[
-              { photo: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&q=85", label: t("Music & Arts",    "Musique et arts"),  sub: t("Outdoor · Free", "Plein air · Gratuit"), tag: t("Festival", "Festival") },
-              { photo: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&q=85", label: t("Jazz Festival",    "Festival de Jazz"), sub: t("Downtown · Free", "Centre-ville · Gratuit"), tag: t("Annual", "Annuel") },
-              { photo: "https://images.unsplash.com/photo-1527224538127-2104bb71c51b?w=800&q=85", label: t("Comedy",           "Humour"),           sub: t("Various · Paid",  "Divers · Payant"),     tag: t("Annual", "Annuel") },
-              { photo: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=800&q=85", label: t("Cinema",           "Cinéma"),           sub: t("Rialto · Curated","Rialto · Sélection"),  tag: t("Curated", "Sélection") },
-              { photo: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&q=85",    label: t("Food & Markets",   "Marchés et Saveurs"), sub: t("Markets · Free", "Marchés · Gratuit"),  tag: t("Weekend", "Week-end") },
+              { photo: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=700&q=85", label: t("Music & Arts",  "Musique et arts"),    sub: t("Outdoor · Free",  "Plein air · Gratuit"),       tag: t("Festival", "Festival") },
+              { photo: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=700&q=85", label: t("Jazz Festival", "Festival de Jazz"),    sub: t("Downtown · Free", "Centre-ville · Gratuit"),    tag: t("Annual",   "Annuel")   },
+              { photo: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=700&q=85", label: t("Cinema",        "Cinéma"),              sub: t("Rialto · Curated","Rialto · Sélection"),        tag: t("Curated",  "Sélection") },
             ].map((card, i) => (
-              <a key={i} href={`/${lang}/festivals`} className="fest-preview-card">
-                <img src={card.photo} alt={card.label} />
-                {/* gradient */}
-                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(5,12,5,0.90) 0%, rgba(5,12,5,0.25) 50%, rgba(5,12,5,0.0) 100%)" }} />
-                {/* bottom info */}
-                <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "0 22px 24px", display: "flex", flexDirection: "column", gap: 10 }}>
-                  <div>
-                    <h3 style={{ fontSize: 22, fontWeight: 900, color: "#fff", letterSpacing: "-0.5px", lineHeight: 1.15, marginBottom: 4 }}>{card.label}</h3>
-                    <p style={{ fontSize: 12, color: "rgba(255,255,255,0.5)" }}>{card.sub}</p>
-                  </div>
-                  <div style={{ display: "inline-flex" }}>
-                    <span style={{ fontSize: 11, fontWeight: 800, padding: "7px 18px", borderRadius: 999, background: "#fff", color: DARK, letterSpacing: "0.2px" }}>
-                      {t("View Festival", "Voir le festival")}
-                    </span>
-                  </div>
+              <a key={i} href={`/${lang}/festivals`} style={{ textDecoration: "none", borderRadius: 20, overflow: "hidden", border: `1px solid ${GREEN_LIGHT}`, background: "#fff", display: "block", transition: "transform 0.2s, box-shadow 0.2s" }}
+                onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-5px)"; e.currentTarget.style.boxShadow = "0 16px 40px rgba(30,77,43,0.15)"; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}>
+                <div style={{ height: 200, overflow: "hidden", position: "relative" }}>
+                  <img src={card.photo} alt={card.label} style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.5s" }}
+                    onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.05)"; }}
+                    onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; }} />
+                  <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.15)" }} />
+                  <span style={{ position: "absolute", top: 14, left: 14, fontSize: 9, fontWeight: 800, padding: "4px 10px", borderRadius: 999, background: "rgba(255,255,255,0.2)", color: "#fff", backdropFilter: "blur(4px)" }}>
+                    {card.tag}
+                  </span>
+                </div>
+                <div style={{ padding: "18px 20px 22px" }}>
+                  <p style={{ fontSize: 11, color: GREEN_MID, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 8 }}>
+                    {t("Festival", "Festival")}
+                  </p>
+                  <h3 style={{ fontSize: 18, fontWeight: 900, color: DARK, marginBottom: 6, lineHeight: 1.2 }}>{card.label}</h3>
+                  <p style={{ fontSize: 12, color: "#888", marginBottom: 4 }}>Montréal</p>
+                  <p style={{ fontSize: 11, color: "#bbb", marginBottom: 14 }}>{card.sub}</p>
+                  <span style={{ fontSize: 12, fontWeight: 800, color: GREEN_DARK }}>
+                    {t("View Festival →", "Voir le festival →")}
+                  </span>
                 </div>
               </a>
             ))}
-            {/* right padding sentinel */}
-            <div style={{ width: 48, flexShrink: 0 }} />
           </div>
-          {/* Right arrow */}
-          <button
-            type="button"
-            onClick={() => {
-              const el = document.querySelector(".feat-scroll");
-              if (el) el.scrollBy({ left: 400, behavior: "smooth" });
-            }}
-            style={{ position: "absolute", right: 20, top: "50%", transform: "translateY(-80%)", width: 44, height: 44, borderRadius: "50%", background: "#fff", border: "1px solid #e0e0e0", boxShadow: "0 2px 12px rgba(0,0,0,0.15)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2 }}
-            aria-label="Scroll right"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={DARK} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="9 18 15 12 9 6" />
-            </svg>
-          </button>
         </div>
       </section>
 
@@ -371,35 +359,49 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
             {t("Upcoming Events", "Événements à venir")}
           </h2>
           {events.length > 0 && (
-            <div className="events-preview">
-              {events.slice(0, 3).map((event, i) => (
-                <div key={i} style={{ borderRadius: 20, overflow: "hidden", border: `1px solid ${GREEN_LIGHT}`, transition: "transform 0.2s, box-shadow 0.2s", cursor: "pointer" }}
-                  onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-5px)"; e.currentTarget.style.boxShadow = "0 16px 40px rgba(30,77,43,0.15)"; }}
-                  onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}>
-                  <div style={{ height: 160, overflow: "hidden", position: "relative" }}>
-                    <img src={getEventPhoto(event.type_evenement)} alt={event.type_evenement}
-                      style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                    <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.2)" }} />
-                    <span style={{ position: "absolute", bottom: 14, left: 14, fontSize: 11, fontWeight: 800, padding: "5px 12px", borderRadius: 999, background: event.cout === "Gratuit" ? GREEN_DARK : RED, color: "#fff" }}>
-                      {tField("cout", event.cout, lang)}
-                    </span>
-                  </div>
-                  <div style={{ padding: "20px 22px 24px", background: "#fff" }}>
-                    <p style={{ fontSize: 11, color: GREEN_MID, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 8 }}>{tField("type_evenement", event.type_evenement, lang)}</p>
-                    <h3 style={{ fontSize: 15, fontWeight: 800, marginBottom: 6, color: DARK, lineHeight: 1.3 }}>{lang === "fr" ? event.titre : (event.titre_en || event.titre)}</h3>
-                    <p style={{ fontSize: 12, color: "#888", marginBottom: 4 }}>{event.arrondissement}</p>
-                    <p style={{ fontSize: 11, color: "#ccc", marginBottom: 10 }}>{event.date_debut} → {event.date_fin}</p>
-                    {event.badge && (
-                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                        <LeafIcons badge={event.badge} size={13} />
-                        <span style={{ fontSize: 10, fontWeight: 700, padding: "3px 9px", borderRadius: 999, background: (BADGE_COLORS[event.badge] || {}).bg || GREEN_LIGHT, color: (BADGE_COLORS[event.badge] || {}).color || GREEN_DARK }}>
-                          {event.badge}
+            <div style={{ position: "relative", margin: "0 -48px", marginBottom: 48 }}>
+              <div className="feat-scroll" style={{ display: "flex", gap: 4, overflowX: "auto", paddingLeft: 48, paddingBottom: 8 }}>
+                {events.slice(0, 7).map((event, i) => (
+                  <div key={i} className="fest-preview-card" style={{ flexShrink: 0 }}>
+                    <img src={getEventPhoto(event.type_evenement)} alt={event.type_evenement} />
+                    <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(5,12,5,0.92) 0%, rgba(5,12,5,0.25) 55%, rgba(5,12,5,0.0) 100%)" }} />
+                    {/* cost pill top-left */}
+                    <div style={{ position: "absolute", top: 16, left: 16 }}>
+                      <span style={{ fontSize: 9, fontWeight: 800, padding: "4px 10px", borderRadius: 999, background: event.cout === "Gratuit" ? "rgba(30,77,43,0.85)" : "rgba(181,40,28,0.85)", color: "#fff", backdropFilter: "blur(4px)" }}>
+                        {tField("cout", event.cout, lang)}
+                      </span>
+                    </div>
+                    {/* bottom info */}
+                    <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "0 20px 22px", display: "flex", flexDirection: "column", gap: 8 }}>
+                      {event.badge && (
+                        <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                          <LeafIcons badge={event.badge} size={12} />
+                          <span style={{ fontSize: 9, fontWeight: 700, padding: "2px 8px", borderRadius: 999, background: "rgba(255,255,255,0.15)", color: "#fff", backdropFilter: "blur(4px)" }}>{event.badge}</span>
+                        </div>
+                      )}
+                      <div>
+                        <p style={{ fontSize: 10, color: "rgba(255,255,255,0.55)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 4 }}>{tField("type_evenement", event.type_evenement, lang)}</p>
+                        <h3 style={{ fontSize: 18, fontWeight: 900, color: "#fff", letterSpacing: "-0.3px", lineHeight: 1.2, marginBottom: 3, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                          {lang === "fr" ? event.titre : (event.titre_en || event.titre)}
+                        </h3>
+                        <p style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>{event.arrondissement}</p>
+                      </div>
+                      <div style={{ display: "inline-flex" }}>
+                        <span style={{ fontSize: 11, fontWeight: 800, padding: "7px 16px", borderRadius: 999, background: "#fff", color: DARK }}>
+                          {t("View Event", "Voir l'événement")}
                         </span>
                       </div>
-                    )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+                <div style={{ width: 48, flexShrink: 0 }} />
+              </div>
+              <button type="button"
+                onClick={() => { const el = document.querySelector(".events-hscroll"); if (el) el.scrollBy({ left: 400, behavior: "smooth" }); }}
+                style={{ position: "absolute", right: 20, top: "50%", transform: "translateY(-60%)", width: 44, height: 44, borderRadius: "50%", background: "#fff", border: "1px solid #e0e0e0", boxShadow: "0 2px 12px rgba(0,0,0,0.15)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2 }}
+                aria-label="Scroll right">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={DARK} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
+              </button>
             </div>
           )}
           {!showEvents ? (
