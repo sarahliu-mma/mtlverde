@@ -86,7 +86,19 @@ export default function SustainabilityRanking({ dict, lang }) {
     return function() { cancelled = true; };
   }, []);
 
-  const shown = useMemo(function() { return events.slice(0, visible); }, [events, visible]);
+  // Group score-sorted events by badge tier, keep each tier's Top 20.
+  const TIER_ORDER = ["Green Leader", "Eco-Friendly", "Getting There"];
+  const TOP_N = 20;
+  const [openTiers, setOpenTiers] = useState({
+    "Green Leader": true, "Eco-Friendly": false, "Getting There": false,
+  });
+  const grouped = useMemo(function() {
+    const g = { "Green Leader": [], "Eco-Friendly": [], "Getting There": [] };
+    events.forEach(function(e) {
+      if (g[e.badge] && g[e.badge].length < TOP_N) g[e.badge].push(e);
+    });
+    return g;
+  }, [events]);
 
   const openEvent = useMemo(function() {
     if (!openId) return null;
@@ -114,132 +126,147 @@ export default function SustainabilityRanking({ dict, lang }) {
       `}</style>
 
       {/* ── Horizontal scroll track ── */}
-      <div className="sr-scroll" style={{ overflowX: "auto", paddingBottom: 16 }}>
-        <div style={{ display: "flex", gap: 14, paddingBottom: 4, width: "max-content", alignItems: "stretch" }}>
-          {shown.map(function(event, i) {
-            const isOpen     = openId === event.id;
-            const badgeName  = b[BADGE_KEY[event.badge]] ?? event.badge;
-            const badgeStyle = BADGE_STYLE[event.badge] ?? { bg: "#eee", color: "#666" };
-            const leafCount  = BADGE_LEAVES[event.badge] || 1;
-            const photo      = CARD_PHOTOS[i % CARD_PHOTOS.length];
+      {TIER_ORDER.map(function(tierBadge) {
+        const list = grouped[tierBadge] || [];
+        if (list.length === 0) return null;
+        const isTierOpen = openTiers[tierBadge];
+        const tierName = b[BADGE_KEY[tierBadge]] ?? tierBadge;
+        const tierStyle = BADGE_STYLE[tierBadge] ?? { bg: "#eee", color: "#666" };
+        const tierLeaves = BADGE_LEAVES[tierBadge] || 1;
+        return (
+          <div key={tierBadge} style={{ marginBottom: 20 }}>
+            {/* Tier header — click to expand/collapse */}
+            <button
+              type="button"
+              onClick={function() {
+                setOpenTiers(function(prev) {
+                  const next = Object.assign({}, prev);
+                  next[tierBadge] = !prev[tierBadge];
+                  return next;
+                });
+              }}
+              aria-expanded={isTierOpen}
+              style={{
+                width: "100%", display: "flex", alignItems: "center", gap: 10,
+                background: tierStyle.bg, color: tierStyle.color,
+                border: "none", cursor: "pointer", borderRadius: 12,
+                padding: "12px 18px", marginBottom: 12, fontWeight: 800, fontSize: 14,
+              }}
+            >
+              <span style={{ display: "flex", gap: 2 }}>
+                {Array.from({ length: tierLeaves }).map(function(_, li) {
+                  return (
+                    <svg key={li} width="14" height="14" viewBox="0 0 24 24" fill={tierStyle.color} stroke="none" aria-hidden="true">
+                      <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" />
+                    </svg>
+                  );
+                })}
+              </span>
+              <span>{tierName}</span>
+              <span style={{ fontSize: 12, fontFamily: "monospace", opacity: 0.7 }}>
+                {(s.topLabel ?? "Top {n}").replace("{n}", String(Math.min(TOP_N, list.length)))}
+              </span>
+              <span style={{ marginLeft: "auto", fontSize: 11, transform: isTierOpen ? "rotate(180deg)" : "none", transition: "transform 0.2s" }} aria-hidden="true">▼</span>
+            </button>
 
-            return (
-              <button
-                key={event.id}
-                type="button"
-                className="sr-card"
-                onClick={function() { setOpenId(isOpen ? null : event.id); }}
-                aria-expanded={isOpen}
-                style={{
-                  width: 220,
-                  height: 300,
-                  flexShrink: 0,
-                  borderRadius: 18,
-                  position: "relative",
-                  overflow: "hidden",
-                  outline: isOpen ? "2.5px solid " + SAGE : "none",
-                  outlineOffset: 2,
-                }}
-              >
-                {/* Background photo */}
-                <img
-                  className="sr-card-img"
-                  src={photo}
-                  alt=""
-                  aria-hidden="true"
-                />
-
-                {/* Dark gradient overlay */}
-                <div style={{
-                  position: "absolute",
-                  inset: 0,
-                  background: "linear-gradient(to bottom, rgba(5,12,5,0.38) 0%, rgba(5,12,5,0.55) 45%, rgba(5,12,5,0.92) 100%)",
-                }} />
-
-                {/* Content */}
-                <div style={{
-                  position: "absolute",
-                  inset: 0,
-                  padding: "16px 16px 18px",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                }}>
-                  {/* Top row: rank + badge */}
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                    <span style={{ fontSize: 11, fontFamily: "monospace", color: "rgba(255,255,255,0.45)", fontWeight: 700 }}>
-                      #{i + 1}
-                    </span>
-                    <span style={{
-                      fontSize: 9, fontWeight: 800, padding: "3px 9px", borderRadius: 999,
-                      background: "rgba(255,255,255,0.18)",
-                      color: WHITE,
-                      letterSpacing: "0.5px",
-                      backdropFilter: "blur(4px)",
-                    }}>
-                      {badgeName}
-                    </span>
-                  </div>
-
-                  {/* Bottom info block */}
-                  <div>
-                    {/* Leaf icons */}
-                    <div style={{ display: "flex", gap: 3, marginBottom: 10 }}>
-                      {Array.from({ length: leafCount }).map(function(_, li) {
-                        return (
-                          <svg key={li} width="13" height="13" viewBox="0 0 24 24" fill={SAGE} stroke="none" aria-hidden="true">
-                            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" />
-                          </svg>
-                        );
-                      })}
-                      {Array.from({ length: 3 - leafCount }).map(function(_, li) {
-                        return (
-                          <svg key={"e" + li} width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.28)" strokeWidth="1.5" aria-hidden="true">
-                            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" />
-                          </svg>
-                        );
-                      })}
-                    </div>
-
-                    {/* Event title */}
-                    <span style={{
-                      display: "-webkit-box",
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: "vertical",
-                      overflow: "hidden",
-                      fontWeight: 800,
-                      fontSize: 13,
-                      color: WHITE,
-                      lineHeight: 1.35,
-                      marginBottom: 4,
-                    }}>
-                      {eventTitle(event, lang)}
-                    </span>
-
-                    {/* Borough */}
-                    <span style={{ display: "block", fontSize: 10, color: "rgba(255,255,255,0.5)", marginBottom: 12 }}>
-                      {event.arrondissement}
-                    </span>
-
-                    {/* Score */}
-                    <div style={{ display: "flex", alignItems: "baseline", gap: 4, borderTop: "1px solid rgba(255,255,255,0.15)", paddingTop: 10 }}>
-                      <span style={{ fontSize: 26, fontWeight: 900, letterSpacing: "-1px", color: WHITE, lineHeight: 1 }}>
-                        {event.sustainability_score}
-                      </span>
-                      <span style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", fontWeight: 400 }}>/100</span>
-                      {event.wheelchair_metro_accessible && (
-                        <span style={{ marginLeft: "auto", fontSize: 9, fontWeight: 800, color: SAGE, letterSpacing: "0.5px" }}>
-                          {fr ? "ACCÈS" : "A11Y"}
-                        </span>
-                      )}
-                    </div>
-                  </div>
+            {/* Horizontal scroll track for this tier */}
+            {isTierOpen && (
+              <div className="sr-scroll" style={{ overflowX: "auto", paddingBottom: 16 }}>
+                <div style={{ display: "flex", gap: 14, paddingBottom: 4, width: "max-content", alignItems: "stretch" }}>
+                  {list.map(function(event, i) {
+                    const isOpen     = openId === event.id;
+                    const badgeName  = b[BADGE_KEY[event.badge]] ?? event.badge;
+                    const badgeStyle = BADGE_STYLE[event.badge] ?? { bg: "#eee", color: "#666" };
+                    const leafCount  = BADGE_LEAVES[event.badge] || 1;
+                    const photo      = CARD_PHOTOS[i % CARD_PHOTOS.length];
+                    return (
+                      <button
+                        key={event.id}
+                        type="button"
+                        className="sr-card"
+                        onClick={function() { setOpenId(isOpen ? null : event.id); }}
+                        aria-expanded={isOpen}
+                        style={{
+                          width: 220,
+                          height: 300,
+                          flexShrink: 0,
+                          borderRadius: 18,
+                          position: "relative",
+                          overflow: "hidden",
+                          outline: isOpen ? "2.5px solid " + SAGE : "none",
+                          outlineOffset: 2,
+                        }}
+                      >
+                        <img className="sr-card-img" src={photo} alt="" aria-hidden="true" />
+                        <div style={{
+                          position: "absolute", inset: 0,
+                          background: "linear-gradient(to bottom, rgba(5,12,5,0.38) 0%, rgba(5,12,5,0.55) 45%, rgba(5,12,5,0.92) 100%)",
+                        }} />
+                        <div style={{
+                          position: "absolute", inset: 0, padding: "16px 16px 18px",
+                          display: "flex", flexDirection: "column", justifyContent: "space-between",
+                        }}>
+                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                            <span style={{ fontSize: 11, fontFamily: "monospace", color: "rgba(255,255,255,0.45)", fontWeight: 700 }}>
+                              #{i + 1}
+                            </span>
+                            <span style={{
+                              fontSize: 9, fontWeight: 800, padding: "3px 9px", borderRadius: 999,
+                              background: "rgba(255,255,255,0.18)", color: WHITE,
+                              letterSpacing: "0.5px", backdropFilter: "blur(4px)",
+                            }}>
+                              {badgeName}
+                            </span>
+                          </div>
+                          <div>
+                            <div style={{ display: "flex", gap: 3, marginBottom: 10 }}>
+                              {Array.from({ length: leafCount }).map(function(_, li) {
+                                return (
+                                  <svg key={li} width="13" height="13" viewBox="0 0 24 24" fill={SAGE} stroke="none" aria-hidden="true">
+                                    <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" />
+                                  </svg>
+                                );
+                              })}
+                              {Array.from({ length: 3 - leafCount }).map(function(_, li) {
+                                return (
+                                  <svg key={"e" + li} width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.28)" strokeWidth="1.5" aria-hidden="true">
+                                    <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" />
+                                  </svg>
+                                );
+                              })}
+                            </div>
+                            <span style={{
+                              display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical",
+                              overflow: "hidden", fontWeight: 800, fontSize: 13, color: WHITE,
+                              lineHeight: 1.35, marginBottom: 4,
+                            }}>
+                              {eventTitle(event, lang)}
+                            </span>
+                            <span style={{ display: "block", fontSize: 10, color: "rgba(255,255,255,0.5)", marginBottom: 12 }}>
+                              {event.arrondissement}
+                            </span>
+                            <div style={{ display: "flex", alignItems: "baseline", gap: 4, borderTop: "1px solid rgba(255,255,255,0.15)", paddingTop: 10 }}>
+                              <span style={{ fontSize: 26, fontWeight: 900, letterSpacing: "-1px", color: WHITE, lineHeight: 1 }}>
+                                {event.sustainability_score}
+                              </span>
+                              <span style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", fontWeight: 400 }}>/100</span>
+                              {event.wheelchair_metro_accessible && (
+                                <span style={{ marginLeft: "auto", fontSize: 9, fontWeight: 800, color: SAGE, letterSpacing: "0.5px" }}>
+                                  {fr ? "ACCÈS" : "A11Y"}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
-              </button>
-            );
-          })}
-        </div>
-      </div>
+              </div>
+            )}
+          </div>
+        );
+      })}
 
       {/* ── Expanded detail panel ── */}
       {openEvent && (
@@ -305,21 +332,6 @@ export default function SustainabilityRanking({ dict, lang }) {
           {openEvent.wheelchair_note && (
             <p style={{ fontSize: 12, color: "#aaa", marginTop: 12 }}>(A) {openEvent.wheelchair_note}</p>
           )}
-        </div>
-      )}
-
-      {/* ── Load more ── */}
-      {visible < events.length && (
-        <div style={{ marginTop: 20, textAlign: "center" }}>
-          <button
-            type="button"
-            onClick={function() { setVisible(function(v) { return v + PAGE_SIZE; }); }}
-            onMouseEnter={btnEnter}
-            onMouseLeave={btnLeave}
-            style={{ fontSize: 13, fontWeight: 800, color: MOSS, border: "1.5px solid " + MOSS, borderRadius: 999, padding: "11px 28px", background: "transparent", cursor: "pointer", transition: "all 0.2s" }}
-          >
-            {(s.rankingLoadMore ?? "Show {count} more").replace("{count}", String(events.length - visible))}
-          </button>
         </div>
       )}
     </div>
