@@ -178,6 +178,8 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
           .feat-grid { grid-template-columns: 1fr !important; }
           .purpose-grid { grid-template-columns: 1fr 1fr !important; gap: 24px !important; }
           .purpose-img { height: 260px !important; }
+          .feat-teaser-grid { grid-template-columns: 1fr !important; }
+          .feat-teaser-card { height: 320px !important; }
         }
         @media (max-width: 480px) {
           .team-grid { grid-template-columns: repeat(2, 1fr); }
@@ -314,7 +316,7 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
             {t("Featured Festivals", "Festivals à l'affiche")}
           </h2>
           {/* 2-up full-bleed cards like Patagonia Stories */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
+          <div className="feat-teaser-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
             {[
               {
                 photo: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=1000&q=90",
@@ -327,7 +329,7 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
                 btn: t("View All", "Voir tout"),
               },
             ].map((card, i) => (
-              <a key={i} href={`/${lang}/festivals`}
+              <a key={i} href={`/${lang}/festivals`} className="feat-teaser-card"
                 style={{ position: "relative", display: "block", height: 520, overflow: "hidden", textDecoration: "none", cursor: "pointer" }}
                 onMouseEnter={e => { e.currentTarget.querySelector("img").style.transform = "scale(1.04)"; }}
                 onMouseLeave={e => { e.currentTarget.querySelector("img").style.transform = "scale(1)"; }}>

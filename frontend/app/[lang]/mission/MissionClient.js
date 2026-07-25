@@ -34,6 +34,7 @@ const CSS=`
   .fb{height:70vw;min-height:320px;max-height:none}
   .fb .st{padding:0 24px 40px}
   .sg{grid-template-columns:repeat(2,1fr)}
+  .mf-grid{grid-template-columns:1fr!important;gap:32px!important}
 }
 `;
 
@@ -107,7 +108,7 @@ export default function MissionClient({ lang, dict }) {
 
       <footer style={{background:G,padding:"64px 8vw 32px"}}>
         <div style={{maxWidth:1200,margin:"0 auto"}}>
-          <div style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr",gap:48,marginBottom:48}}>
+          <div className="mf-grid" style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr",gap:48,marginBottom:48}}>
             <div>
               <img src="/MTLVerde_Logo.png" alt="MTLVerde" style={{height:120,marginBottom:24,filter:"brightness(10)"}}/>
               <p style={{fontSize:13,color:"rgba(255,255,255,.45)",lineHeight:1.8,maxWidth:280}}>{dict.header.subtitle}</p>
