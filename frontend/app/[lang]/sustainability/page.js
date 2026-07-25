@@ -445,7 +445,7 @@ export default async function Sustainability({ params }) {
       </section>
 
       {/* ── DISCLAIMER — rounded box with thick green border ── */}
-      <section style={{ background: CREAM, padding: "0 48px 64px" }}>
+      <section style={{ background: CREAM, padding: "64px 48px 64px" }}>
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
           <div style={{ border: "3px solid " + MOSS, borderRadius: 20, padding: "28px 32px", display: "flex", gap: 18, alignItems: "flex-start", background: "#fffbf0" }}>
             <div style={{ flexShrink: 0, marginTop: 3 }}>
