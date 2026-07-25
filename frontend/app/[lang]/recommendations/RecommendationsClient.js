@@ -170,38 +170,45 @@ export default function RecommendationsClient({ dict, lang }) {
 
       <Header dict={dict} lang={lang} />
 
-      {/* ── HERO — mountain lake / aerial ── */}
-      <section style={{ position: "relative", height: "100vh", minHeight: 500, maxHeight: 420, overflow: "hidden", flexShrink: 0 }}>
-        <img
-          src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=1800&q=85"
-          alt=""
-          aria-hidden="true"
-          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 40%" }}
-        />
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(10,20,10,0.3) 0%, rgba(10,20,10,0.88) 100%)" }} />
-        <div style={{ position: "relative", zIndex: 1, maxWidth: 1100, margin: "0 auto", padding: "0 48px", height: "100%", display: "flex", flexDirection: "column", justifyContent: "flex-end", paddingBottom: 44 }}>
-          <p style={{ fontSize: 10, fontWeight: 800, letterSpacing: "4px", color: SAGE, textTransform: "uppercase", marginBottom: 12 }}>
-            {fr ? "MTLVERDE · RECOMMANDATIONS" : "MTLVERDE · RECOMMENDATIONS"}
-          </p>
-          <h1 style={{ fontSize: "clamp(36px, 6vw, 72px)", fontWeight: 900, color: WHITE, letterSpacing: "-2.5px", lineHeight: 0.95, margin: 0, maxWidth: 700 }}>
-            {r.heading}
-          </h1>
+      {/* ── HERO — split: text left, nature photo right ── */}
+      <section style={{ background: PINE, flexShrink: 0, overflow: "hidden" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", alignItems: "stretch", minHeight: 320 }}>
+          {/* Left: text */}
+          <div style={{ flex: "1 1 0", padding: "56px 48px 56px", display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
+            <p style={{ fontSize: 10, fontWeight: 800, letterSpacing: "4px", color: SAGE, textTransform: "uppercase", marginBottom: 16 }}>
+              {fr ? "MTLVERDE · RECOMMANDATIONS" : "MTLVERDE · RECOMMENDATIONS"}
+            </p>
+            <h1 style={{ fontSize: "clamp(36px, 5vw, 68px)", fontWeight: 900, color: WHITE, letterSpacing: "-2.5px", lineHeight: 0.95, margin: 0 }}>
+              {r.heading}
+            </h1>
+            <p style={{ fontSize: 15, color: "rgba(255,255,255,0.45)", marginTop: 20, lineHeight: 1.75, maxWidth: 420 }}>
+              {r.intro}
+            </p>
+          </div>
+          {/* Right: nature photo card */}
+          <div style={{ flex: "0 0 380px", position: "relative", overflow: "hidden" }}>
+            <img
+              src="https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&q=85"
+              alt=""
+              aria-hidden="true"
+              style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 40%" }}
+            />
+            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(26,46,26,0.6) 0%, rgba(26,46,26,0.05) 60%)" }} />
+            <div style={{ position: "absolute", bottom: 24, left: 24 }}>
+              <p style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.65)", letterSpacing: "0.5px", lineHeight: 1.5, margin: 0 }}>
+                {fr ? "Explorez Montréal,\ndurablement." : "Explore Montréal,\nsustainably."}
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* ── MAIN — split layout ── */}
       <main style={{ flex: 1, display: "flex", maxWidth: 1200, width: "100%", margin: "0 auto", padding: "48px 24px 60px", gap: 32, alignItems: "flex-start" }}>
 
-        {/* ── LEFT PANEL — context + prompt cards ── */}
+        {/* ── LEFT PANEL — prompt cards ── */}
         {!hasMessages && (
           <div style={{ flex: "0 0 300px", display: "flex", flexDirection: "column", gap: 20, position: "sticky", top: 32 }}>
-            <div>
-              <p style={{ fontSize: 10, fontWeight: 800, letterSpacing: "3px", color: SAGE, textTransform: "uppercase", marginBottom: 10 }}>
-                {fr ? "ASK MTLVERDE" : "ASK MTLVERDE"}
-              </p>
-              <p style={{ fontSize: 16, color: "#555", lineHeight: 1.8, marginBottom: 0 }}>{r.intro}</p>
-            </div>
-
             <div style={{ width: "100%", height: 1, background: "#e0d8cc" }} />
 
             <div>
@@ -233,20 +240,6 @@ export default function RecommendationsClient({ dict, lang }) {
               </div>
             </div>
 
-            {/* Decorative nature strip */}
-            <div style={{ borderRadius: 16, overflow: "hidden", height: 140, position: "relative", marginTop: 4 }}>
-              <img
-                src="https://images.unsplash.com/photo-1501854140801-50d01698950b?w=600&q=80"
-                alt=""
-                aria-hidden="true"
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              />
-              <div style={{ position: "absolute", inset: 0, background: "rgba(10,20,10,0.5)", display: "flex", alignItems: "flex-end", padding: "14px 16px" }}>
-                <p style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.7)", letterSpacing: "0.5px", lineHeight: 1.4, margin: 0 }}>
-                  {fr ? "Explorez Montréal,\ndurablement." : "Explore Montréal,\nsustainably."}
-                </p>
-              </div>
-            </div>
           </div>
         )}
 
