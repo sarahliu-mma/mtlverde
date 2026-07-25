@@ -534,25 +534,22 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
                       </div>
                       <div style={{ display: "flex", flexDirection: "column", gap: 6, flexShrink: 0, alignItems: "flex-end", alignSelf: "stretch" }}>
                         {event.public_cible && <span className="badge badge-pink">{tField("public_cible", event.public_cible, lang)}</span>}
-                        
-                        <span className={`badge ${event.cout === "Gratuit" ? "badge-green" : "badge-red"}`}>
-                          {tField("cout", event.cout, lang)}
-                        </span>
-                          
-                        <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
-                          {event.wheelchair_metro_accessible && (
-                            <span style={{ fontSize: 14 }} title="Wheelchair-accessible metro nearby" aria-label="Wheelchair accessible">
-                            ♿
-                            </span>
-                          )}
-                          {event.eco_flag && (
-                            <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: MOSS, background: "#e8f0e4", padding: "8px 12px", borderRadius: 10 }}>
-                              <span>🌱</span>
-                              <span>{fr ? "Pratique écolo mentionnée (autodéclarée)" : "Organizer mentions an eco practice (self-reported)"}</span>
-                            </div>
-                          )}
-                      </div>
-                        
+                        <span className={`badge ${event.cout === "Gratuit" ? "badge-green" : "badge-red"}`}>
+                          {tField("cout", event.cout, lang)}
+                        </span>
+
+                        {event.wheelchair_metro_accessible && (
+                          <span style={{ fontSize: 14 }} title="Wheelchair-accessible metro nearby" aria-label="Wheelchair accessible">
+                            ♿
+                          </span>
+                        )}
+
+                        {event.eco_flag && (
+                          <span style={{ fontSize: 14 }} title={lang === "fr" ? "Pratique écolo mentionnée (autodéclarée)" : "Organizer mentions an eco practice (self-reported)"} aria-label="Eco practice">
+                            🌱
+                          </span>
+                        )}
+                          
                         <button
                           type="button"
                           onClick={(e) => { e.stopPropagation(); toggle(event.id); }}
