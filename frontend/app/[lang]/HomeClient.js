@@ -254,8 +254,8 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
       <section style={{ position: "relative", overflow: "hidden", padding: "80px 48px" }}>
         {/* Aerial rainforest photo — full bleed */}
         <img
-          src="https://images.unsplash.com/photo-1448375240586-882707db888b?w=1800&q=90"
-          alt="Forest from above"
+          src="https://images.unsplash.com/photo-1542401886-65d6c61db217?w=1800&q=90"
+          alt="Aerial forest canopy"
           style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
         />
         {/* Dark green overlay so text is legible */}
