@@ -489,14 +489,14 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
 
                         {/* Sustainability score breakdown — collapsible */}
                         {event.score_breakdown && (
-                          <div style={{ marginTop: 10, width: "100%", display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+                          <div style={{ marginTop: 10, alignSelf: "flex-start" }}>
                             <button
                               type="button"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 setOpenBreakdownId(prev => (prev === event.id ? null : event.id));
                               }}
-                              style={{ background: "none", border: "none", padding: 0, cursor: "pointer", fontSize: 11, fontWeight: 700, color: GREEN_MID, display: "inline-flex", alignItems: "center", gap: 4 }}
+                              style={{ background: "none", border: "none", padding: 0, cursor: "pointer", fontSize: 11, fontWeight: 700, color: GREEN_MID, display: "inline-flex", alignItems: "center", gap: 4 }}
                               aria-expanded={openBreakdownId === event.id}
                             >
                               🌿 {event.sustainability_score} / 100
