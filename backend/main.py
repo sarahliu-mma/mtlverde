@@ -118,19 +118,21 @@ def query_public_events(db, today, horizon):
 
 
 # Fields the list feeds actually need: card/row display, filters, map markers,
-# and the sustainability badge. Excludes the heavier scoring-detail fields
-# (score_breakdown, score_reasons, wheelchair_note) plus fields unused anywhere
-# in the frontend (adresse_principale, eco_flag, eco_flag_terms, free_flag,
-# wheelchair_metro_m, wheelchair_metro_gap_m) -- those are ~30% of payload
-# bytes and only ever needed one event at a time, via /events/{id}/detail.
+# the sustainability badge, and the per-row eco tag + score breakdown used by
+# the Sustainability ranking page. Excludes fields still unused anywhere in
+# the frontend (adresse_principale, eco_flag_terms, free_flag,
+# wheelchair_metro_m, wheelchair_metro_gap_m, score_reasons) -- those stay in
+# DETAIL_FIELDS, served one event at a time via /events/{id}/detail, so
+# /events/all doesn't ship data nothing reads yet.
 LIST_FIELDS = [
     "id", "titre", "titre_en", "url_fiche", "description", "description_en",
     "date_debut", "date_fin", "type_evenement", "public_cible", "emplacement",
     "inscription", "cout", "arrondissement", "lat", "long",
     "sustainability_score", "badge", "badge_icon", "wheelchair_metro_accessible",
+    "eco_flag", "score_breakdown", "wheelchair_note",
 ]
 
-DETAIL_FIELDS = ["score_breakdown", "score_reasons", "wheelchair_note"]
+DETAIL_FIELDS = ["score_reasons", "eco_flag_terms", "wheelchair_metro_m", "wheelchair_metro_gap_m"]
 
 
 def _field(event, key):
