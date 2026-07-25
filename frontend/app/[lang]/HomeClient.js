@@ -487,76 +487,93 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
                           </a>
                         )}
 
-                        {/* Sustainability score breakdown — collapsible */}
-                        {event.score_breakdown && (
-                          <div style={{ marginTop: 10 }}>
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setOpenBreakdownId(prev => (prev === event.id ? null : event.id));
-                              }}
-                              style={{ background: "none", border: "none", padding: 0, cursor: "pointer", fontSize: 11, fontWeight: 700, color: GREEN_MID, display: "flex", alignItems: "center", gap: 4 }}
-                              aria-expanded={openBreakdownId === event.id}
-                            >
-                              {event.sustainability_score} / 100
-                              <span style={{ fontSize: 9, transform: openBreakdownId === event.id ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}>▼</span>
-                            </button>
+                        {/* Sustainability score breakdown — collapsible */}
+                        {event.score_breakdown && (
+                          <div style={{ marginTop: 10 }}>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setOpenBreakdownId(prev => (prev === event.id ? null : event.id));
+                              }}
+                              style={{ background: "none", border: "none", padding: 0, cursor: "pointer", fontSize: 11, fontWeight: 700, color: GREEN_MID, display: "flex", alignItems: "center", gap: 4 }}
+                              aria-expanded={openBreakdownId === event.id}
+                            >
+                              {lang === "fr" ? "Durabilité" : "Sustainability"} {event.sustainability_score} / 100
+                              <span style={{ fontSize: 9, transform: openBreakdownId === event.id ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}>▼</span>
+                            </button>
 
-                            {openBreakdownId === event.id && (
-                              <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 8 }} onClick={(e) => e.stopPropagation()}>
-                                {COMPONENTS.map((c) => {
-                                  const pts = (event.score_breakdown || {})[c.key] ?? 0;
-                                  const pct = Math.max(0, Math.min(100, (pts / c.max) * 100));
-                                  return (
-                                    <div key={c.key} style={{ display: "grid", gridTemplateColumns: "110px 1fr 46px", alignItems: "center", gap: 10 }}>
-                                      <span style={{ fontSize: 11, color: "#666" }}>{c.label[lang] || c.label.en}</span>
-                                      <span style={{ height: 5, borderRadius: 999, background: GREEN_LIGHT, overflow: "hidden", display: "block" }}>
-                                        <span style={{ display: "block", height: "100%", borderRadius: 999, background: GREEN_MID, width: pct + "%" }} />
-                                      </span>
-                                      <span style={{ fontSize: 10, fontFamily: "monospace", color: "#aaa", textAlign: "right" }}>{pts}/{c.max}</span>
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                      <div style={{ display: "flex", flexDirection: "column", gap: 6, flexShrink: 0, alignItems: "flex-end", alignSelf: "stretch" }}>
-                        {event.public_cible && <span className="badge badge-pink">{tField("public_cible", event.public_cible, lang)}</span>}
+                            {openBreakdownId === event.id && (
+                              <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 8 }} onClick={(e) => e.stopPropagation()}>
+                                {COMPONENTS.map((c) => {
+                                  const pts = (event.score_breakdown || {})[c.key] ?? 0;
+                                  const pct = Math.max(0, Math.min(100, (pts / c.max) * 100));
+                                  return (
+                                    <div key={c.key} style={{ display: "grid", gridTemplateColumns: "110px 1fr 46px", alignItems: "center", gap: 10 }}>
+                                      <span style={{ fontSize: 11, color: "#666" }}>{c.label[lang] || c.label.en}</span>
+                                      <span style={{ height: 5, borderRadius: 999, background: GREEN_LIGHT, overflow: "hidden", display: "block" }}>
+                                        <span style={{ display: "block", height: "100%", borderRadius: 999, background: GREEN_MID, width: pct + "%" }} />
+                                      </span>
+                                      <span style={{ fontSize: 10, fontFamily: "monospace", color: "#aaa", textAlign: "right" }}>{pts}/{c.max}</span>
+                                    </div>
+                                  );
+                                })}
+                                  <a
+                                  href={`/${lang}/sustainability`}
+                                  onClick={(e) => e.stopPropagation()}
+                                  style={{ fontSize: 11, fontWeight: 700, color: GREEN_DARK, textDecoration: "none", marginTop: 2 }}
+                                  onMouseEnter={e => { e.currentTarget.style.textDecoration = "underline"; }}
+                                  onMouseLeave={e => { e.currentTarget.style.textDecoration = "none"; }}
+                                >
+                                  {lang === "fr" ? "Notre méthode d'évaluation →" : "How we score →"}
+                                </a>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                      <div style={{ display: "flex", flexDirection: "column", gap: 6, flexShrink: 0, alignItems: "flex-end", alignSelf: "stretch" }}>
+                        {event.public_cible && <span className="badge badge-pink">{tField("public_cible", event.public_cible, lang)}</span>}
+                        
+                        <span className={`badge ${event.cout === "Gratuit" ? "badge-green" : "badge-red"}`}>
+                          {tField("cout", event.cout, lang)}
+                        </span>
+                          
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
+                          {event.wheelchair_metro_accessible && (
+                            <span style={{ fontSize: 14 }} title="Wheelchair-accessible metro nearby" aria-label="Wheelchair accessible">
+                            ♿
+                            </span>
+                          )}
+                          {event.eco_flag && (
+                            <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: MOSS, background: "#e8f0e4", padding: "8px 12px", borderRadius: 10 }}>
+                              <span>🌱</span>
+                              <span>{fr ? "Pratique écolo mentionnée (autodéclarée)" : "Organizer mentions an eco practice (self-reported)"}</span>
+                            </div>
+                          )}
+                      </div>
+                        
+                        <button
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); toggle(event.id); }}
+                          aria-label={isSaved(event.id) ? ((dict || DICT[lang]).event?.unsave || "Remove from saved") : ((dict || DICT[lang]).event?.save || "Save event")}
+                          aria-pressed={isSaved(event.id)}
+                          style={{ background: "none", border: "none", padding: 0, cursor: "pointer", color: RED, display: "flex", marginTop: "auto" }}
+                        >
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill={isSaved(event.id) ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      </section>
                         
-                        <span className={`badge ${event.cout === "Gratuit" ? "badge-green" : "badge-red"}`}>
-                          {tField("cout", event.cout, lang)}
-                        </span>
-                        
-                        {event.wheelchair_metro_accessible && (
-                          <span style={{ fontSize: 14 }} title="Wheelchair-accessible metro nearby" aria-label="Wheelchair accessible">
-                          ♿
-                          </span>
-                        )}
-                        
-                        <button
-                          type="button"
-                          onClick={(e) => { e.stopPropagation(); toggle(event.id); }}
-                          aria-label={isSaved(event.id) ? ((dict || DICT[lang]).event?.unsave || "Remove from saved") : ((dict || DICT[lang]).event?.save || "Save event")}
-                          aria-pressed={isSaved(event.id)}
-                          style={{ background: "none", border: "none", padding: 0, cursor: "pointer", color: RED, display: "flex", marginTop: "auto" }}
-                        >
-                          <svg viewBox="0 0 24 24" width="20" height="20" fill={isSaved(event.id) ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
-        </div>
-      </section>
-
       {/* ── 6. SUSTAINABILITY TEASER — full-bleed photo ── */}
       <section style={{ position: "relative", height: "70vh", minHeight: 480, overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
         {/* Full-bleed landscape photo */}
