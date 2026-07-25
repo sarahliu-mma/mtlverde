@@ -476,16 +476,17 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
                       <div style={{ display: "flex", flexDirection: "column", gap: 6, flexShrink: 0, alignItems: "flex-end", alignSelf: "stretch" }}>
                         {event.public_cible && <span className="badge badge-pink">{tField("public_cible", event.public_cible, lang)}</span>}
                         
-                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}> 
-                        {event.wheelchair_metro_accessible && (
-                          <span style={{ fontSize: 14 }} title="Wheelchair-accessible metro nearby" aria-label="Wheelchair accessible">
-                          ♿
-                          </span>
-                        )}
+                        <div style={{ display: "flex", alignItems: "center", gap: 6 }}> 
+                          {event.wheelchair_metro_accessible && (
+                            <span style={{ fontSize: 14 }} title="Wheelchair-accessible metro nearby" aria-label="Wheelchair accessible">
+                            ♿
+                            </span>
+                          )}
                           
-                        <span className={`badge ${event.cout === "Gratuit" ? "badge-green" : "badge-red"}`}>
-                          {tField("cout", event.cout, lang)}
-                        </span>
+                          <span className={`badge ${event.cout === "Gratuit" ? "badge-green" : "badge-red"}`}>
+                            {tField("cout", event.cout, lang)}
+                          </span>
+                        </div>
                         <button
                           type="button"
                           onClick={(e) => { e.stopPropagation(); toggle(event.id); }}
