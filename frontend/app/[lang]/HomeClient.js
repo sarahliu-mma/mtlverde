@@ -489,7 +489,7 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
 
                         {/* Sustainability score breakdown — collapsible */}
                         {event.score_breakdown && (
-                          <div style={{ marginTop: 10 }}>
+                          <div style={{ marginTop: 10, width: "100%", display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
                             <button
                               type="button"
                               onClick={(e) => {
@@ -532,7 +532,7 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
                           </div>
                         )}
                       </div>
-                      <div style={{ display: "flex", flexDirection: "column", gap: 6, flexShrink: 0, alignItems: "flex-end", alignSelf: "stretch" }}>
+                      <div style={{ display: "flex", flexDirection: "column", gap: 6, flexShrink: 0, alignItems: "flex-end" }}>
                         {event.public_cible && <span className="badge badge-pink">{tField("public_cible", event.public_cible, lang)}</span>}
                         <span className={`badge ${event.cout === "Gratuit" ? "badge-green" : "badge-red"}`}>
                           {tField("cout", event.cout, lang)}
