@@ -36,14 +36,14 @@ const BADGE_STYLE = {
 
 // Fallback nature photo pool for cards without a specific photo
 const CARD_PHOTOS = [
-  "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=600&q=80",
-  "https://images.unsplash.com/photo-1511497584788-876760111969?w=600&q=80",
-  "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=600&q=80",
-  "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80",
-  "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=600&q=80",
-  "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=600&q=80",
-  "https://images.unsplash.com/photo-1440342359743-84fcb8c21f21?w=600&q=80",
-  "https://images.unsplash.com/photo-1491002052546-bf38f186af56?w=600&q=80",
+  "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&q=85",
+  "https://images.unsplash.com/photo-1511497584788-876760111969?w=800&q=85",
+  "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&q=85",
+  "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=85",
+  "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=85",
+  "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=800&q=85",
+  "https://images.unsplash.com/photo-1440342359743-84fcb8c21f21?w=800&q=85",
+  "https://images.unsplash.com/photo-1491002052546-bf38f186af56?w=800&q=85",
 ];
 
 function HeartIcon({ filled = false, size = 20, color = RUST }) {
