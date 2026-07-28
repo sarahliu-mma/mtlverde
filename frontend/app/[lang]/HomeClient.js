@@ -63,7 +63,7 @@ function LeafIcons({ badge, size = 12 }) {
 }
 const TEAM = [
   { name: "Yan-Ling Lu",  role: { en: "Data Pipeline",          fr: "Pipeline de données"    }, photo: "/Yan-Ling_Lu.jpeg" },
-  { name: "Sarah Liu",    role: { en: "Backend Development",    fr: "Développement backend"  }, photo: "/Sarah_Liu.jpeg" },
+  { name: "Sarah Liu",    role: { en: "Backend Development",    fr: "Développement backend"  }, photo: "/Sarah_Liu.jpg" },
   { name: "Joohee Kim",   role: { en: "Sustainability Scoring", fr: "Score de durabilité"    }, photo: "/Joohee_Kim.JPG" },
   { name: "Chloee Liew",  role: { en: "Frontend Development",   fr: "Développement frontend" }, photo: "/Chloee_Liew.jpg" },
 ];
