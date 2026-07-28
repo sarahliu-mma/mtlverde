@@ -16,30 +16,30 @@ const RED_LIGHT   = "#fdf0ee";
 const CREAM       = "#f9f6f1";
 const DARK        = "#111";
 const EVENT_PHOTOS = {
-  "Musique":                        "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=120&q=80",
-  "Initiation à la musique":        "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=120&q=80",
-  "Art et artisanat":               "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=120&q=80",
-  "Art de la parole":               "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=120&q=80",
-  "Cinéma":                         "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=120&q=80",
-  "Cirque":                         "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=120&q=80",
-  "Danse":                          "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=120&q=80",
-  "Théâtre":                        "https://images.unsplash.com/photo-1503095396549-807759245b35?w=120&q=80",
-  "Humour":                         "https://images.unsplash.com/photo-1527224538127-2104bb71c51b?w=120&q=80",
-  "Exposition":                     "https://images.unsplash.com/photo-1536924940846-227afb31e2a5?w=120&q=80",
-  "Sport et plein air":             "https://images.unsplash.com/photo-1517649763962-0c623066013b?w=120&q=80",
-  "Jardinage":                      "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=120&q=80",
-  "Cuisine":                        "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=120&q=80",
-  "Bien-être":                      "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=120&q=80",
-  "Jeux":                           "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=120&q=80",
-  "Heure du conte":                 "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=120&q=80",
-  "Club de lecture et littérature": "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=120&q=80",
-  "Langues":                        "https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=120&q=80",
-  "Informatique":                   "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=120&q=80",
-  "Science et techno":              "https://images.unsplash.com/photo-1507413245164-6160d8298b31?w=120&q=80",
-  "Société et histoire":            "https://images.unsplash.com/photo-1461360370896-922624d12aa1?w=120&q=80",
-  "Soutien et échange":             "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=120&q=80",
-  "Fête et marché":                 "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=120&q=80",
-  "default":                        "https://images.unsplash.com/photo-1519098635131-4c8f806d1e82?w=120&q=80",
+  "Musique":                        "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&q=85",
+  "Initiation à la musique":        "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=800&q=85",
+  "Art et artisanat":               "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=800&q=85",
+  "Art de la parole":               "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=800&q=85",
+  "Cinéma":                         "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=800&q=85",
+  "Cirque":                         "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&q=85",
+  "Danse":                          "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=800&q=85",
+  "Théâtre":                        "https://images.unsplash.com/photo-1503095396549-807759245b35?w=800&q=85",
+  "Humour":                         "https://images.unsplash.com/photo-1527224538127-2104bb71c51b?w=800&q=85",
+  "Exposition":                     "https://images.unsplash.com/photo-1536924940846-227afb31e2a5?w=800&q=85",
+  "Sport et plein air":             "https://images.unsplash.com/photo-1517649763962-0c623066013b?w=800&q=85",
+  "Jardinage":                      "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&q=85",
+  "Cuisine":                        "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=85",
+  "Bien-être":                      "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&q=85",
+  "Jeux":                           "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800&q=85",
+  "Heure du conte":                 "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800&q=85",
+  "Club de lecture et littérature": "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=800&q=85",
+  "Langues":                        "https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=800&q=85",
+  "Informatique":                   "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&q=85",
+  "Science et techno":              "https://images.unsplash.com/photo-1507413245164-6160d8298b31?w=800&q=85",
+  "Société et histoire":            "https://images.unsplash.com/photo-1461360370896-922624d12aa1?w=800&q=85",
+  "Soutien et échange":             "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800&q=85",
+  "Fête et marché":                 "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&q=85",
+  "default":                        "https://images.unsplash.com/photo-1519098635131-4c8f806d1e82?w=800&q=85",
 };
 const getEventPhoto = (type) => EVENT_PHOTOS[type] || EVENT_PHOTOS["default"];
 const BADGE_LEAVES = { "Green Leader": 3, "Eco-Friendly": 2, "Getting There": 1 };
@@ -48,11 +48,6 @@ const BADGE_COLORS = {
   "Eco-Friendly":  { bg: "#e4f0dc", color: "#2e6e30" },
   "Getting There": { bg: "#f0ead8", color: "#7a5a1a" },
 };
-const COMPONENTS = [
-  { key: "transit_access", max: 45, label: { en: "Transit access", fr: "Accès au transport" } },
-  { key: "walkin_access",  max: 35, label: { en: "Walk-in access", fr: "Accès libre" } },
-  { key: "outdoor_green",  max: 20, label: { en: "Outdoor venue",  fr: "Lieu extérieur" } },
-];
 function LeafIcons({ badge, size = 12 }) {
   const count = BADGE_LEAVES[badge] || 0;
   if (!count) return null;
@@ -68,7 +63,7 @@ function LeafIcons({ badge, size = 12 }) {
 }
 const TEAM = [
   { name: "Yan-Ling Lu",  role: { en: "Data Pipeline",          fr: "Pipeline de données"    }, photo: "/Yan-Ling_Lu.jpeg" },
-  { name: "Sarah Liu",    role: { en: "Backend Development",    fr: "Développement backend"  }, photo: "/Sarah_Liu.jpg" },
+  { name: "Sarah Liu",    role: { en: "Backend Development",    fr: "Développement backend"  }, photo: "/Sarah_Liu.jpeg" },
   { name: "Joohee Kim",   role: { en: "Sustainability Scoring", fr: "Score de durabilité"    }, photo: "/Joohee_Kim.JPG" },
   { name: "Chloee Liew",  role: { en: "Frontend Development",   fr: "Développement frontend" }, photo: "/Chloee_Liew.jpg" },
 ];
@@ -104,7 +99,6 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
   const [email, setEmail]           = useState("");
   const [subscribed, setSubscribed] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
-  const [openBreakdownId, setOpenBreakdownId] = useState(null);
   const { isSaved, toggle } = useBookmarks();
   const eventsRef     = useRef(null);
   const purposeRef    = useRef(null);
@@ -160,9 +154,7 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
         .fest-preview-card img { transition: transform 0.6s ease; width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
         .feat-scroll::-webkit-scrollbar { display: none; }
         .feat-scroll { -ms-overflow-style: none; scrollbar-width: none; }
-        .feat-full-bleed { margin: 0 -48px; }
         @media (max-width: 768px) {
-          .feat-full-bleed { margin: 0 -24px; }
           .section-pad { padding: 64px 24px; }
           .team-grid { grid-template-columns: repeat(2, 1fr); gap: 24px; }
           .events-preview { grid-template-columns: 1fr; }
@@ -176,16 +168,10 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
           .mission-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
           .sustain-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
           .feat-grid { grid-template-columns: 1fr !important; }
-          .purpose-grid { grid-template-columns: 1fr 1fr !important; gap: 24px !important; }
-          .purpose-img { height: 260px !important; }
-          .feat-teaser-grid { grid-template-columns: 1fr !important; }
-          .feat-teaser-card { height: 320px !important; }
         }
         @media (max-width: 480px) {
           .team-grid { grid-template-columns: repeat(2, 1fr); }
           .footer-grid { grid-template-columns: 1fr; }
-          .purpose-grid { grid-template-columns: 1fr !important; }
-          .purpose-img { height: 220px !important; }
         }
       `}</style>
 
@@ -247,10 +233,10 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
               {t("Montréal produces thousands of free events every year. We make them easy to find.", "Montréal organise des milliers d'événements gratuits chaque année. Nous les rendons faciles à trouver.")}
             </p>
           </div>
-          <div className="purpose-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
             {PURPOSE.map((p, i) => (
               <div key={i}>
-                <div className="purpose-img" style={{ height: 480, overflow: "hidden", marginBottom: 20 }}>
+                <div style={{ height: 480, overflow: "hidden", marginBottom: 20 }}>
                   <img src={p.img} alt={p.title.en}
                     style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", transition: "transform 0.6s" }}
                     onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.04)"; }}
@@ -316,7 +302,7 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
             {t("Featured Festivals", "Festivals à l'affiche")}
           </h2>
           {/* 2-up full-bleed cards like Patagonia Stories */}
-          <div className="feat-teaser-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
             {[
               {
                 photo: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=1000&q=90",
@@ -329,7 +315,7 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
                 btn: t("View All", "Voir tout"),
               },
             ].map((card, i) => (
-              <a key={i} href={`/${lang}/festivals`} className="feat-teaser-card"
+              <a key={i} href={`/${lang}/festivals`}
                 style={{ position: "relative", display: "block", height: 520, overflow: "hidden", textDecoration: "none", cursor: "pointer" }}
                 onMouseEnter={e => { e.currentTarget.querySelector("img").style.transform = "scale(1.04)"; }}
                 onMouseLeave={e => { e.currentTarget.querySelector("img").style.transform = "scale(1)"; }}>
@@ -362,10 +348,10 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
             {t("Upcoming Events", "Événements à venir")}
           </h2>
           {events.length > 0 && (
-            <div className="feat-full-bleed" style={{ position: "relative", marginBottom: 48 }}>
+            <div style={{ position: "relative", margin: "0 -48px", marginBottom: 48 }}>
               <div className="feat-scroll" style={{ display: "flex", gap: 4, overflowX: "auto", paddingLeft: 48, paddingBottom: 8 }}>
                 {events.slice(0, 7).map((event, i) => (
-                  <div key={i} className="fest-preview-card" style={{ flexShrink: 0 }}>
+                  <a key={i} href={event.url_fiche || `/${lang}/events`} target={event.url_fiche ? "_blank" : "_self"} rel="noopener noreferrer" className="fest-preview-card" style={{ flexShrink: 0, textDecoration: "none" }}>
                     <img src={getEventPhoto(event.type_evenement)} alt={event.type_evenement} />
                     <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(5,12,5,0.92) 0%, rgba(5,12,5,0.25) 55%, rgba(5,12,5,0.0) 100%)" }} />
                     {/* cost pill top-left */}
@@ -395,7 +381,7 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
                         </span>
                       </div>
                     </div>
-                  </div>
+                  </a>
                 ))}
                 <div style={{ width: 48, flexShrink: 0 }} />
               </div>
@@ -486,56 +472,12 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
                             {(dict || DICT[lang]).event?.readMore || "Read more"} →
                           </a>
                         )}
-
-                        {/* Sustainability score breakdown — collapsible */}
-                        {event.score_breakdown && (
-                          <div style={{ marginTop: 10 }}>
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setOpenBreakdownId(prev => (prev === event.id ? null : event.id));
-                              }}
-                              style={{ background: "none", border: "none", padding: 0, cursor: "pointer", fontSize: 11, fontWeight: 700, color: GREEN_MID, display: "flex", alignItems: "center", gap: 4 }}
-                              aria-expanded={openBreakdownId === event.id}
-                            >
-                              {event.sustainability_score} / 100
-                              <span style={{ fontSize: 9, transform: openBreakdownId === event.id ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}>▼</span>
-                            </button>
-
-                            {openBreakdownId === event.id && (
-                              <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 8 }} onClick={(e) => e.stopPropagation()}>
-                                {COMPONENTS.map((c) => {
-                                  const pts = (event.score_breakdown || {})[c.key] ?? 0;
-                                  const pct = Math.max(0, Math.min(100, (pts / c.max) * 100));
-                                  return (
-                                    <div key={c.key} style={{ display: "grid", gridTemplateColumns: "110px 1fr 46px", alignItems: "center", gap: 10 }}>
-                                      <span style={{ fontSize: 11, color: "#666" }}>{c.label[lang] || c.label.en}</span>
-                                      <span style={{ height: 5, borderRadius: 999, background: GREEN_LIGHT, overflow: "hidden", display: "block" }}>
-                                        <span style={{ display: "block", height: "100%", borderRadius: 999, background: GREEN_MID, width: pct + "%" }} />
-                                      </span>
-                                      <span style={{ fontSize: 10, fontFamily: "monospace", color: "#aaa", textAlign: "right" }}>{pts}/{c.max}</span>
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            )}
-                          </div>
-                        )}
                       </div>
                       <div style={{ display: "flex", flexDirection: "column", gap: 6, flexShrink: 0, alignItems: "flex-end", alignSelf: "stretch" }}>
                         {event.public_cible && <span className="badge badge-pink">{tField("public_cible", event.public_cible, lang)}</span>}
-                        
                         <span className={`badge ${event.cout === "Gratuit" ? "badge-green" : "badge-red"}`}>
                           {tField("cout", event.cout, lang)}
                         </span>
-                        
-                        {event.wheelchair_metro_accessible && (
-                          <span style={{ fontSize: 14 }} title="Wheelchair-accessible metro nearby" aria-label="Wheelchair accessible">
-                          ♿
-                          </span>
-                        )}
-                        
                         <button
                           type="button"
                           onClick={(e) => { e.stopPropagation(); toggle(event.id); }}
@@ -581,8 +523,8 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
           </h2>
           <p style={{ fontSize: "clamp(13px, 1.4vw, 17px)", color: "rgba(255,255,255,0.65)", lineHeight: 1.75, marginBottom: 40, maxWidth: 560, margin: "0 auto 40px" }}>
             {t(
-              "Every event on MTLVerde gets an eco-score based on transit access, accessibility, and more.",
-              "Chaque événement sur MTLVerde reçoit un score écologique basé sur l'accès aux transports, l'accessibilité, et bien plus."
+              "Every event on MTLVerde gets an eco-score based on transit access, carbon footprint, and more.",
+              "Chaque événement sur MTLVerde reçoit un score écologique basé sur l'accès aux transports et l'empreinte carbone."
             )}
           </p>
           <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
@@ -597,7 +539,7 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
 
         {/* Frosted tag pills — bottom left */}
         <div style={{ position: "absolute", bottom: 28, left: 48, display: "flex", gap: 8, flexWrap: "wrap" }}>
-          {[t("Transit-Friendly", "Accès transport"), t("Walkable", "Accessible à pied"), t("Outdoors", "En plein air")].map(tag => (
+          {[t("Low emissions","Faibles émissions"), t("Walkable","Accessible à pied"), t("Zero waste","Zéro déchet"), t("Local","Local")].map(tag => (
             <span key={tag} style={{ background: "rgba(255,255,255,0.12)", backdropFilter: "blur(8px)", color: "#fff", fontSize: 11, fontWeight: 700, padding: "6px 14px", borderRadius: 999, border: "1px solid rgba(255,255,255,0.25)" }}>{tag}</span>
           ))}
         </div>
