@@ -192,7 +192,7 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
           </h1>
           <p style={{ fontSize: "clamp(15px, 1.8vw, 20px)", color: "rgba(255,255,255,0.75)", lineHeight: 1.7, maxWidth: 560, margin: "0 auto 44px" }}>
             {t(
-              "Community events, workshops and local markets in Montreal. All seasons long. All in one place.",
+              "Community events, workshops and local markets in Montreal. Every season. All in one place.",
               "Événements communautaires, ateliers et marchés locaux à Montréal. Toutes les saisons. Tout au même endroit."
             )}
           </p>

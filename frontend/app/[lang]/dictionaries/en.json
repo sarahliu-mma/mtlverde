@@ -159,6 +159,10 @@
   "mission": {
     "title": "Our Mission — MTLVerde",
     "heading": "Our Mission",
+    "statEvents": "Events this year",
+    "statBoroughs": "Boroughs",
+    "statNewcomers": "Newcomers / year",
+    "statFree": "Free & bilingual",
     "statement": "Montréal produces thousands of free community events every year — but they're scattered, hard to find, and often only in French. MTLVerde brings them together in one free, bilingual place, so anyone can find something meaningful to do nearby this weekend. We believe discovering your community shouldn't require speaking the right language or already knowing where to look.",
     "problemTitle": "The problem",
     "problem": "The city publishes 4,400+ free events a year across 20 boroughs. Existing tools serve tourists or organizers — not the person who just moved in and wants to know what's happening near them. The result is a city full of public life that stays invisible to the people who'd benefit from it most.",

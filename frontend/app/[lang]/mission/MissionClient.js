@@ -42,10 +42,10 @@ export default function MissionClient({ lang, dict }) {
   const m = dict.mission;
 
   const STATS=[
-    {n:"3,000+",label:m.heading},
-    {n:"20", label:m.problemTitle},
-    {n:"50,000", label:m.whatTitle},
-    {n:"100%", label:m.visionTitle},
+    {n:"3,000+",label:m.statEvents},
+    {n:"20", label:m.statBoroughs},
+    {n:"50,000", label:m.statNewcomers},
+    {n:"100%", label:m.statFree},
   ];
 
   const SECS=[

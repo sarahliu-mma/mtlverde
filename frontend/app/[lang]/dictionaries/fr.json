@@ -158,6 +158,10 @@
   "mission": {
     "title": "Notre mission — MTLVerde",
     "heading": "Notre mission",
+    "statEvents": "Événements cette année",
+    "statBoroughs": "Arrondissements",
+    "statNewcomers": "Nouveaux arrivants / an",
+    "statFree": "Gratuit et bilingue",
     "statement": "Montréal produit des milliers d'événements communautaires gratuits chaque année — mais ils sont dispersés, difficiles à trouver, et souvent seulement en français. MTLVerde les réunit dans un seul endroit gratuit et bilingue, pour que chacun trouve une activité enrichissante près de chez lui cette fin de semaine. Nous croyons que découvrir sa communauté ne devrait pas exiger de parler la bonne langue ni de savoir déjà où chercher.",
     "problemTitle": "Le problème",
     "problem": "La Ville publie plus de 4 400 événements gratuits par année dans 20 arrondissements. Les outils existants servent les touristes ou les organisateurs — pas la personne qui vient d'emménager et veut savoir ce qui se passe près d'elle. Résultat : une ville pleine de vie publique qui reste invisible pour ceux qui en bénéficieraient le plus.",
