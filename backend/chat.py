@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
-from datetime import datetime
+from datetime import datetime, date
 from zoneinfo import ZoneInfo
 import os
 import re
@@ -63,7 +63,15 @@ def build_filter(model, keywords):
 def search_events(db: Session, keywords: list, limit_per_table: int = MAX_EVENTS_PER_TABLE):
     """Keyword-match festivals and public events independently, each with
     its own quota, so a generic keyword matching one table can't crowd out
-    the other table's results."""
+    the other table's results.
+
+    Deliberately does NOT filter by date -- expired events are still
+    returned so the model can recommend them with an "already ended"
+    annotation (or, for recurring festivals, a "happens again next year"
+    note) instead of silently hiding them. Status is computed per event in
+    format_events_for_prompt and handed to the model as a fact rather than
+    left for the model to infer from raw dates.
+    """
     if not keywords:
         return []
 
@@ -84,11 +92,46 @@ def search_events(db: Session, keywords: list, limit_per_table: int = MAX_EVENTS
     return list(festivals) + list(publics)
 
 
+def _event_status(e, today):
+    """Return 'ended', 'ongoing', 'upcoming', or 'unknown' for one event,
+    computed from date_debut/date_fin so the model is handed a fact instead
+    of having to infer it from raw date strings itself."""
+    fin = debut = None
+    try:
+        if e.date_fin:
+            fin = date.fromisoformat(e.date_fin)
+    except ValueError:
+        pass
+    try:
+        if e.date_debut:
+            debut = date.fromisoformat(e.date_debut)
+    except ValueError:
+        pass
+
+    if fin is not None:
+        if fin < today:
+            return "ended"
+        return "ongoing" if (debut is not None and debut <= today) else "upcoming"
+    if debut is not None:
+        return "upcoming" if debut > today else "ongoing"
+    return "unknown"
+
+
 def format_events_for_prompt(events):
+    today = date.today()
     lines = []
     for e in events:
+        status = _event_status(e, today)
+        # Curated festivals (Festival table) are known annual/recurring
+        # events by design of the curated list; public events pulled from
+        # city open data are one-time occurrences. This distinction drives
+        # which annotation template the model should use (see
+        # date_instruction below) -- it is NOT inferred from outside
+        # knowledge about any specific event.
+        recurring = "yes" if isinstance(e, Festival) else "no"
         lines.append(
             f"- id={e.id} | {e.titre} | {e.date_debut} to {e.date_fin} | "
+            f"status={status} | recurring={recurring} | "
             f"{e.arrondissement or e.emplacement or 'location unknown'} | "
             f"{e.type_evenement or 'type unknown'} | cost={e.cout or 'unknown'}"
         )
@@ -154,17 +197,45 @@ def chat(req: ChatRequest, db: Session = Depends(get_db)):
         "reply, and do not mention that you are detecting the language."
     )
 
-    # Date rule: give Claude today's actual date so it can resolve relative
-    # time expressions, and require it to only recommend events from the
-    # list below whose date actually falls within the requested range.
+    # Date/status rule: give Claude today's actual date for resolving
+    # relative time expressions, plus the precomputed status/recurring
+    # facts attached to each event below (see format_events_for_prompt) so
+    # it never has to guess expiry from raw dates. Expired events are NOT
+    # filtered out upstream -- they must still be recommended, just clearly
+    # annotated, with different phrasing depending on whether the event is
+    # a recurring festival or a one-time public event.
     date_instruction = (
-        f"{get_date_context()} When the user asks about a relative time "
-        "period (e.g. \"this weekend\", \"next week\", \"today\"), calculate "
-        "the real date range from today's date above — do not say you lack "
-        "access to the current date. When filtering events by a date range, "
-        "only recommend events from the list below whose date falls within "
-        "that range. If none of the listed events fall within the requested "
-        "range, say so honestly instead of listing unrelated events."
+        f"{get_date_context()} Each event below includes precomputed "
+        "status=ended|ongoing|upcoming|unknown and recurring=yes|no fields "
+        "-- treat these as ground truth rather than recalculating status "
+        "yourself from the raw dates.\n\n"
+        "Do not omit or hide an event just because it has already ended. "
+        "For every event you recommend, work its status into your answer "
+        "naturally, using one of these cases:\n"
+        "- recurring=no and status=ended: say plainly that this event has "
+        "already ended.\n"
+        "- recurring=no and status=ongoing or upcoming: recommend it "
+        "normally, with no expiry caveat needed.\n"
+        "- recurring=yes and status=ended: say it has already ended for "
+        "this year, mention that it recurs annually around the same time "
+        "of year (state that period in your own words based on this "
+        "event's own date_debut/date_fin -- e.g. \"mid-June\" -- do not "
+        "invent a period from outside knowledge), and suggest the person "
+        "keep an eye out for next year's announcement. (For reference, "
+        "the intended meaning in Chinese is: 這個活動目前已經過期，但每年"
+        "＿＿都會舉行，建議可以密切留意相關訊息 -- phrase this naturally in "
+        "whatever language you are replying in; do not translate it "
+        "literally.)\n"
+        "- recurring=yes and status=ongoing or upcoming: mention that it "
+        "takes place during roughly that same period every year (again "
+        "stated from this event's own dates). (Reference meaning in "
+        "Chinese: 這個活動會在固定＿＿時間舉行.)\n"
+        "- status=unknown: skip the status/period commentary for that "
+        "event rather than guessing.\n\n"
+        "Separately, when the user's message itself references a relative "
+        "time period (e.g. \"this weekend\", \"next week\", \"today\"), "
+        "calculate the real date range from today's date above -- do not "
+        "say you lack access to the current date."
     )
 
     system_prompt = (
