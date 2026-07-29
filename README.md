@@ -130,6 +130,7 @@ mtlverde/
 │   ├── public_events_montreal.json City events snapshot (refreshed by CI)
 │   ├── PUBLIC_EVENTS.md            Data dictionary: source, filters, breakdowns
 │   ├── Sustainability_Scoring.md   Scoring model, fields, and how to run it
+│   ├── Sustainability_Logic.md     Sustainability Scoring Methodology 
 │   └── Procfile / requirements.txt Railway deploy config
 ├── frontend/                       Next.js app (App Router, [lang] routing)
 │   ├── app/[lang]/                 Pages, Header, Map, EventCard, MultiSelect, dictionaries
