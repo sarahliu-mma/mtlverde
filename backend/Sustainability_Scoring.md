@@ -7,7 +7,7 @@ separate wheelchair-by-metro accessibility signal.
 
 The score estimates **how transit-friendly and barrier-free it is to *attend* an
 event** — not the event's carbon emissions, which the open data can't support. For
-the full reasoning behind the model, see [`LOGIC.md`](./LOGIC.md).
+the full reasoning behind the model, see [`LOGIC.md`](./Sustainability_Logic.md).
 
 ---
 
@@ -30,7 +30,7 @@ For each event it computes:
 
 Score = transit access (45) + walk-in access (35) + outdoor venue (20). Badge cuts
 at 90 and 65. Wheelchair accessibility is reported **alongside** the score, never
-folded into it. See `LOGIC.md` for why.
+folded into it. See `Sustainability_Logic.md` for why.
 
 ---
 
@@ -148,5 +148,5 @@ recreated when the schema changes, then re-seeded.
 - The eco-flag is **self-reported** (scanned from organizer descriptions) and triggers on ~10 events.
 - The score is a **transit-friendly, barrier-free accessibility proxy**, not a measurement of carbon emissions.
 
-See [`LOGIC.md`](./LOGIC.md) for the full methodology, the decision history, and the
+See [`LOGIC.md`](./Sustainability_Logic.md) for the full methodology, the decision history, and the
 equity and sensitivity findings.
