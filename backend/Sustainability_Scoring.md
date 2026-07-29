@@ -5,9 +5,9 @@ discovery site for Montréal community events. This component assigns every even
 **0–100 sustainability score** and an **eco-badge** (🌿🌿🌿 / 🌿🌿 / 🌿), plus a
 separate wheelchair-by-metro accessibility signal.
 
-The score estimates **how low-carbon and barrier-free it is to *attend* an event**
-— not the event's carbon emissions, which the open data can't support. For the
-full reasoning behind the model, see [`LOGIC.md`](./LOGIC.md).
+The score estimates **how transit-friendly and barrier-free it is to *attend* an
+event** — not the event's carbon emissions, which the open data can't support. For
+the full reasoning behind the model, see [`LOGIC.md`](./LOGIC.md).
 
 ---
 
@@ -40,9 +40,12 @@ folded into it. See `LOGIC.md` for why.
 |---|---|
 | `sustainability_score.py` | The rubric. `score_event(event, transit_index) -> dict`. All weights, thresholds, and keywords live in `CONFIG` at the top. |
 | `mtl_transit_pipeline.py` | Loads STM stops + BIXI stations and builds the transit index (nearest-stop distances via a KD-tree). |
-| `run_scoring.py` | Local end-to-end runner for testing: reads both JSON feeds, scores them, writes `events_scored.json`/`.csv`. **Not used in production** (see pipeline below). |
 | `score_festivals.py` | Scores the curated festivals once and writes badges back into `festivals_montreal.json`. |
+| `run_scoring.py` | Local end-to-end runner for testing only: reads both JSON feeds, scores them, writes `events_scored.json`/`.csv`. **Not used in production** (see pipeline below). |
 | `stops.txt` | STM GTFS stops (committed so scoring is reproducible without a live download). |
+
+Scoring is also wired into `fetch_public_events.py`, `models.py`, and `seed.py`
+(see below), which are shared with the rest of the data pipeline.
 
 ---
 
@@ -72,7 +75,7 @@ unreachable, scoring still runs (without the BIXI bonus).
 Scoring is **built into the existing data pipeline**, not run by hand. There are
 two feeds because the two data sources are different:
 
-**City events** (~2,900, refreshed daily via the CKAN API):
+**City events** (~2,500, refreshed daily via the CKAN API):
 
 ```
 CKAN API
@@ -115,11 +118,16 @@ recreated when the schema changes, then re-seeded.
 ## Frontend
 
 - **`EventCard.js`** — renders the eco-badge (icon + name) and a ♿ chip when the
-  nearest accessible metro is within range. The badge links to the Sustainability
-  page.
-- **`sustainability/`** — the Sustainability page: an explainer (how the score
-  works, what the tiers mean, wheelchair accessibility, limitations) plus a live
-  ranking of every event by score with an expandable per-event breakdown.
+  nearest accessible metro is within range.
+- **`HomeClient.js`** — the main events list shows each event's badge, plus a
+  collapsible score breakdown (transit / walk-in / outdoor bars) per event.
+- **`sustainability/page.js`** — the Sustainability page: an explainer (how the
+  score works, the tiers, wheelchair accessibility, limitations).
+- **`sustainability/SustainabilityRanking.js`** — a live leaderboard ranking every
+  event by score, grouped into the three badge tiers, showing the top 20 per tier,
+  each expandable to its per-event breakdown.
+- **`sustainability/Collapsible.js`** — small client component for the page's
+  expand/collapse sections.
 - Badge names and page copy are translated via the `badge` and `sustainability`
   sections of `dictionaries/en.json` and `fr.json`.
 
@@ -138,7 +146,7 @@ recreated when the schema changes, then re-seeded.
 - Distances are straight-line (as-the-crow-flies), not walking routes — mildly optimistic.
 - The wheelchair flag describes the STM **station**, not the event **venue**.
 - The eco-flag is **self-reported** (scanned from organizer descriptions) and triggers on ~10 events.
-- The score is a **low-carbon accessibility proxy**, not a measurement of carbon emissions.
+- The score is a **transit-friendly, barrier-free accessibility proxy**, not a measurement of carbon emissions.
 
 See [`LOGIC.md`](./LOGIC.md) for the full methodology, the decision history, and the
 equity and sensitivity findings.
