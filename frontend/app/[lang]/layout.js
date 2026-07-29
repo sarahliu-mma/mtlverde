@@ -1,5 +1,5 @@
 
-import ChatWidget from "@/components/ChatWidget";
+import ConditionalChatWidget from "@/components/ConditionalChatWidget";
 import { Geist, Geist_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
 import "../globals.css";
@@ -44,7 +44,7 @@ export default async function RootLayout({ children, params }) {
   <AuthProvider>
     <BookmarksProvider>
       {children}
-      <ChatWidget lang={lang} dict={dict} />
+      <ConditionalChatWidget lang={lang} dict={dict} />
     </BookmarksProvider>
   </AuthProvider>
 </body>
