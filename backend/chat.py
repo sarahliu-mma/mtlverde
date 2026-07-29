@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
+from datetime import datetime
+from zoneinfo import ZoneInfo
 import os
 import re
 import anthropic
@@ -19,6 +21,11 @@ STOPWORDS = {
     "find", "me", "show", "i", "want", "any", "there", "some",
     "festival", "festivals", "event", "events", "montreal", "happen",
 }
+
+# Montreal timezone, used so the chatbot can resolve relative time
+# expressions like "this weekend" or "next week" against the real
+# current date instead of guessing or claiming it has no date access.
+MONTREAL_TZ = ZoneInfo("America/Montreal")
 
 
 class ChatRequest(BaseModel):
@@ -88,6 +95,14 @@ def format_events_for_prompt(events):
     return "\n".join(lines)
 
 
+def get_date_context() -> str:
+    """Return today's date in Montreal time as a human-readable string,
+    so the model can calculate ranges like "this weekend" or "next week"
+    instead of saying it has no access to the current date."""
+    now = datetime.now(MONTREAL_TZ)
+    return f"Today's date is {now.strftime('%Y-%m-%d')} ({now.strftime('%A')}), Montreal time."
+
+
 # Serializes an event to the same shape EventCard.js expects (matches
 # recommendations.py's _serialize), so chat replies can render real cards.
 def _serialize_event(item):
@@ -126,11 +141,11 @@ def chat(req: ChatRequest, db: Session = Depends(get_db)):
         else "No matching events found in the database for these keywords."
     )
 
-# Language rule: detect the language of the user's message and reply in
-# kind. Only English and French are supported (matches the site's
-# [lang] locales). This intentionally overrides req.lang (the current
-# UI locale) — req.lang is still useful for other templated strings,
-# but the reply language always follows what the user actually typed.
+    # Language rule: detect the language of the user's message and reply in
+    # kind. Only English and French are supported (matches the site's
+    # [lang] locales). This intentionally overrides req.lang (the current
+    # UI locale) — req.lang is still useful for other templated strings,
+    # but the reply language always follows what the user actually typed.
     lang_instruction = (
         "Detect the language of the user's message below and reply entirely "
         "in that language. If the message is in French, reply entirely in "
@@ -139,8 +154,22 @@ def chat(req: ChatRequest, db: Session = Depends(get_db)):
         "reply, and do not mention that you are detecting the language."
     )
 
+    # Date rule: give Claude today's actual date so it can resolve relative
+    # time expressions, and require it to only recommend events from the
+    # list below whose date actually falls within the requested range.
+    date_instruction = (
+        f"{get_date_context()} When the user asks about a relative time "
+        "period (e.g. \"this weekend\", \"next week\", \"today\"), calculate "
+        "the real date range from today's date above — do not say you lack "
+        "access to the current date. When filtering events by a date range, "
+        "only recommend events from the list below whose date falls within "
+        "that range. If none of the listed events fall within the requested "
+        "range, say so honestly instead of listing unrelated events."
+    )
+
     system_prompt = (
             f"{lang_instruction}\n\n"
+            f"{date_instruction}\n\n"
             "You are the event recommendation assistant for MTLVerde, a bilingual "
             "website that helps people discover free and low-cost community events "
             "in Montréal. You can help with two kinds of questions:\n\n"
