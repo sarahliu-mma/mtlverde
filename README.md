@@ -143,9 +143,11 @@ mtlverde/
 │       ├── bookmarks.js            Bookmarks store — localStorage (guest) / Supabase (account)
 │       ├── useEventsFeed.js        Shared events feed with cross-tab fetch dedup
 │       └── eventPhotos.js          Event-type → stock photo mapping
-└── .github/workflows/
-    ├── update-public-events.yml    Daily fetch → translate → score → commit → seed
-    └── backfill-translations.yml   One-time translation backfill
+├── .github/workflows/
+│   ├── update-public-events.yml    Daily fetch → translate → score → commit → seed
+│   └── backfill-translations.yml   One-time translation backfill
+├── Final_presentation.pdf          Final presentation slides
+└── README.md
 ```
 
 ---
