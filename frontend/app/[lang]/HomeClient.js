@@ -99,6 +99,7 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
   const [email, setEmail]           = useState("");
   const [subscribed, setSubscribed] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
+  const [openBreakdownId, setOpenBreakdownId] = useState(null);
   const { isSaved, toggle } = useBookmarks();
   const eventsRef     = useRef(null);
   const purposeRef    = useRef(null);
@@ -472,12 +473,55 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
                             {(dict || DICT[lang]).event?.readMore || "Read more"} →
                           </a>
                         )}
+
+                        {/* Sustainability score breakdown — collapsible */}
+                        {event.score_breakdown && (
+                          <div style={{ marginTop: 10 }}>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setOpenBreakdownId(prev => (prev === event.id ? null : event.id));
+                              }}
+                              style={{ background: "none", border: "none", padding: 0, cursor: "pointer", fontSize: 11, fontWeight: 700, color: GREEN_MID, display: "flex", alignItems: "center", gap: 4 }}
+                              aria-expanded={openBreakdownId === event.id}
+                            >
+                              🌿{event.sustainability_score} / 100
+                              <span style={{ fontSize: 9, transform: openBreakdownId === event.id ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}>▼</span>
+                            </button>
+
+                            {openBreakdownId === event.id && (
+                              <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 8 }} onClick={(e) => e.stopPropagation()}>
+                                {COMPONENTS.map((c) => {
+                                  const pts = (event.score_breakdown || {})[c.key] ?? 0;
+                                  const pct = Math.max(0, Math.min(100, (pts / c.max) * 100));
+                                  return (
+                                    <div key={c.key} style={{ display: "grid", gridTemplateColumns: "110px 1fr 46px", alignItems: "center", gap: 10 }}>
+                                      <span style={{ fontSize: 11, color: "#666" }}>{c.label[lang] || c.label.en}</span>
+                                      <span style={{ height: 5, borderRadius: 999, background: GREEN_LIGHT, overflow: "hidden", display: "block" }}>
+                                        <span style={{ display: "block", height: "100%", borderRadius: 999, background: GREEN_MID, width: pct + "%" }} />
+                                      </span>
+                                      <span style={{ fontSize: 10, fontFamily: "monospace", color: "#aaa", textAlign: "right" }}>{pts}/{c.max}</span>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            )}
+                          </div>
+                        )}
                       </div>
                       <div style={{ display: "flex", flexDirection: "column", gap: 6, flexShrink: 0, alignItems: "flex-end", alignSelf: "stretch" }}>
                         {event.public_cible && <span className="badge badge-pink">{tField("public_cible", event.public_cible, lang)}</span>}
                         <span className={`badge ${event.cout === "Gratuit" ? "badge-green" : "badge-red"}`}>
                           {tField("cout", event.cout, lang)}
                         </span>
+
+                        {event.wheelchair_metro_accessible && (
+                          <span style={{ fontSize: 14 }} title="Wheelchair-accessible metro nearby" aria-label="Wheelchair accessible">
+                          ♿
+                          </span>
+                        )}
+                          
                         <button
                           type="button"
                           onClick={(e) => { e.stopPropagation(); toggle(event.id); }}
@@ -523,8 +567,8 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
           </h2>
           <p style={{ fontSize: "clamp(13px, 1.4vw, 17px)", color: "rgba(255,255,255,0.65)", lineHeight: 1.75, marginBottom: 40, maxWidth: 560, margin: "0 auto 40px" }}>
             {t(
-              "Every event on MTLVerde gets an eco-score based on transit access, carbon footprint, and more.",
-              "Chaque événement sur MTLVerde reçoit un score écologique basé sur l'accès aux transports et l'empreinte carbone."
+              "Every event on MTLVerde gets an eco-score based on transit access, accessibility, and more.",
+              "Chaque événement sur MTLVerde reçoit un score écologique basé sur l'accès aux transports, l'accessibilité, et bien plus."
             )}
           </p>
           <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
@@ -539,7 +583,7 @@ export default function HomeClient({ dict, lang, initialEvents = [] }) {
 
         {/* Frosted tag pills — bottom left */}
         <div style={{ position: "absolute", bottom: 28, left: 48, display: "flex", gap: 8, flexWrap: "wrap" }}>
-          {[t("Low emissions","Faibles émissions"), t("Walkable","Accessible à pied"), t("Zero waste","Zéro déchet"), t("Local","Local")].map(tag => (
+          {[t("Transit-Friendly", "Accès transport"), t("Walkable", "Accessible à pied"), t("Outdoors", "En plein air")].map(tag => (
             <span key={tag} style={{ background: "rgba(255,255,255,0.12)", backdropFilter: "blur(8px)", color: "#fff", fontSize: 11, fontWeight: 700, padding: "6px 14px", borderRadius: 999, border: "1px solid rgba(255,255,255,0.25)" }}>{tag}</span>
           ))}
         </div>
