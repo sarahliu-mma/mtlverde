@@ -48,6 +48,13 @@ const BADGE_COLORS = {
   "Eco-Friendly":  { bg: "#e4f0dc", color: "#2e6e30" },
   "Getting There": { bg: "#f0ead8", color: "#7a5a1a" },
 };
+
+const COMPONENTS = [
+  { key: "transit_access", max: 45, label: { en: "Transit access", fr: "Accès au transport" } },
+  { key: "walkin_access",  max: 35, label: { en: "Walk-in access", fr: "Accès libre" } },
+  { key: "outdoor_green",  max: 20, label: { en: "Outdoor venue",  fr: "Lieu extérieur" } },
+];
+
 function LeafIcons({ badge, size = 12 }) {
   const count = BADGE_LEAVES[badge] || 0;
   if (!count) return null;
