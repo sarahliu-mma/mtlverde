@@ -146,6 +146,8 @@ mtlverde/
 ├── .github/workflows/
 │   ├── update-public-events.yml    Daily fetch → translate → score → commit → seed
 │   └── backfill-translations.yml   One-time translation backfill
+├── User_Testing_Responses.xlsx     Raw user testing survey responses (n = 13)
+├── mtlverde_survey_takeaways.md    User testing findings and analysis
 ├── Final_presentation.pdf          Final presentation slides
 └── README.md
 ```
@@ -363,6 +365,39 @@ for setup details.
 
 [`.github/workflows/backfill-translations.yml`](.github/workflows/backfill-translations.yml)
 is a one-time helper that fills in English for any events missing it.
+
+---
+## User testing
+
+We ran a Google Form survey on the live site with **13 respondents** —
+all on the English version, roughly seven in ten on mobile, and **38.5%**
+identifying as new to Montréal. Participants were asked to complete a real task
+(*find a free event happening this weekend in your neighborhood*), then rate and
+comment on the filters, the sustainability features, and the AI assistant.
+
+Headline results:
+
+| Measure | Result |
+|---------|--------|
+| Found a free weekend event easily (4–5 of 5) | **76.9%** — nobody scored below 3 |
+| Noticed and used the borough / category filters | **69.2%** |
+| Likely to use the site for real event discovery (4–5) | **76.9%** |
+| Found the eco-badge scoring self-explanatory (4–5) | **76.9%** |
+| Found the sustainability page easy to navigate (4–5) | **84.6%** |
+| Rate sustainability as important when choosing an event (4–5) | **61.5%** |
+| Used the AI assistant / chatbot | **53.8%** each |
+
+Two themes came out of the open-ended answers that no single metric captures:
+respondents value having events **in one place** rather than scattered across
+social media and venue sites, and they value **English access to listings that
+are French-only** at the source — the barrier the project was built to remove.
+Structured navigation also outperformed conversational navigation: the filters
+and the guided find-an-event task scored near the top of the scale, while the AI
+features reached about half of respondents.
+
+Full analysis, including the free-text responses and the breakdown of both AI
+features: [`mtlverde_survey_takeaways.md`](mtlverde_survey_takeaways.md). Raw
+responses are in [`User_Testing_Responses.xlsx`](User_Testing_Responses.xlsx).
 
 ---
 
